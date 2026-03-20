@@ -1,0 +1,10 @@
+{
+  "projects": {
+    "default": "alis-aigoo-apocalypse"
+  },
+  "targets": {
+    "alis-aigoo-apocalypse": {
+      "server": "http://localhost:3001"
+    }
+  }
+}

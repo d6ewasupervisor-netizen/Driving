@@ -1,0 +1,48 @@
+{
+  "project": {
+    "id": "alis-aigoo-apocalypse",
+    "displayName": "Ali's Aigoo Apocalypse",
+    "region": "local"
+  },
+  "server": {
+    "port": 3001,
+    "host": "localhost"
+  },
+  "authentication": {
+    "providers": {
+      "email": {
+        "enabled": true,
+        "requireEmailVerification": false
+      },
+      "google": {
+        "enabled": false,
+        "note": "Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in .env to enable"
+      }
+    },
+    "jwt": {
+      "expiresIn": "7d",
+      "algorithm": "HS256"
+    }
+  },
+  "database": {
+    "type": "sqlite",
+    "path": "./server/data/aigoo.db"
+  },
+  "roles": {
+    "player": {
+      "description": "Ali's account - full game access",
+      "claims": {
+        "gameAccess": true,
+        "dashboardAccess": false
+      }
+    },
+    "parent": {
+      "description": "Mom and T's accounts - dashboard access only",
+      "claims": {
+        "gameAccess": false,
+        "dashboardAccess": true,
+        "canSendRadioMessages": true
+      }
+    }
+  }
+}
