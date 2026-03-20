@@ -4,6 +4,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useGameStore } from '@/stores/gameStore';
 import { useGameProgress } from '@/hooks/useGameProgress';
+import { AudioManager } from '@/systems/AudioManager';
 
 function shuffleArray<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -42,6 +43,13 @@ export function QuizOverlay() {
       setSelected(answer);
       const res = answerQuiz(answer);
       setResult(res);
+
+      // Audio feedback
+      if (res.correct) {
+        AudioManager.playQuizCorrect();
+      } else {
+        AudioManager.playQuizWrong();
+      }
 
       // Record to backend (fire and forget)
       recordQuizAnswer(

@@ -1,7 +1,8 @@
 /**
- * EngineHUD — Displays RPM, gear, speed, ABS status
+ * EngineHUD — Displays RPM, gear, speed, ABS status, mute toggle
  * Rendered as an overlay on top of the 3D scene
  */
+import { useCallback } from 'react';
 import { useGameStore } from '@/stores/gameStore';
 
 export function EngineHUD() {
@@ -9,6 +10,13 @@ export function EngineHUD() {
   const gear = useGameStore((s) => s.engineGear);
   const speed = useGameStore((s) => s.engineSpeed);
   const absActive = useGameStore((s) => s.absActive);
+  const isMuted = useGameStore((s) => s.isMuted);
+  const toggleMute = useGameStore((s) => s.toggleMute);
+
+  const handleMute = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleMute();
+  }, [toggleMute]);
 
   const redline = rpm > 6000;
   const rpmPercent = (rpm / 7000) * 100;
@@ -87,6 +95,29 @@ export function EngineHUD() {
           }}
         />
       </div>
+
+      {/* Mute toggle */}
+      <button
+        onClick={handleMute}
+        style={{
+          background: 'rgba(0,0,0,0.5)',
+          border: '1px solid #444',
+          borderRadius: 6,
+          color: '#aaa',
+          fontSize: 16,
+          width: 36,
+          height: 36,
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginTop: 4,
+          pointerEvents: 'auto',
+        }}
+        aria-label={isMuted ? 'Unmute' : 'Mute'}
+      >
+        {isMuted ? '\u{1F507}' : '\u{1F50A}'}
+      </button>
     </div>
   );
 }
