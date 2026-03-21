@@ -69,6 +69,10 @@ const ABS_PULSE_HZ = 15;              // real ABS pulses at 10-15 Hz
 // Brake torque (converted from force through wheel radius)
 const MAX_BRAKE_TORQUE = 1200;        // N·m per wheel
 
+// Drag model: F = Cd * v² + rolling resistance
+const AERO_DRAG_COEFF = 0.5;         // ½ρCdA ≈ 0.5 for a boxy VW Beetle
+const ROLLING_RESISTANCE_N = 200;    // ~0.015 * mass * g
+
 // Game metrics
 const MPH_TO_MS = 0.44704;
 const MILEAGE_BATCH = 0.1;            // miles before writing to store
@@ -358,17 +362,26 @@ export function tickVehicle(
   // ── Lateral grip (only when on ground) ───────────────────────────────────
   if (anyGrounded) {
     const lateralSpeed = vel.dot(right);
-    // Update slip state for audio/particles
     _lateralSlip = Math.abs(lateralSpeed) / Math.max(1, speedMs);
     _brakeSlip = brakeInput > 0.1 ? brakeInput * (speedMs > 2 ? 0.5 : 0) : 0;
     _isAnyWheelSlipping = _lateralSlip > 0.1 || _brakeSlip > 0.2;
-    // Cancel ~90% of sideways velocity per frame to simulate tire grip
     const correction = right.clone().multiplyScalar(-lateralSpeed * 0.9);
     const lv = body.linvel();
     body.setLinvel(
       { x: lv.x + correction.x, y: lv.y, z: lv.z + correction.z },
       true
     );
+  }
+
+  // ── Aerodynamic drag + rolling resistance ─────────────────────────────
+  if (speedMs > 0.5) {
+    const dragForceN = AERO_DRAG_COEFF * speedMs * speedMs
+      + (anyGrounded ? ROLLING_RESISTANCE_N : 0);
+    const maxImpulse = speedMs * 1400 * 0.4;
+    const dragImpulse = vel.clone().normalize().multiplyScalar(
+      -Math.min(dragForceN * dt, maxImpulse),
+    );
+    body.applyImpulse(dragImpulse as any, true);
   }
 
   // ── Steering ─────────────────────────────────────────────────────────────
