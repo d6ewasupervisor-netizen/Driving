@@ -379,15 +379,16 @@ export function Vehicle() {
     <RigidBody
       ref={bodyRef}
       mass={1400}
-      position={[0, 0.6992, 0]}
+      position={[0, 1.0, 0]}
       enabledRotations={[false, true, false]}
       linearDamping={0.1}
       angularDamping={0.05}
       colliders={false}
     >
-      {/* Main body collider */}
+      {/* Main body collider – raised so it sits above the wheel line */}
       <CuboidCollider
         args={[COLLIDER_HX, COLLIDER_HY, COLLIDER_HZ]}
+        position={[0, 0.2, 0]}
         friction={1.111}
         restitution={0.1}
       />

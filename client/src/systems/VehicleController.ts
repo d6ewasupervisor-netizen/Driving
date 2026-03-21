@@ -358,6 +358,9 @@ export function tickVehicle(
       compression = Math.max(0, (wheel.restLength + wheel.radius) - distToGround);
     }
 
+    // Clamp to suspension travel so springs can't over-compress
+    compression = Math.min(compression, wheel.travel);
+
     if (compression <= 0) continue;
     ws.isGrounded = true;
     anyGrounded = true;
