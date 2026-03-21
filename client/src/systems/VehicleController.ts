@@ -153,8 +153,8 @@ export function tickVehicle(
   let anyGrounded = false;
   const bodyPos = body.translation();
   for (const lp of WHEEL_POSITIONS) {
-    const wy = bodyPos.y + lp.y * quat.w + lp.y; // approximate
-    if (bodyPos.y + lp.y < 0.35 + 0.5) { anyGrounded = true; break; }
+    const worldY = bodyPos.y + new THREE.Vector3().copy(lp).applyQuaternion(quat).y;
+    if (worldY < 0.35 + 0.5) { anyGrounded = true; break; }
   }
 
   // ── Reverse detection (delayed to prevent brake → reverse snap) ────────
@@ -235,11 +235,10 @@ export function tickVehicle(
 
   // ── Apply forward velocity change ──────────────────────────────────────
   const dv = newSpeed - forwardSpeed;
-  const lv = body.linvel();
-  body.setLinvel(
-    { x: lv.x + forward.x * dv, y: lv.y, z: lv.z + forward.z * dv },
-    true,
-  );
+  if (Math.abs(dv) > 0.0001) {
+    const impulse = forward.clone().multiplyScalar(VEHICLE_MASS * dv);
+    body.applyImpulse({ x: impulse.x, y: 0, z: impulse.z }, true);
+  }
 
   // ── Lateral grip ───────────────────────────────────────────────────────
   if (anyGrounded) {
@@ -248,8 +247,8 @@ export function tickVehicle(
     _brakeSlip = brakeInput > 0.1 ? brakeInput * (contactSpeed > 2 ? 0.5 : 0) : 0;
     _isAnyWheelSlipping = _lateralSlip > 0.1 || _brakeSlip > 0.2;
 
-    const lv2 = body.linvel();
     const correction = right.clone().multiplyScalar(-lateralSpeed * 0.9);
+    const lv2 = body.linvel();
     body.setLinvel(
       { x: lv2.x + correction.x, y: lv2.y, z: lv2.z + correction.z },
       true,
