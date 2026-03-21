@@ -13,6 +13,7 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useGameStore } from '@/stores/gameStore';
 import { AudioManager } from '@/systems/AudioManager';
+import { triggerScreenShake } from './GameCamera';
 import { getCollectibles } from './Collectibles';
 import { NpcState } from '@/systems/TrafficManager';
 
@@ -77,6 +78,7 @@ export function CollisionSystem({ npcsRef }: CollisionSystemProps) {
           store.takeDamage(TRAFFIC_DAMAGE);
           store.addTrafficHit();
           AudioManager.playCollision();
+          triggerScreenShake(0.6, 0.35);
           trafficCooldown.current = TRAFFIC_COOLDOWN;
           break; // only one hit per cooldown
         }
@@ -94,6 +96,7 @@ export function CollisionSystem({ npcsRef }: CollisionSystemProps) {
           zombie.active = false;
           store.addZombieHit();
           AudioManager.playZombieSplat();
+          triggerScreenShake(0.2, 0.15);
           zombieCooldown.current = ZOMBIE_COOLDOWN;
           break;
         }

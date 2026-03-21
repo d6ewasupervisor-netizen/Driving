@@ -1,9 +1,10 @@
 /**
- * GameCamera — Smooth follow camera with multiple view modes
+ * GameCamera — Smooth follow camera with multiple view modes + screen shake
  * Cycle with C key: chase → birdseye → profile
  *
  * Chase mode: true chase cam — offset rotates with vehicle heading.
  * Bird's eye / profile: world-aligned offsets (don't rotate with car).
+ * Screen shake: triggered by collisions, decays exponentially.
  */
 import { useRef, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
@@ -28,7 +29,7 @@ const MODES: Record<CameraMode, ModeConfig> = {
     followHeading: true,
   },
   birdseye: {
-    offset:  new THREE.Vector3(0, 10, 3),     // ~10m up (was 30)
+    offset:  new THREE.Vector3(0, 10, 3),     // ~10m up
     lookAt:  new THREE.Vector3(0, 0, -3),
     lerpPos: 0.08,
     lerpRot: 0.12,
@@ -43,10 +44,21 @@ const MODES: Record<CameraMode, ModeConfig> = {
   },
 };
 
+// ─── Screen shake (module-level for easy triggering) ──────────────────────────
+let _shakeIntensity = 0;
+let _shakeDecay = 0;
+
+/** Trigger screen shake. intensity: 0-1, duration in seconds */
+export function triggerScreenShake(intensity = 0.5, duration = 0.3) {
+  _shakeIntensity = Math.max(_shakeIntensity, intensity);
+  _shakeDecay = intensity / duration;
+}
+
 // Reusable vectors
 const _targetPos = new THREE.Vector3();
 const _targetLook = new THREE.Vector3();
 const _rotatedOffset = new THREE.Vector3();
+const _shakeOffset = new THREE.Vector3();
 
 export function GameCamera() {
   const { camera } = useThree();
@@ -63,11 +75,12 @@ export function GameCamera() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     const state = useGameStore.getState();
     const [vx, vy, vz] = state.vehiclePosition;
     const heading = state.vehicleHeading;
     const mode = MODES[state.cameraMode];
+    const dt = Math.min(delta, 0.05);
 
     if (mode.followHeading) {
       // Rotate offset and lookAt around Y by vehicle heading
@@ -92,6 +105,19 @@ export function GameCamera() {
     } else {
       _targetPos.set(vx + mode.offset.x, vy + mode.offset.y, vz + mode.offset.z);
       _targetLook.set(vx + mode.lookAt.x, vy + mode.lookAt.y, vz + mode.lookAt.z);
+    }
+
+    // ── Apply screen shake ────────────────────────────────────────────────
+    if (_shakeIntensity > 0.001) {
+      _shakeOffset.set(
+        (Math.random() - 0.5) * 2 * _shakeIntensity,
+        (Math.random() - 0.5) * 1.5 * _shakeIntensity,
+        (Math.random() - 0.5) * 1.5 * _shakeIntensity,
+      );
+      _targetPos.add(_shakeOffset);
+
+      // Decay shake
+      _shakeIntensity = Math.max(0, _shakeIntensity - _shakeDecay * dt);
     }
 
     camera.position.lerp(_targetPos, mode.lerpPos);

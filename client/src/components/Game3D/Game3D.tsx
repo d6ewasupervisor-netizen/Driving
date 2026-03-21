@@ -32,6 +32,7 @@ import { LovesStopScreen, OutOfGasScreen } from './LovesStopScreen';
 import { Collectibles } from './Collectibles';
 import { CollisionSystem } from './CollisionSystem';
 import { PostProcessing } from './PostProcessing';
+import { SkidMarks } from './SkidMarks';
 import { NpcState } from '@/systems/TrafficManager';
 
 // ─── Low-end detection (computed once) ───────────────────────────────────────
@@ -93,6 +94,7 @@ function Scene({ lowEnd }: { lowEnd: boolean }) {
       <TrafficRenderer lowEnd={lowEnd} onNpcsRef={handleNpcsRef} />
       <Collectibles />
       <CollisionSystem npcsRef={npcsRef} />
+      <SkidMarks />
       <GameCamera />
     </Physics>
   );
