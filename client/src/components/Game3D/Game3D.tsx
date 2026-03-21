@@ -2,7 +2,7 @@
  * Game3D — Root component: Canvas + Physics + all systems
  * Replaces the 2D ZombieRoadWarrior game body.
  */
-import { Suspense, useEffect, useRef } from 'react';
+import { Suspense, useEffect, useRef, useCallback } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { Physics } from '@react-three/rapier';
 
@@ -28,6 +28,9 @@ import { TouchOverlay } from './TouchOverlay';
 import { PauseMenu, VictoryScreen, GameOverScreen } from './PauseMenu';
 import { MainMenu } from './MainMenu';
 import { LovesStopScreen, OutOfGasScreen } from './LovesStopScreen';
+import { Collectibles } from './Collectibles';
+import { CollisionSystem } from './CollisionSystem';
+import { NpcState } from '@/systems/TrafficManager';
 
 // ─── Low-end detection (computed once) ───────────────────────────────────────
 const LOW_END = isLowEndDevice();
@@ -67,6 +70,14 @@ function AudioBridge() {
 
 // ─── Inner scene (needs Canvas context) ──────────────────────────────────────
 function Scene({ lowEnd }: { lowEnd: boolean }) {
+  const npcsRef = useRef<NpcState[]>([]);
+  const npcsRefWrapper = useRef(npcsRef.current);
+
+  const handleNpcsRef = useCallback((ref: React.MutableRefObject<NpcState[]>) => {
+    npcsRefWrapper.current = ref.current;
+    npcsRef.current = ref.current;
+  }, []);
+
   return (
     <Physics
       gravity={[0, -9.7119, 0]}
@@ -76,7 +87,9 @@ function Scene({ lowEnd }: { lowEnd: boolean }) {
       <Skybox />
       <RoadChunks lowEnd={lowEnd} />
       <Vehicle />
-      <TrafficRenderer lowEnd={lowEnd} />
+      <TrafficRenderer lowEnd={lowEnd} onNpcsRef={handleNpcsRef} />
+      <Collectibles />
+      <CollisionSystem npcsRef={npcsRef} />
       <GameCamera />
     </Physics>
   );

@@ -2,12 +2,14 @@
  * RoadChunks — Renders pooled road chunks with Kenney GLB assets.
  * Vehicle travels in -Z direction.
  */
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
+import * as THREE from 'three';
 import { RigidBody, CuboidCollider } from '@react-three/rapier';
 import { useGameStore, Biome } from '@/stores/gameStore';
 import { ChunkData, CHUNK_LENGTH, initChunks, updateChunks } from '@/systems/RoadChunkManager';
+import { registerRoadZombies, RoadZombie } from './CollisionSystem';
 
 // ─── Preload all assets used in chunks ────────────────────────────────────────
 useGLTF.preload('/models/road/road-straight.glb');
@@ -164,6 +166,105 @@ function CityDecorations({ lowEnd }: { lowEnd?: boolean }) {
   );
 }
 
+// ─── Road Zombies — hittable zombies that wander on/near the road ─────────────
+const MAX_ROAD_ZOMBIES = 20;
+const ZOMBIE_SPAWN_AHEAD = 200;
+const ZOMBIE_DESPAWN_BEHIND = 40;
+
+// Module-level zombie pool
+const roadZombiePool: RoadZombie[] = [];
+let nextZombieZ = -80;
+
+function initRoadZombiePool() {
+  if (roadZombiePool.length > 0) return;
+  for (let i = 0; i < MAX_ROAD_ZOMBIES; i++) {
+    roadZombiePool.push({
+      position: new THREE.Vector3(0, -100, 0),
+      active: false,
+      hit: false,
+    });
+  }
+  registerRoadZombies(roadZombiePool);
+}
+
+// Seeded random for deterministic placement
+function zombieSeeded(seed: number): number {
+  const x = Math.sin(seed * 9.123 + seed * 41.789) * 31415.9265;
+  return x - Math.floor(x);
+}
+
+function RoadZombieInstance({ zombie }: { zombie: RoadZombie }) {
+  const { scene } = useGLTF('/models/zombies/walking_zombie.glb');
+  const groupRef = useRef<THREE.Group>(null);
+
+  useFrame(() => {
+    const g = groupRef.current;
+    if (!g) return;
+    if (zombie.active && !zombie.hit) {
+      g.visible = true;
+      g.position.copy(zombie.position);
+    } else {
+      g.visible = false;
+    }
+  });
+
+  return (
+    <group ref={groupRef} visible={false}>
+      <primitive
+        object={scene.clone(true)}
+        scale={0.01}
+        rotation={[0, Math.random() * Math.PI * 2, 0]}
+      />
+    </group>
+  );
+}
+
+function RoadZombies({ lowEnd }: { lowEnd?: boolean }) {
+  const count = lowEnd ? 8 : MAX_ROAD_ZOMBIES;
+
+  useEffect(() => {
+    initRoadZombiePool();
+  }, []);
+
+  useFrame(() => {
+    const { vehiclePosition, phase, currentBiome } = useGameStore.getState();
+    if (phase !== 'driving') return;
+    const playerZ = vehiclePosition[2];
+
+    // Spawn zombies ahead (city biome gets more, others still some)
+    const spacing = currentBiome === 'city' ? 30 : 60;
+    while (nextZombieZ > playerZ - ZOMBIE_SPAWN_AHEAD) {
+      const slot = roadZombiePool.find((z) => !z.active && !z.hit);
+      if (!slot) break;
+
+      const seed = Math.round(nextZombieZ * 5.67);
+      // Place on or near road — X range -4 to 4
+      const x = (zombieSeeded(seed) - 0.5) * 8;
+      slot.position.set(x, 0, nextZombieZ);
+      slot.active = true;
+      slot.hit = false;
+
+      nextZombieZ -= spacing + zombieSeeded(seed + 1) * 20;
+    }
+
+    // Recycle zombies behind player
+    for (const zombie of roadZombiePool) {
+      if (zombie.active && zombie.position.z > playerZ + ZOMBIE_DESPAWN_BEHIND) {
+        zombie.active = false;
+        zombie.hit = false;
+      }
+    }
+  });
+
+  return (
+    <>
+      {roadZombiePool.slice(0, count).map((zombie, i) => (
+        <RoadZombieInstance key={i} zombie={zombie} />
+      ))}
+    </>
+  );
+}
+
 // ─── Highway decorations — barriers, cones, sign ─────────────────────────────
 function BarrierModel({ position }: { position: [number, number, number] }) {
   const { scene } = useGLTF('/models/road/construction-barrier.glb');
@@ -306,6 +407,7 @@ export function RoadChunks({ lowEnd }: { lowEnd?: boolean }) {
 
   return (
     <>
+      <RoadZombies lowEnd={lowEnd} />
       {chunks.map((chunk) => (
         <RigidBody
           key={`${chunk.id}-${chunk.gen}`}
