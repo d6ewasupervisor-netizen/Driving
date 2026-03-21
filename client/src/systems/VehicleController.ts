@@ -53,9 +53,9 @@ const WHEEL_INERTIA = 0.9;            // kg·m² per wheel
 const IDLE_RPM = 800;
 const REDLINE_RPM = 7000;
 const PEAK_TORQUE_RPM = 3500;
-const PEAK_TORQUE_NM = 350;           // peak torque at 3500 RPM
+const PEAK_TORQUE_NM = 400;           // peak torque at 3500 RPM
 const GEAR_RATIOS = [0, 3.5, 2.1, 1.4, 1.0, 0.8, 0.65];  // 0=neutral placeholder
-const FINAL_DRIVE = 3.9;
+const FINAL_DRIVE = 1.63;
 const WHEEL_RADIUS = 0.35;
 
 // Shifting thresholds
@@ -67,7 +67,7 @@ const ABS_THRESHOLD = 0.15;           // slip ratio that triggers ABS (~15%)
 const ABS_PULSE_HZ = 15;              // real ABS pulses at 10-15 Hz
 
 // Brake torque (converted from force through wheel radius)
-const MAX_BRAKE_TORQUE = 2500;        // N·m per wheel
+const MAX_BRAKE_TORQUE = 1200;        // N·m per wheel
 
 // Game metrics
 const MPH_TO_MS = 0.44704;
@@ -175,13 +175,14 @@ function getTorqueAtRPM(rpm: number): number {
   if (rpm < peak) {
     return 0.6 + 0.4 * (rpm / peak);
   }
-  return Math.max(0, 1.0 - ((rpm - peak) / (redline - peak)));
+  const x = (rpm - peak) / (redline - peak);
+  return Math.max(0.15, 1.0 - 0.6 * x * x);
 }
 
-/** Get wheel torque from engine torque and gearing */
+/** Get wheel torque (Nm) from engine torque and gearing */
 function getWheelTorque(engineTorqueNm: number, gear: number): number {
   if (gear === 0) return 0; // neutral
-  return engineTorqueNm * GEAR_RATIOS[gear] * FINAL_DRIVE / WHEEL_RADIUS;
+  return engineTorqueNm * GEAR_RATIOS[gear] * FINAL_DRIVE;
 }
 
 /** Calculate RPM from wheel contact velocity and current gear */
@@ -340,13 +341,15 @@ export function tickVehicle(
       updateWheelAngularVel(ws, driveForcePerWheel * wheel.radius, 0, WHEEL_INERTIA, dt);
     }
 
-    // ── Braking ────────────────────────────────────────────────────────────
-    if (brakeInput > 0) {
+    // ── Braking (oppose velocity, taper near stop) ──────────────────────
+    if (brakeInput > 0 && Math.abs(forwardSpeed) > 0.5) {
       const brakeSlip = getBrakeSlipRatio(ws.angularVel, contactVelocity, wheel.radius);
       const effectiveBrake = updateABS(bs, brakeSlip, brakeInput, dt);
       const brakeTorque = effectiveBrake * MAX_BRAKE_TORQUE;
       updateWheelAngularVel(ws, 0, brakeTorque, WHEEL_INERTIA, dt);
-      const brakeImpulse = forward.clone().negate().multiplyScalar((brakeTorque / wheel.radius) * dt);
+      const speedFactor = Math.min(1, Math.abs(forwardSpeed) / 3);
+      const brakeDir = forwardSpeed > 0 ? -1 : 1;
+      const brakeImpulse = forward.clone().multiplyScalar(brakeDir * (brakeTorque / wheel.radius) * speedFactor * dt);
       body.applyImpulseAtPoint(brakeImpulse as any, wheelMount as any, true);
       store.setABSActive(bs.absActive);
     }

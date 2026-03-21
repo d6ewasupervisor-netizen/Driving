@@ -25,6 +25,8 @@ interface SkidMark {
 
 const _mat = new THREE.Matrix4();
 const _quat = new THREE.Quaternion();
+const _headingQuat = new THREE.Quaternion();
+const _flatQuat = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2);
 const _pos = new THREE.Vector3();
 const _color = new THREE.Color();
 
@@ -66,10 +68,10 @@ export function SkidMarks() {
         marks[idx].age = 0;
         marks[idx].active = true;
 
-        // Flat quad on road surface, rotated to match heading
-        _quat.setFromAxisAngle(new THREE.Vector3(0, 1, 0), vehicleHeading);
-        _pos.set(wx, 0.015, wz); // just above road surface
-        _mat.compose(_pos, _quat, new THREE.Vector3(0.25, 1, 0.6));
+        _headingQuat.setFromAxisAngle(new THREE.Vector3(0, 1, 0), vehicleHeading);
+        _quat.copy(_headingQuat).multiply(_flatQuat);
+        _pos.set(wx, 0.015, wz);
+        _mat.compose(_pos, _quat, new THREE.Vector3(0.25, 0.6, 1));
         mesh.setMatrixAt(idx, _mat);
 
         nextIdx.current = (nextIdx.current + 1) % MAX_MARKS;
