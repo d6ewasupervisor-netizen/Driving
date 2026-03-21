@@ -106,7 +106,7 @@ function Dashboard({ onPlayGame }: { onPlayGame: () => void }) {
             marginBottom: 20
           }}
         >
-          🚗 PLAY K-POP ZOMBIE ROAD WARRIOR 🧟
+          🚗 PLAY K-POP ROAD WARRIOR
         </button>
       )}
       

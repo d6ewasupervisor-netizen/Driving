@@ -36,7 +36,7 @@ export function MainMenu({ onExit }: { onExit?: () => void }) {
         {/* Bouncing car */}
         <div style={styles.carBounce}>🚗</div>
 
-        <h1 style={styles.title}>K-POP ZOMBIE<br />ROAD WARRIOR</h1>
+        <h1 style={styles.title}>K-POP<br />ROAD WARRIOR</h1>
         <p style={styles.subtitle}>NYC → Spokane, WA</p>
         <p style={styles.tagline}>
           Drive, dodge, and ace your road test!

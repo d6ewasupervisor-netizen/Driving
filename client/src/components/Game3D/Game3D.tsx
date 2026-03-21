@@ -1,6 +1,6 @@
 /**
  * Game3D — Root component: Canvas + Physics + all systems
- * Replaces the 2D ZombieRoadWarrior game body.
+ * Main 3D game scene built with React Three Fiber.
  */
 import { Suspense, useEffect, useRef, useCallback } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';

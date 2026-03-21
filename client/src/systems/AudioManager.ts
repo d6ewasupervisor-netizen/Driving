@@ -296,34 +296,6 @@ class AudioManagerClass {
     osc2.stop(t + 0.45);
   }
 
-  // ── One-shot: zombie splat ────────────────────────────────────────────────
-  playZombieSplat() {
-    if (!this._initialized || !this.ctx || !this.sfxGain) return;
-    const ctx = this.ctx;
-    const t = ctx.currentTime;
-
-    // Quick wet thud — bandpass noise + pitch drop
-    const source = ctx.createBufferSource();
-    source.buffer = getNoiseBuffer(ctx);
-
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(800, t);
-    filter.frequency.exponentialRampToValueAtTime(200, t + 0.15);
-    filter.Q.value = 3;
-
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.3, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
-
-    source.connect(filter);
-    filter.connect(gain);
-    gain.connect(this.sfxGain);
-
-    source.start(t);
-    source.stop(t + 0.25);
-  }
-
   // ── One-shot: quiz correct ────────────────────────────────────────────────
   playQuizCorrect() {
     if (!this._initialized || !this.ctx || !this.sfxGain) return;

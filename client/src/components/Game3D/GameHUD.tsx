@@ -106,7 +106,6 @@ export function GameHUD() {
   const hp = useGameStore((s) => s.hp);
   const fuel = useGameStore((s) => s.fuel);
   const streak = useGameStore((s) => s.streak);
-  const zombiesHit = useGameStore((s) => s.zombiesHit);
   const phase = useGameStore((s) => s.phase);
   const setPhase = useGameStore((s) => s.setPhase);
 
@@ -136,7 +135,6 @@ export function GameHUD() {
 
         {/* Z-Coins + Pause */}
         <div style={styles.topRight}>
-          {zombiesHit > 0 && <span style={styles.zombieCount}>🧟 {zombiesHit}</span>}
           <span style={styles.coins}>💰 {zCoins}</span>
           <button style={styles.pauseBtn} onClick={handlePause} aria-label="Pause">
             ⏸
@@ -238,12 +236,6 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     gap: '8px',
     pointerEvents: 'auto',
-  },
-  zombieCount: {
-    color: '#66ff66',
-    fontSize: '13px',
-    fontWeight: 700,
-    textShadow: '0 1px 4px rgba(0,0,0,0.8)',
   },
   coins: {
     color: '#ffd93d',

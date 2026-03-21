@@ -36,8 +36,8 @@ export function generateTrueFalse(question: Question): TrueFalseQuestion {
  */
 export function generateScenario(question: Question): ScenarioQuestion {
   const scenarios = [
-    `Ali is driving The Pink Menace through zombie territory when`,
-    `While navigating past a horde of dancing zombies,`,
+    `Ali is driving The Pink Menace down the highway when`,
+    `While cruising through traffic,`,
     `Mya the cat suddenly hisses at the window. Ali needs to focus because`,
     `The K-pop emergency broadcast just ended. Now Ali must decide:`,
     `Gracie points a paw at the road ahead. The situation is:`,
@@ -102,7 +102,7 @@ export function getFormatDisplayName(format: AlternativeFormat): string {
     case "true_false":
       return "True or False";
     case "scenario":
-      return "Zombie Scenario";
+      return "Road Scenario";
     case "fill_blank":
       return "Fill in the Blank";
     default:

@@ -86,7 +86,6 @@ interface QuizSlice {
 interface EconomySlice {
   zCoins: number;
   streak: number;
-  zombiesHit: number;
   trafficHits: number;
 }
 
@@ -122,7 +121,6 @@ type GameState = ControlsSlice &
     answerQuiz: (selectedAnswer: string) => { correct: boolean; coinsEarned: number };
     takeDamage: (amount: number) => void;
     addZCoins: (amount: number) => void;
-    addZombieHit: () => void;
     addTrafficHit: () => void;
     collectFuelCan: () => void;
     resetProgress: () => void;
@@ -152,7 +150,6 @@ const defaultGameState: GameSlice & QuizSlice & EconomySlice = {
   correctAnswers: 0,
   zCoins: 0,
   streak: 0,
-  zombiesHit: 0,
   trafficHits: 0,
 };
 
@@ -328,11 +325,6 @@ export const useGameStore = create<GameState>()(
       // ── Economy ─────────────────────────────────────────────────────────────
       addZCoins: (amount) => set((s) => ({ zCoins: s.zCoins + amount })),
 
-      addZombieHit: () => set((s) => ({
-        zombiesHit: s.zombiesHit + 1,
-        zCoins: s.zCoins + 5, // 5 coins per zombie
-      })),
-
       addTrafficHit: () => set((s) => ({
         trafficHits: s.trafficHits + 1,
       })),
@@ -367,7 +359,6 @@ export const useGameStore = create<GameState>()(
         correctAnswers: state.correctAnswers,
         zCoins: state.zCoins,
         streak: state.streak,
-        zombiesHit: state.zombiesHit,
         trafficHits: state.trafficHits,
         steeringSensitivity: state.steeringSensitivity,
         isMuted: state.isMuted,

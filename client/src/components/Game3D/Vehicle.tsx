@@ -1,5 +1,5 @@
 /**
- * Vehicle — VW Beetle with custom material overrides + zombie plow
+ * Vehicle — VW Beetle with custom material overrides
  *
  * GLB material map (from inspection):
  *   Chassi        → car body mesh

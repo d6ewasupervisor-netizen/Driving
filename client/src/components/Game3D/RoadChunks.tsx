@@ -2,14 +2,13 @@
  * RoadChunks — Renders pooled road chunks with Kenney GLB assets.
  * Vehicle travels in -Z direction.
  */
-import { useMemo, useRef, useState, useEffect } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { RigidBody, CuboidCollider } from '@react-three/rapier';
 import { useGameStore, Biome } from '@/stores/gameStore';
 import { ChunkData, CHUNK_LENGTH, initChunks, updateChunks } from '@/systems/RoadChunkManager';
-import { registerRoadZombies, RoadZombie } from './CollisionSystem';
 
 // ─── Preload all assets used in chunks ────────────────────────────────────────
 useGLTF.preload('/models/road/road-straight.glb');
@@ -24,12 +23,9 @@ useGLTF.preload('/models/buildings/building-type-d.glb');
 useGLTF.preload('/models/buildings/building-type-e.glb');
 useGLTF.preload('/models/buildings/building-sample-tower-a.glb');
 useGLTF.preload('/models/buildings/building-sample-tower-b.glb');
-useGLTF.preload('/models/zombies/walking_zombie.glb');
 useGLTF.preload('/models/nature/low_poly_cactus.glb');
 useGLTF.preload('/models/buildings/building-sample-house-a.glb');
 useGLTF.preload('/models/road/road-straight-barrier.glb');
-useGLTF.preload('/models/zombies/agony_zombie.glb');
-useGLTF.preload('/models/zombies/dying_1_zombie.glb');
 
 // Kenney road-straight tile is 1×1 unit (X: -0.5→0.5, Z: -0.5→0.5, Y≈0.02 top).
 // Scale X×8 for 8m road width, Z×4 so each tile covers 4m along Z.
@@ -64,7 +60,7 @@ function RoadSurface() {
   );
 }
 
-// ─── City decorations — Kenney suburban buildings + streetlights + zombies ────
+// ─── City decorations — Kenney suburban buildings + streetlights ──────────
 const CITY_BUILDING_MODELS = [
   '/models/buildings/building-type-a.glb',
   '/models/buildings/building-type-b.glb',
@@ -74,12 +70,6 @@ const CITY_BUILDING_MODELS = [
   '/models/buildings/building-sample-tower-a.glb',
   '/models/buildings/building-sample-tower-b.glb',
   '/models/buildings/building-sample-house-a.glb',
-];
-
-const ZOMBIE_MODELS = [
-  '/models/zombies/walking_zombie.glb',
-  '/models/zombies/agony_zombie.glb',
-  '/models/zombies/dying_1_zombie.glb',
 ];
 
 // Seeded random for deterministic decoration variation
@@ -113,17 +103,6 @@ function StreetLight({ position }: { position: [number, number, number] }) {
       position={position}
       scale={4.4}
       castShadow
-    />
-  );
-}
-
-function ZombieDecor({ position, modelPath }: { position: [number, number, number]; modelPath?: string }) {
-  const { scene } = useGLTF(modelPath || '/models/zombies/walking_zombie.glb');
-  return (
-    <primitive
-      object={scene.clone(true)}
-      position={position}
-      scale={0.01}
     />
   );
 }
@@ -180,11 +159,10 @@ function Bench({ position, rotation }: { position: [number, number, number]; rot
 function CityDecorations({ lowEnd, variation }: { lowEnd?: boolean; variation: number }) {
   const layout = useMemo(() => {
     const items: Array<{
-      type: 'building' | 'light' | 'zombie' | 'hydrant' | 'dumpster' | 'bench';
+      type: 'building' | 'light' | 'hydrant' | 'dumpster' | 'bench';
       x: number; z: number;
       modelIdx?: number;
       rot?: number;
-      zombieModel?: string;
     }> = [];
 
     // 5-6 buildings per side with variation-seeded model selection
@@ -230,20 +208,6 @@ function CityDecorations({ lowEnd, variation }: { lowEnd?: boolean; variation: n
       items.push({ type: 'bench', x: 5.0, z: 20 + variation * 12, rot: -Math.PI / 2 });
     }
 
-    // Zombies on sidewalks with varied models (skip on low-end)
-    if (!lowEnd) {
-      const zombiePositions = [
-        { x: -6, z: -60 }, { x: 7, z: -20 }, { x: -7, z: 40 },
-        { x: 6.5, z: 60 }, { x: -5.5, z: 10 },
-      ];
-      const count = 3 + (variation % 3);
-      for (let i = 0; i < count && i < zombiePositions.length; i++) {
-        const zp = zombiePositions[i];
-        const modelIdx = Math.floor(decorSeed(variation * 5 + i * 11) * ZOMBIE_MODELS.length);
-        items.push({ type: 'zombie', x: zp.x, z: zp.z, zombieModel: ZOMBIE_MODELS[modelIdx] });
-      }
-    }
-
     return items;
   }, [lowEnd, variation]);
 
@@ -263,9 +227,6 @@ function CityDecorations({ lowEnd, variation }: { lowEnd?: boolean; variation: n
         if (item.type === 'light') {
           return <StreetLight key={i} position={[item.x, 0, item.z]} />;
         }
-        if (item.type === 'zombie') {
-          return <ZombieDecor key={i} position={[item.x, 0, item.z]} modelPath={item.zombieModel} />;
-        }
         if (item.type === 'hydrant') {
           return <FireHydrant key={i} position={[item.x, 0, item.z]} />;
         }
@@ -277,105 +238,6 @@ function CityDecorations({ lowEnd, variation }: { lowEnd?: boolean; variation: n
         }
         return null;
       })}
-    </>
-  );
-}
-
-// ─── Road Zombies — hittable zombies that wander on/near the road ─────────────
-const MAX_ROAD_ZOMBIES = 20;
-const ZOMBIE_SPAWN_AHEAD = 200;
-const ZOMBIE_DESPAWN_BEHIND = 40;
-
-// Module-level zombie pool
-const roadZombiePool: RoadZombie[] = [];
-let nextZombieZ = -80;
-
-function initRoadZombiePool() {
-  if (roadZombiePool.length > 0) return;
-  for (let i = 0; i < MAX_ROAD_ZOMBIES; i++) {
-    roadZombiePool.push({
-      position: new THREE.Vector3(0, -100, 0),
-      active: false,
-      hit: false,
-    });
-  }
-  registerRoadZombies(roadZombiePool);
-}
-
-// Seeded random for deterministic placement
-function zombieSeeded(seed: number): number {
-  const x = Math.sin(seed * 9.123 + seed * 41.789) * 31415.9265;
-  return x - Math.floor(x);
-}
-
-function RoadZombieInstance({ zombie }: { zombie: RoadZombie }) {
-  const { scene } = useGLTF('/models/zombies/walking_zombie.glb');
-  const groupRef = useRef<THREE.Group>(null);
-
-  useFrame(() => {
-    const g = groupRef.current;
-    if (!g) return;
-    if (zombie.active && !zombie.hit) {
-      g.visible = true;
-      g.position.copy(zombie.position);
-    } else {
-      g.visible = false;
-    }
-  });
-
-  return (
-    <group ref={groupRef} visible={false}>
-      <primitive
-        object={scene.clone(true)}
-        scale={0.01}
-        rotation={[0, Math.random() * Math.PI * 2, 0]}
-      />
-    </group>
-  );
-}
-
-function RoadZombies({ lowEnd }: { lowEnd?: boolean }) {
-  const count = lowEnd ? 8 : MAX_ROAD_ZOMBIES;
-
-  useEffect(() => {
-    initRoadZombiePool();
-  }, []);
-
-  useFrame(() => {
-    const { vehiclePosition, phase, currentBiome } = useGameStore.getState();
-    if (phase !== 'driving') return;
-    const playerZ = vehiclePosition[2];
-
-    // Spawn zombies ahead (city biome gets more, others still some)
-    const spacing = currentBiome === 'city' ? 30 : 60;
-    while (nextZombieZ > playerZ - ZOMBIE_SPAWN_AHEAD) {
-      const slot = roadZombiePool.find((z) => !z.active && !z.hit);
-      if (!slot) break;
-
-      const seed = Math.round(nextZombieZ * 5.67);
-      // Place on or near road — X range -4 to 4
-      const x = (zombieSeeded(seed) - 0.5) * 8;
-      slot.position.set(x, 0, nextZombieZ);
-      slot.active = true;
-      slot.hit = false;
-
-      nextZombieZ -= spacing + zombieSeeded(seed + 1) * 20;
-    }
-
-    // Recycle zombies behind player
-    for (const zombie of roadZombiePool) {
-      if (zombie.active && zombie.position.z > playerZ + ZOMBIE_DESPAWN_BEHIND) {
-        zombie.active = false;
-        zombie.hit = false;
-      }
-    }
-  });
-
-  return (
-    <>
-      {roadZombiePool.slice(0, count).map((zombie, i) => (
-        <RoadZombieInstance key={i} zombie={zombie} />
-      ))}
     </>
   );
 }
@@ -712,7 +574,6 @@ export function RoadChunks({ lowEnd }: { lowEnd?: boolean }) {
 
   return (
     <>
-      <RoadZombies lowEnd={lowEnd} />
       {chunks.map((chunk) => (
         <RigidBody
           key={`${chunk.id}-${chunk.gen}`}
