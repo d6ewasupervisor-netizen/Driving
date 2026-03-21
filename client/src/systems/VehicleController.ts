@@ -73,6 +73,10 @@ const MAX_BRAKE_TORQUE = 1200;        // N·m per wheel
 const AERO_DRAG_COEFF = 0.5;         // ½ρCdA ≈ 0.5 for a boxy VW Beetle
 const ROLLING_RESISTANCE_N = 200;    // ~0.015 * mass * g
 
+// Reverse gear
+const MAX_REVERSE_MPH = 15;
+const REVERSE_FORCE_N = 2000;        // per driven wheel
+
 // Game metrics
 const MPH_TO_MS = 0.44704;
 const MILEAGE_BATCH = 0.1;            // miles before writing to store
@@ -185,7 +189,7 @@ function getTorqueAtRPM(rpm: number): number {
 
 /** Get wheel torque (Nm) from engine torque and gearing */
 function getWheelTorque(engineTorqueNm: number, gear: number): number {
-  if (gear === 0) return 0; // neutral
+  if (gear <= 0) return 0; // neutral or reverse (reverse uses its own force)
   return engineTorqueNm * GEAR_RATIOS[gear] * FINAL_DRIVE;
 }
 
@@ -305,13 +309,25 @@ export function tickVehicle(
   const forwardSpeed = vel.dot(forward);
   const contactVelocity = Math.abs(forwardSpeed);
 
+  // ── Reverse detection ─────────────────────────────────────────────────────
+  const reverseSpeedMs = MAX_REVERSE_MPH * MPH_TO_MS;
+  const wantReverse = brakeInput > 0 && throttleInput < 0.1 && forwardSpeed < 1.0;
+  const atReverseLimit = forwardSpeed < -reverseSpeedMs;
+
   // ── Update engine state from wheel speed ───────────────────────────────────
-  engine.throttle = throttleInput;
-  engine.rpm = updateRPM(contactVelocity, engine.gear);
-  engine.gear = autoShift(engine.rpm, engine.gear);
+  if (wantReverse) {
+    engine.gear = -1;
+    engine.rpm = Math.max(IDLE_RPM, Math.min(3000,
+      (Math.abs(forwardSpeed) / reverseSpeedMs) * 3000));
+    engine.throttle = brakeInput;
+  } else {
+    engine.throttle = throttleInput;
+    engine.rpm = updateRPM(contactVelocity, engine.gear);
+    if (engine.gear === -1) engine.gear = 1;
+    engine.gear = autoShift(engine.rpm, engine.gear);
+  }
 
   // ── Simple drive force — applied per driven wheel ──────────────────────────
-  // Torque → wheel force in N. Capped at 2× body weight / driven wheels for realism.
   const torqueNm = PEAK_TORQUE_NM * getTorqueAtRPM(engine.rpm);
   const wheelTorque = getWheelTorque(torqueNm * throttleInput, engine.gear);
   const drivenWheelCount = WHEELS.filter(w => w.isDriven).length;
@@ -338,15 +354,21 @@ export function tickVehicle(
     ws.isGrounded = true;
     anyGrounded = true;
 
-    // ── Drive force ────────────────────────────────────────────────────────
-    if (wheel.isDriven && throttleInput > 0) {
+    // ── Drive force (forward) ────────────────────────────────────────────
+    if (wheel.isDriven && throttleInput > 0 && !wantReverse) {
       const driveImpulse = forward.clone().multiplyScalar(driveForcePerWheel * dt);
       body.applyImpulseAtPoint(driveImpulse as any, wheelMount as any, true);
       updateWheelAngularVel(ws, driveForcePerWheel * wheel.radius, 0, WHEEL_INERTIA, dt);
     }
 
+    // ── Reverse drive ─────────────────────────────────────────────────────
+    if (wantReverse && wheel.isDriven && !atReverseLimit) {
+      const revImpulse = forward.clone().negate().multiplyScalar(REVERSE_FORCE_N * brakeInput * dt);
+      body.applyImpulseAtPoint(revImpulse as any, wheelMount as any, true);
+    }
+
     // ── Braking (oppose velocity, taper near stop) ──────────────────────
-    if (brakeInput > 0 && Math.abs(forwardSpeed) > 0.5) {
+    if (brakeInput > 0 && !wantReverse && Math.abs(forwardSpeed) > 0.5) {
       const brakeSlip = getBrakeSlipRatio(ws.angularVel, contactVelocity, wheel.radius);
       const effectiveBrake = updateABS(bs, brakeSlip, brakeInput, dt);
       const brakeTorque = effectiveBrake * MAX_BRAKE_TORQUE;

@@ -72,7 +72,7 @@ export function EngineHUD() {
           textAlign: 'center',
         }}
       >
-        {gear === 0 ? 'N' : gear}
+        {gear === -1 ? 'R' : gear === 0 ? 'N' : gear}
       </div>
 
       {/* RPM bar */}
