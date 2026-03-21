@@ -22,6 +22,7 @@ import * as THREE from 'three';
 import { RigidBody, CuboidCollider, RapierRigidBody, useRapier } from '@react-three/rapier';
 import { tickVehicle } from '@/systems/VehicleController';
 import { useGameStore } from '@/stores/gameStore';
+import { VehicleParticles } from './VehicleParticles';
 
 // ─── Collider half-extents (VW Beetle ≈ 1.55m wide, 1.5m tall, 4.1m long) ──
 const COLLIDER_HX = 0.78;
@@ -366,6 +367,7 @@ export function Vehicle() {
         sensor={false}
       />
       <VWBeetleModel plowAngle={plowAngleDisplay.current} />
+      <VehicleParticles />
     </RigidBody>
   );
 }
