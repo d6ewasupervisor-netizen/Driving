@@ -286,8 +286,6 @@ export function tickVehicle(
 
   const dt = Math.min(delta, 0.05);
 
-  const hasRapier = !!world && !!rapier;
-
   // ── Read current state ─────────────────────────────────────────────────────
   const linvel = body.linvel();
   const vel = new THREE.Vector3(linvel.x, linvel.y, linvel.z);
@@ -329,54 +327,11 @@ export function tickVehicle(
       .applyQuaternion(quat)
       .add(body.translation() as any);
 
-    // ── Ground detection ───────────────────────────────────────────────────
-    const rayLen = wheel.restLength + wheel.travel + wheel.radius;
-    let compression = 0;
-
-    if (hasRapier) {
-      try {
-        const ro = new rapier.Vector(wheelMount.x, wheelMount.y, wheelMount.z);
-        const rd = new rapier.Vector(-up.x, -up.y, -up.z);
-        const ray = new rapier.Ray(ro, rd);
-        const hit = world.castRay(ray, rayLen, true, undefined, undefined, undefined, body);
-        if (hit) {
-          // Rapier returns toi (time of impact) = distance along the ray
-          const toi = hit.toi ?? hit.timeOfImpact ?? null;
-          if (toi !== null) {
-            compression = Math.max(0, (wheel.restLength + wheel.radius) - toi);
-          }
-        }
-      } catch (_) {
-        // castRay not available on this Rapier version, fall through to fallback
-      }
-    }
-
-    // Fallback: flat ground at y = 0
-    if (compression <= 0) {
-      const distToGround = wheelMount.y; // ground is at y=0
-      compression = Math.max(0, (wheel.restLength + wheel.radius) - distToGround);
-    }
-
-    // Clamp to suspension travel so springs can't over-compress
-    compression = Math.min(compression, wheel.travel);
-
-    if (compression <= 0) continue;
+    // ── Ground detection (simple height check — wheel near ground plane y=0) ─
+    const isOnGround = wheelMount.y < (wheel.radius + 0.5);
+    if (!isOnGround) continue;
     ws.isGrounded = true;
     anyGrounded = true;
-
-    // ── Suspension spring + damper ─────────────────────────────────────────
-    const springForce = compression * wheel.stiffness;
-
-    const angvelBody = body.angvel();
-    const angvelVec = new THREE.Vector3(angvelBody.x, angvelBody.y, angvelBody.z);
-    const r = wheelMount.clone().sub(body.translation() as any);
-    const velAtWheel = vel.clone().add(angvelVec.cross(r));
-    const relVelUp = velAtWheel.dot(up);
-    const damperForce = relVelUp * wheel.damping;
-
-    const suspMag = Math.max(0, springForce - damperForce);
-    const suspImpulse = up.clone().multiplyScalar(suspMag * dt);
-    body.applyImpulseAtPoint(suspImpulse as any, wheelMount as any, true);
 
     // ── Drive force ────────────────────────────────────────────────────────
     if (wheel.isDriven && throttleInput > 0) {

@@ -379,18 +379,17 @@ export function Vehicle() {
     <RigidBody
       ref={bodyRef}
       mass={1400}
-      position={[0, 2, 0]}
+      position={[0, 0.5, 0]}
       enabledRotations={[false, true, false]}
-      linearDamping={0.1}
-      angularDamping={0.05}
+      linearDamping={0.5}
+      angularDamping={0.5}
       colliders={false}
+      ccd
     >
-      {/* Main body collider – raised so bottom sits above wheel line.
-          Rapier collision keeps the car on the road;
-          suspension system controls ride height and driving forces. */}
+      {/* Main body collider – sits at body center so Rapier rests it on the road */}
       <CuboidCollider
-        args={[COLLIDER_HX, 0.5, COLLIDER_HZ]}
-        position={[0, 0.85, 0]}
+        args={[COLLIDER_HX, COLLIDER_HY, COLLIDER_HZ]}
+        position={[0, 0, 0]}
         friction={0.3}
         restitution={0.0}
       />

@@ -581,10 +581,10 @@ export function RoadChunks({ lowEnd }: { lowEnd?: boolean }) {
           position={[0, 0, chunk.zPosition]}
           colliders={false}
         >
-          {/* Road surface collider - thin slab */}
+          {/* Road surface collider - thick slab to prevent tunneling */}
           <CuboidCollider
-            args={[6, 0.05, CHUNK_LENGTH / 2]}
-            position={[0, -0.05, 0]}
+            args={[6, 0.5, CHUNK_LENGTH / 2]}
+            position={[0, -0.5, 0]}
             friction={0.9}
             restitution={0.0}
           />
