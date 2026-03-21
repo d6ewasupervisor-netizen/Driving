@@ -384,14 +384,15 @@ export function Vehicle() {
       linearDamping={0.1}
       angularDamping={0.05}
       colliders={false}
-      gravityScale={0}
     >
-      {/* Main body collider – sensor so it doesn't physically rest on road
-          (suspension system handles ground contact, not collision response) */}
+      {/* Main body collider – raised so bottom sits above wheel line.
+          Rapier collision keeps the car on the road;
+          suspension system controls ride height and driving forces. */}
       <CuboidCollider
-        args={[COLLIDER_HX, COLLIDER_HY, COLLIDER_HZ]}
-        position={[0, 0.55, 0]}
-        sensor
+        args={[COLLIDER_HX, 0.5, COLLIDER_HZ]}
+        position={[0, 0.85, 0]}
+        friction={0.3}
+        restitution={0.0}
       />
       <VWBeetleModel plowAngle={plowAngleDisplay.current} />
       <VehicleParticles />

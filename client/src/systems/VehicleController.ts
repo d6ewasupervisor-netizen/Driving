@@ -49,9 +49,6 @@ interface BrakeStatePerWheel {
 // ─── Physics constants ────────────────────────────────────────────────────────
 const WHEELBASE = 2.4;                // meters (for steering)
 const WHEEL_INERTIA = 0.9;            // kg·m² per wheel
-const VEHICLE_MASS = 1400;             // kg — must match RigidBody mass
-const GRAVITY = 9.81;                  // m/s²
-
 // Engine parameters
 const IDLE_RPM = 800;
 const REDLINE_RPM = 7000;
@@ -285,13 +282,9 @@ export function tickVehicle(
   const store = useGameStore.getState();
   const { steering, throttle: throttleInput, brake: brakeInput, phase } = store;
 
-  const dt = Math.min(delta, 0.05);
-
-  // ── Manual gravity (gravityScale=0 on RigidBody, we apply it ourselves) ────
-  const gravityForce = new THREE.Vector3(0, -VEHICLE_MASS * GRAVITY * dt, 0);
-  body.applyImpulse(gravityForce as any, true);
-
   if (phase !== 'driving') return;
+
+  const dt = Math.min(delta, 0.05);
 
   const hasRapier = !!world && !!rapier;
 
