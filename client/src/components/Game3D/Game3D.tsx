@@ -31,6 +31,7 @@ import { MainMenu } from './MainMenu';
 import { LovesStopScreen, OutOfGasScreen } from './LovesStopScreen';
 import { Collectibles } from './Collectibles';
 import { CollisionSystem } from './CollisionSystem';
+import { PostProcessing } from './PostProcessing';
 import { NpcState } from '@/systems/TrafficManager';
 
 // ─── Low-end detection (computed once) ───────────────────────────────────────
@@ -213,6 +214,7 @@ export function Game3D({ onExit }: Game3DProps) {
       >
         <Suspense fallback={null}>
           <Scene lowEnd={LOW_END} />
+          <PostProcessing lowEnd={LOW_END} />
           <AudioBridge />
           <PerformanceMonitor />
         </Suspense>
