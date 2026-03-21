@@ -55,7 +55,10 @@ function NpcCar({
   );
 }
 
-export function TrafficRenderer({ lowEnd }: { lowEnd?: boolean }) {
+export function TrafficRenderer({ lowEnd, onNpcsRef }: {
+  lowEnd?: boolean;
+  onNpcsRef?: (ref: React.MutableRefObject<NpcState[]>) => void;
+}) {
   const npcCount = lowEnd ? 4 : NPC_COUNT;
   const npcsRef = useRef<NpcState[]>([]);
   // Per-npc mutable refs so NpcCar can read without re-render
@@ -72,6 +75,8 @@ export function TrafficRenderer({ lowEnd }: { lowEnd?: boolean }) {
     npcsRef.current.forEach((npc, i) => {
       if (npcSlotRefs.current[i]) npcSlotRefs.current[i].current = npc;
     });
+    // Expose ref to parent for collision system
+    onNpcsRef?.(npcsRef);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useFrame((_, delta) => {

@@ -122,6 +122,13 @@ function VWBeetleModel({ plowAngle }: { plowAngle: number }) {
   const brake = useGameStore((s) => s.brake);
   const throttle = useGameStore((s) => s.throttle);
   const steering = useGameStore((s) => s.steering);
+  const timeOfDay = useGameStore((s) => s.timeOfDay);
+
+  // Headlight refs
+  const leftLightRef = useRef<THREE.SpotLight>(null);
+  const rightLightRef = useRef<THREE.SpotLight>(null);
+  const leftTargetRef = useRef<THREE.Object3D>(null);
+  const rightTargetRef = useRef<THREE.Object3D>(null);
 
   // Clone once so we don't mutate the cached GLB
   const scene = useMemo(() => rawScene.clone(true), [rawScene]);
@@ -199,6 +206,17 @@ function VWBeetleModel({ plowAngle }: { plowAngle: number }) {
     const targetSteerY = -steering * maxVisualSteerAngle;
     for (const wheel of frontWheelsRef.current) {
       wheel.rotation.y = THREE.MathUtils.lerp(wheel.rotation.y, targetSteerY, 10 * delta);
+    }
+
+    // ── Headlight intensity based on time of day ──────────────────────────────
+    const headlightIntensity = timeOfDay === 'night' ? 15 : timeOfDay === 'sunset' ? 8 : 2;
+    if (leftLightRef.current) leftLightRef.current.intensity = headlightIntensity;
+    if (rightLightRef.current) rightLightRef.current.intensity = headlightIntensity;
+    if (leftLightRef.current && leftTargetRef.current) {
+      leftLightRef.current.target = leftTargetRef.current;
+    }
+    if (rightLightRef.current && rightTargetRef.current) {
+      rightLightRef.current.target = rightTargetRef.current;
     }
 
     // Blinker flash
@@ -284,6 +302,31 @@ function VWBeetleModel({ plowAngle }: { plowAngle: number }) {
       </group>
       {/* Plow in physics space — -Z is forward */}
       <Plow angleDeg={plowAngle} />
+
+      {/* Headlight SpotLights — project forward from front of car */}
+      <spotLight
+        ref={leftLightRef}
+        position={[-0.55, 0.45, -2.1]}
+        angle={0.45}
+        penumbra={0.6}
+        distance={40}
+        intensity={2}
+        color="#ffe8c0"
+        castShadow={false}
+      />
+      <object3D ref={leftTargetRef} position={[-0.55, -0.5, -15]} />
+
+      <spotLight
+        ref={rightLightRef}
+        position={[0.55, 0.45, -2.1]}
+        angle={0.45}
+        penumbra={0.6}
+        distance={40}
+        intensity={2}
+        color="#ffe8c0"
+        castShadow={false}
+      />
+      <object3D ref={rightTargetRef} position={[0.55, -0.5, -15]} />
     </group>
   );
 }

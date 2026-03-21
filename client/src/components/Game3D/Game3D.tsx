@@ -2,7 +2,7 @@
  * Game3D — Root component: Canvas + Physics + all systems
  * Replaces the 2D ZombieRoadWarrior game body.
  */
-import { Suspense, useEffect, useRef } from 'react';
+import { Suspense, useEffect, useRef, useCallback } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { Physics } from '@react-three/rapier';
 
@@ -12,6 +12,7 @@ import { useTouchControls } from '@/hooks/useTouchControls';
 import { useQuizManager } from '@/systems/QuizManager';
 import { AudioManager } from '@/systems/AudioManager';
 import { getSlipState } from '@/systems/VehicleController';
+import { getWeather } from './Skybox';
 import { isLowEndDevice, recordDelta } from '@/utils/performance';
 
 import { Lighting } from './Lighting';
@@ -28,6 +29,11 @@ import { TouchOverlay } from './TouchOverlay';
 import { PauseMenu, VictoryScreen, GameOverScreen } from './PauseMenu';
 import { MainMenu } from './MainMenu';
 import { LovesStopScreen, OutOfGasScreen } from './LovesStopScreen';
+import { Collectibles } from './Collectibles';
+import { CollisionSystem } from './CollisionSystem';
+import { PostProcessing } from './PostProcessing';
+import { SkidMarks } from './SkidMarks';
+import { NpcState } from '@/systems/TrafficManager';
 
 // ─── Low-end detection (computed once) ───────────────────────────────────────
 const LOW_END = isLowEndDevice();
@@ -51,10 +57,11 @@ function PerformanceMonitor() {
 // ─── Audio bridge (runs inside Canvas for useFrame) ─────────────────────────
 function AudioBridge() {
   useFrame(() => {
-    const { engineRPM, velocityMph, phase, isMuted } = useGameStore.getState();
+    const { engineRPM, velocityMph, phase, isMuted, mileage } = useGameStore.getState();
     const slip = getSlipState();
+    const raining = getWeather(mileage) === 'rain';
     AudioManager.setMuted(isMuted);
-    AudioManager.update(engineRPM, velocityMph, slip.slipAmount, phase === 'driving');
+    AudioManager.update(engineRPM, velocityMph, slip.slipAmount, phase === 'driving', raining);
 
     if (phase === 'paused' || phase === 'quiz' || phase === 'gasStation') {
       AudioManager.suspend();
@@ -67,6 +74,14 @@ function AudioBridge() {
 
 // ─── Inner scene (needs Canvas context) ──────────────────────────────────────
 function Scene({ lowEnd }: { lowEnd: boolean }) {
+  const npcsRef = useRef<NpcState[]>([]);
+  const npcsRefWrapper = useRef(npcsRef.current);
+
+  const handleNpcsRef = useCallback((ref: React.MutableRefObject<NpcState[]>) => {
+    npcsRefWrapper.current = ref.current;
+    npcsRef.current = ref.current;
+  }, []);
+
   return (
     <Physics
       gravity={[0, -9.7119, 0]}
@@ -76,7 +91,10 @@ function Scene({ lowEnd }: { lowEnd: boolean }) {
       <Skybox />
       <RoadChunks lowEnd={lowEnd} />
       <Vehicle />
-      <TrafficRenderer lowEnd={lowEnd} />
+      <TrafficRenderer lowEnd={lowEnd} onNpcsRef={handleNpcsRef} />
+      <Collectibles />
+      <CollisionSystem npcsRef={npcsRef} />
+      <SkidMarks />
       <GameCamera />
     </Physics>
   );
@@ -198,6 +216,7 @@ export function Game3D({ onExit }: Game3DProps) {
       >
         <Suspense fallback={null}>
           <Scene lowEnd={LOW_END} />
+          <PostProcessing lowEnd={LOW_END} />
           <AudioBridge />
           <PerformanceMonitor />
         </Suspense>
