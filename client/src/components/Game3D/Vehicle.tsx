@@ -26,7 +26,7 @@ import { VehicleParticles } from './VehicleParticles';
 
 // ─── Collider half-extents (VW Beetle ≈ 1.55m wide, 1.5m tall, 4.1m long) ──
 const COLLIDER_HX = 0.78;
-const COLLIDER_HY = 0.75;
+const COLLIDER_HY = 0.5;
 const COLLIDER_HZ = 2.05;
 
 // ─── Material colours ─────────────────────────────────────────────────────────
@@ -388,14 +388,14 @@ export function Vehicle() {
       {/* Main body collider – raised so it sits above the wheel line */}
       <CuboidCollider
         args={[COLLIDER_HX, COLLIDER_HY, COLLIDER_HZ]}
-        position={[0, 0.2, 0]}
+        position={[0, 0.55, 0]}
         friction={1.111}
         restitution={0.1}
       />
       {/* Front weight - 10% of base mass */}
       <CuboidCollider
-        args={[0.4, 0.3, 0.4]}
-        position={[0, -0.2, -1.5]}
+        args={[0.4, 0.2, 0.4]}
+        position={[0, 0.1, -1.5]}
         mass={140}
         friction={1.111}
         restitution={0.1}
@@ -403,8 +403,8 @@ export function Vehicle() {
       />
       {/* Rear weight counterbalance - 20% heavier */}
       <CuboidCollider
-        args={[0.4, 0.3, 0.4]}
-        position={[0, -0.2, 1.5]}
+        args={[0.4, 0.2, 0.4]}
+        position={[0, 0.1, 1.5]}
         mass={240}
         friction={1.111}
         restitution={0.1}
