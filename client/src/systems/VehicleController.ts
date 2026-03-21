@@ -53,7 +53,7 @@ const WHEEL_INERTIA = 0.9;            // kg·m² per wheel
 const IDLE_RPM = 800;
 const REDLINE_RPM = 7000;
 const PEAK_TORQUE_RPM = 3500;
-const PEAK_TORQUE_NM = 400;           // peak torque at 3500 RPM
+const PEAK_TORQUE_NM = 350;           // peak torque at 3500 RPM
 const GEAR_RATIOS = [0, 3.5, 2.1, 1.4, 1.0, 0.8, 0.65];  // 0=neutral placeholder
 const FINAL_DRIVE = 1.63;
 const WHEEL_RADIUS = 0.35;
@@ -75,7 +75,13 @@ const ROLLING_RESISTANCE_N = 200;    // ~0.015 * mass * g
 
 // Reverse gear
 const MAX_REVERSE_MPH = 15;
-const REVERSE_FORCE_N = 2000;        // per driven wheel
+const REVERSE_FORCE_N = 800;         // per driven wheel (gentle backing up)
+const REVERSE_ENGAGE_DELAY = 0.5;    // seconds stopped before reverse engages
+const REVERSE_RAMP_TIME = 1.0;       // seconds to reach full reverse force
+
+// Traction limit: 45% weight on rear axle × friction coeff, per driven wheel
+const VEHICLE_MASS = 1400;
+const TRACTION_LIMIT_PER_WHEEL = (VEHICLE_MASS * 9.81 * 0.45 * 0.8) / 2;
 
 // Game metrics
 const MPH_TO_MS = 0.44704;
@@ -137,6 +143,7 @@ const WHEELS: Wheel[] = [
 
 // ─── Module-level state ───────────────────────────────────────────────────────
 let mileageAccumulator = 0;
+let reverseEngageTimer = 0;
 
 // Slip state exposed for audio/particle systems
 let _lateralSlip = 0;
@@ -309,10 +316,21 @@ export function tickVehicle(
   const forwardSpeed = vel.dot(forward);
   const contactVelocity = Math.abs(forwardSpeed);
 
-  // ── Reverse detection ─────────────────────────────────────────────────────
+  // ── Reverse detection (with engage delay to prevent brake→reverse snap) ───
   const reverseSpeedMs = MAX_REVERSE_MPH * MPH_TO_MS;
-  const wantReverse = brakeInput > 0 && throttleInput < 0.1 && forwardSpeed < 1.0;
+  const carStopped = Math.abs(forwardSpeed) < 0.5;
+
+  if (brakeInput > 0 && throttleInput < 0.1 && carStopped) {
+    reverseEngageTimer += dt;
+  } else if (!carStopped || brakeInput < 0.1) {
+    reverseEngageTimer = 0;
+  }
+
+  const wantReverse = reverseEngageTimer > REVERSE_ENGAGE_DELAY;
   const atReverseLimit = forwardSpeed < -reverseSpeedMs;
+  const reverseRamp = wantReverse
+    ? Math.min(1, (reverseEngageTimer - REVERSE_ENGAGE_DELAY) / REVERSE_RAMP_TIME)
+    : 0;
 
   // ── Update engine state from wheel speed ───────────────────────────────────
   if (wantReverse) {
@@ -327,11 +345,12 @@ export function tickVehicle(
     engine.gear = autoShift(engine.rpm, engine.gear);
   }
 
-  // ── Simple drive force — applied per driven wheel ──────────────────────────
+  // ── Drive force with traction limit ────────────────────────────────────────
   const torqueNm = PEAK_TORQUE_NM * getTorqueAtRPM(engine.rpm);
   const wheelTorque = getWheelTorque(torqueNm * throttleInput, engine.gear);
   const drivenWheelCount = WHEELS.filter(w => w.isDriven).length;
-  const driveForcePerWheel = wheelTorque / (WHEEL_RADIUS * drivenWheelCount);
+  const rawDriveForce = wheelTorque / (WHEEL_RADIUS * drivenWheelCount);
+  const driveForcePerWheel = Math.min(rawDriveForce, TRACTION_LIMIT_PER_WHEEL);
 
   // ── Per-wheel loop ─────────────────────────────────────────────────────────
   let anyGrounded = false;
@@ -361,9 +380,10 @@ export function tickVehicle(
       updateWheelAngularVel(ws, driveForcePerWheel * wheel.radius, 0, WHEEL_INERTIA, dt);
     }
 
-    // ── Reverse drive ─────────────────────────────────────────────────────
+    // ── Reverse drive (ramped force) ─────────────────────────────────────
     if (wantReverse && wheel.isDriven && !atReverseLimit) {
-      const revImpulse = forward.clone().negate().multiplyScalar(REVERSE_FORCE_N * brakeInput * dt);
+      const revForce = REVERSE_FORCE_N * reverseRamp * brakeInput;
+      const revImpulse = forward.clone().negate().multiplyScalar(revForce * dt);
       body.applyImpulseAtPoint(revImpulse as any, wheelMount as any, true);
     }
 
@@ -373,9 +393,11 @@ export function tickVehicle(
       const effectiveBrake = updateABS(bs, brakeSlip, brakeInput, dt);
       const brakeTorque = effectiveBrake * MAX_BRAKE_TORQUE;
       updateWheelAngularVel(ws, 0, brakeTorque, WHEEL_INERTIA, dt);
-      const speedFactor = Math.min(1, Math.abs(forwardSpeed) / 3);
+      const speedFactor = Math.min(1, Math.abs(forwardSpeed) / 5);
       const brakeDir = forwardSpeed > 0 ? -1 : 1;
-      const brakeImpulse = forward.clone().multiplyScalar(brakeDir * (brakeTorque / wheel.radius) * speedFactor * dt);
+      const maxStopForce = Math.abs(forwardSpeed) * VEHICLE_MASS / (4 * dt);
+      const brakeForce = Math.min((brakeTorque / wheel.radius) * speedFactor, maxStopForce);
+      const brakeImpulse = forward.clone().multiplyScalar(brakeDir * brakeForce * dt);
       body.applyImpulseAtPoint(brakeImpulse as any, wheelMount as any, true);
       store.setABSActive(bs.absActive);
     }
@@ -459,6 +481,7 @@ export function tickVehicle(
 /** Reset module state */
 export function resetVehicleController(): void {
   mileageAccumulator = 0;
+  reverseEngageTimer = 0;
   engine.rpm = IDLE_RPM;
   engine.gear = 1;
   engine.throttle = 0;
