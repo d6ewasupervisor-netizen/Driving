@@ -381,7 +381,7 @@ export function Vehicle() {
       mass={1400}
       position={[0, 0.5, 0]}
       enabledRotations={[false, true, false]}
-      linearDamping={0.05}
+      linearDamping={0}
       angularDamping={0.5}
       colliders={false}
       ccd
