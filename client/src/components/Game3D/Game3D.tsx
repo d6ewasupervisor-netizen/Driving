@@ -10,6 +10,8 @@ import { useGameStore } from '@/stores/gameStore';
 import { useGameProgress } from '@/hooks/useGameProgress';
 import { useTouchControls } from '@/hooks/useTouchControls';
 import { useQuizManager } from '@/systems/QuizManager';
+import { AudioManager } from '@/systems/AudioManager';
+import { getSlipState } from '@/systems/VehicleController';
 import { isLowEndDevice, recordDelta } from '@/utils/performance';
 
 import { Lighting } from './Lighting';
@@ -43,6 +45,23 @@ function PerformanceMonitor() {
     }
   });
 
+  return null;
+}
+
+// ─── Audio bridge (runs inside Canvas for useFrame) ─────────────────────────
+function AudioBridge() {
+  useFrame(() => {
+    const { engineRPM, velocityMph, phase, isMuted } = useGameStore.getState();
+    const slip = getSlipState();
+    AudioManager.setMuted(isMuted);
+    AudioManager.update(engineRPM, velocityMph, slip.slipAmount, phase === 'driving');
+
+    if (phase === 'paused' || phase === 'quiz' || phase === 'gasStation') {
+      AudioManager.suspend();
+    } else {
+      AudioManager.resume();
+    }
+  });
   return null;
 }
 
@@ -87,6 +106,23 @@ export function Game3D({ onExit }: Game3DProps) {
   // Register systems
   useTouchControls();
   useQuizManager();
+
+  // ── Initialize audio on first user interaction ─────────────────────────────
+  useEffect(() => {
+    const initAudio = () => {
+      if (!AudioManager.initialized) {
+        AudioManager.init();
+      }
+    };
+    window.addEventListener('click', initAudio, { once: true });
+    window.addEventListener('keydown', initAudio, { once: true });
+    window.addEventListener('touchstart', initAudio, { once: true });
+    return () => {
+      window.removeEventListener('click', initAudio);
+      window.removeEventListener('keydown', initAudio);
+      window.removeEventListener('touchstart', initAudio);
+    };
+  }, []);
 
   // ── Keyboard: Escape / P to toggle pause ─────────────────────────────────
   useEffect(() => {
@@ -162,6 +198,7 @@ export function Game3D({ onExit }: Game3DProps) {
       >
         <Suspense fallback={null}>
           <Scene lowEnd={LOW_END} />
+          <AudioBridge />
           <PerformanceMonitor />
         </Suspense>
       </Canvas>

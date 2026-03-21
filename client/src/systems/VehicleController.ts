@@ -131,6 +131,22 @@ const WHEELS: Wheel[] = [
 // ─── Module-level state ───────────────────────────────────────────────────────
 let mileageAccumulator = 0;
 
+// Slip state exposed for audio/particle systems
+let _lateralSlip = 0;
+let _brakeSlip = 0;
+let _isAnyWheelSlipping = false;
+
+/** Get current slip state for audio/particle effects */
+export function getSlipState() {
+  return {
+    lateralSlip: _lateralSlip,
+    brakeSlip: _brakeSlip,
+    isSlipping: _isAnyWheelSlipping,
+    /** Combined slip amount 0–1 for audio intensity */
+    slipAmount: Math.min(1, Math.max(_lateralSlip, _brakeSlip) * 3),
+  };
+}
+
 // Wheel states
 const wheelStates: WheelState[] = WHEELS.map(() => ({
   angularVel: 0,
@@ -189,7 +205,7 @@ function autoShift(rpm: number, gear: number): number {
 }
 
 /** Slip ratio: (wheel surface speed - ground contact speed) / contact speed */
-function getSlipRatio(wheelAngularVel: number, contactVel: number, radius: number): number {
+export function getSlipRatio(wheelAngularVel: number, contactVel: number, radius: number): number {
   const wheelSurfaceSpeed = wheelAngularVel * radius;
   const denom = Math.max(Math.abs(contactVel), 0.1);
   return (wheelSurfaceSpeed - contactVel) / denom;
@@ -203,7 +219,7 @@ function getBrakeSlipRatio(wheelAngularVel: number, contactVel: number, radius: 
 }
 
 /** Pacejka simplified grip calculation */
-function getPacejkaForce(
+export function getPacejkaForce(
   slipRatio: number,
   normalForce: number,
   peakFriction: number,
@@ -382,6 +398,10 @@ export function tickVehicle(
   // ── Lateral grip (only when on ground) ───────────────────────────────────
   if (anyGrounded) {
     const lateralSpeed = vel.dot(right);
+    // Update slip state for audio/particles
+    _lateralSlip = Math.abs(lateralSpeed) / Math.max(1, speedMs);
+    _brakeSlip = brakeInput > 0.1 ? brakeInput * (speedMs > 2 ? 0.5 : 0) : 0;
+    _isAnyWheelSlipping = _lateralSlip > 0.1 || _brakeSlip > 0.2;
     // Cancel ~90% of sideways velocity per frame to simulate tire grip
     const correction = right.clone().multiplyScalar(-lateralSpeed * 0.9);
     const lv = body.linvel();

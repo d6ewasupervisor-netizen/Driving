@@ -91,6 +91,9 @@ interface EconomySlice {
 interface SettingsSlice {
   steeringSensitivity: number; // 0.5–2.0
   cameraMode: CameraMode;
+  isMuted: boolean;
+  sfxVolume: number;    // 0–1
+  musicVolume: number;  // 0–1
 }
 
 type GameState = ControlsSlice &
@@ -120,6 +123,10 @@ type GameState = ControlsSlice &
     resetProgress: () => void;
     togglePause: () => void;
     cycleCameraMode: () => void;
+    setMuted: (muted: boolean) => void;
+    toggleMute: () => void;
+    setSfxVolume: (vol: number) => void;
+    setMusicVolume: (vol: number) => void;
   };
 
 // ─── Default values ───────────────────────────────────────────────────────────
@@ -164,6 +171,9 @@ export const useGameStore = create<GameState>()(
       // Settings
       steeringSensitivity: 1.0,
       cameraMode: 'chase' as CameraMode,
+      isMuted: false,
+      sfxVolume: 0.7,
+      musicVolume: 0.3,
 
       // ── Controls ────────────────────────────────────────────────────────────
       setControls: (partial) => set((s) => ({ ...s, ...partial })),
@@ -191,6 +201,11 @@ export const useGameStore = create<GameState>()(
         const idx = modes.indexOf(get().cameraMode);
         set({ cameraMode: modes[(idx + 1) % modes.length] });
       },
+
+      setMuted: (muted) => set({ isMuted: muted }),
+      toggleMute: () => set((s) => ({ isMuted: !s.isMuted })),
+      setSfxVolume: (vol) => set({ sfxVolume: Math.max(0, Math.min(1, vol)) }),
+      setMusicVolume: (vol) => set({ musicVolume: Math.max(0, Math.min(1, vol)) }),
 
       // ── Mileage + triggers ───────────────────────────────────────────────────
       addMileage: (delta) => {
@@ -333,6 +348,9 @@ export const useGameStore = create<GameState>()(
         zCoins: state.zCoins,
         streak: state.streak,
         steeringSensitivity: state.steeringSensitivity,
+        isMuted: state.isMuted,
+        sfxVolume: state.sfxVolume,
+        musicVolume: state.musicVolume,
       }),
     }
   )
