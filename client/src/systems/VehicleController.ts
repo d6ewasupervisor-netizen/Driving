@@ -49,6 +49,8 @@ interface BrakeStatePerWheel {
 // ─── Physics constants ────────────────────────────────────────────────────────
 const WHEELBASE = 2.4;                // meters (for steering)
 const WHEEL_INERTIA = 0.9;            // kg·m² per wheel
+const VEHICLE_MASS = 1400;             // kg — must match RigidBody mass
+const GRAVITY = 9.81;                  // m/s²
 
 // Engine parameters
 const IDLE_RPM = 800;
@@ -82,10 +84,10 @@ const WHEELS: Wheel[] = [
   {
     localPosition: new THREE.Vector3(-0.9, -0.3, 1.5),
     radius: 0.35,
-    restLength: 0.4,
-    travel: 0.2,
-    stiffness: 22000,
-    damping: 2200,
+    restLength: 0.5,
+    travel: 0.3,
+    stiffness: 45000,
+    damping: 4500,
     frictionCoeff: 0.8,
     isSteerable: true,
     isDriven: false,
@@ -94,10 +96,10 @@ const WHEELS: Wheel[] = [
   {
     localPosition: new THREE.Vector3(0.9, -0.3, 1.5),
     radius: 0.35,
-    restLength: 0.4,
-    travel: 0.2,
-    stiffness: 22000,
-    damping: 2200,
+    restLength: 0.5,
+    travel: 0.3,
+    stiffness: 45000,
+    damping: 4500,
     frictionCoeff: 0.8,
     isSteerable: true,
     isDriven: false,
@@ -106,10 +108,10 @@ const WHEELS: Wheel[] = [
   {
     localPosition: new THREE.Vector3(-0.9, -0.3, -1.5),
     radius: 0.35,
-    restLength: 0.4,
-    travel: 0.2,
-    stiffness: 22000,
-    damping: 2200,
+    restLength: 0.5,
+    travel: 0.3,
+    stiffness: 45000,
+    damping: 4500,
     frictionCoeff: 0.8,
     isSteerable: false,
     isDriven: true,
@@ -118,10 +120,10 @@ const WHEELS: Wheel[] = [
   {
     localPosition: new THREE.Vector3(0.9, -0.3, -1.5),
     radius: 0.35,
-    restLength: 0.4,
-    travel: 0.2,
-    stiffness: 22000,
-    damping: 2200,
+    restLength: 0.5,
+    travel: 0.3,
+    stiffness: 45000,
+    damping: 4500,
     frictionCoeff: 0.8,
     isSteerable: false,
     isDriven: true,
@@ -283,9 +285,13 @@ export function tickVehicle(
   const store = useGameStore.getState();
   const { steering, throttle: throttleInput, brake: brakeInput, phase } = store;
 
-  if (phase !== 'driving') return;
-
   const dt = Math.min(delta, 0.05);
+
+  // ── Manual gravity (gravityScale=0 on RigidBody, we apply it ourselves) ────
+  const gravityForce = new THREE.Vector3(0, -VEHICLE_MASS * GRAVITY * dt, 0);
+  body.applyImpulse(gravityForce as any, true);
+
+  if (phase !== 'driving') return;
 
   const hasRapier = !!world && !!rapier;
 
@@ -426,6 +432,16 @@ export function tickVehicle(
   } else {
     const angvel = body.angvel();
     body.setAngvel({ x: angvel.x * 0.8, y: angvel.y * 0.9, z: angvel.z * 0.8 }, true);
+  }
+
+  // ── Safety clamp: prevent falling through the world ────────────────────────
+  {
+    const p = body.translation();
+    if (p.y < 0.3) {
+      body.setTranslation({ x: p.x, y: 0.3, z: p.z }, true);
+      const lv = body.linvel();
+      if (lv.y < 0) body.setLinvel({ x: lv.x, y: 0, z: lv.z }, true);
+    }
   }
 
   // ── Sync to store ─────────────────────────────────────────────────────────

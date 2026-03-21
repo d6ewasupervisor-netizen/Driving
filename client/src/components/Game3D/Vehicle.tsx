@@ -379,36 +379,19 @@ export function Vehicle() {
     <RigidBody
       ref={bodyRef}
       mass={1400}
-      position={[0, 0.75, 0]}
+      position={[0, 2, 0]}
       enabledRotations={[false, true, false]}
       linearDamping={0.1}
       angularDamping={0.05}
       colliders={false}
+      gravityScale={0}
     >
-      {/* Main body collider – raised so it sits above the wheel line */}
+      {/* Main body collider – sensor so it doesn't physically rest on road
+          (suspension system handles ground contact, not collision response) */}
       <CuboidCollider
         args={[COLLIDER_HX, COLLIDER_HY, COLLIDER_HZ]}
         position={[0, 0.55, 0]}
-        friction={1.111}
-        restitution={0.1}
-      />
-      {/* Front weight - 10% of base mass */}
-      <CuboidCollider
-        args={[0.4, 0.2, 0.4]}
-        position={[0, 0.1, -1.5]}
-        mass={140}
-        friction={1.111}
-        restitution={0.1}
-        sensor={false}
-      />
-      {/* Rear weight counterbalance - 20% heavier */}
-      <CuboidCollider
-        args={[0.4, 0.2, 0.4]}
-        position={[0, 0.1, 1.5]}
-        mass={240}
-        friction={1.111}
-        restitution={0.1}
-        sensor={false}
+        sensor
       />
       <VWBeetleModel plowAngle={plowAngleDisplay.current} />
       <VehicleParticles />
