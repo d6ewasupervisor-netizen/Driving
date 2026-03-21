@@ -379,7 +379,7 @@ export function Vehicle() {
     <RigidBody
       ref={bodyRef}
       mass={1400}
-      position={[0, 1.0, 0]}
+      position={[0, 0.75, 0]}
       enabledRotations={[false, true, false]}
       linearDamping={0.1}
       angularDamping={0.05}
