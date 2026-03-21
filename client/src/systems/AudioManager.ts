@@ -48,6 +48,11 @@ class AudioManagerClass {
   private screechFilter: BiquadFilterNode | null = null;
   private screechGain: GainNode | null = null;
 
+  // Rain nodes
+  private rainSource: AudioBufferSourceNode | null = null;
+  private rainFilter: BiquadFilterNode | null = null;
+  private rainGain: GainNode | null = null;
+
   // State
   private _initialized = false;
   private _muted = false;
@@ -79,6 +84,7 @@ class AudioManagerClass {
       this._setupEngine();
       this._setupWind();
       this._setupScreech();
+      this._setupRain();
 
       this._initialized = true;
       return true;
@@ -163,8 +169,29 @@ class AudioManagerClass {
     this.screechSource.start();
   }
 
+  // ── Rain: bandpass noise, ambient patter ───────────────────────────────────
+  private _setupRain() {
+    const ctx = this.ctx!;
+
+    this.rainGain = ctx.createGain();
+    this.rainGain.gain.value = 0;
+    this.rainGain.connect(this.sfxGain!);
+
+    this.rainFilter = ctx.createBiquadFilter();
+    this.rainFilter.type = 'bandpass';
+    this.rainFilter.frequency.value = 4000;
+    this.rainFilter.Q.value = 0.5;
+    this.rainFilter.connect(this.rainGain);
+
+    this.rainSource = ctx.createBufferSource();
+    this.rainSource.buffer = getNoiseBuffer(ctx);
+    this.rainSource.loop = true;
+    this.rainSource.connect(this.rainFilter);
+    this.rainSource.start();
+  }
+
   // ── Per-frame update: call from useFrame ──────────────────────────────────
-  update(rpm: number, speedMph: number, slipAmount: number, isDriving: boolean) {
+  update(rpm: number, speedMph: number, slipAmount: number, isDriving: boolean, raining = false) {
     if (!this._initialized || !this.ctx) return;
 
     // Resume context if needed (autoplay policy)
@@ -207,6 +234,10 @@ class AudioManagerClass {
     // slipAmount 0-1 → gain 0-0.15
     const screechVol = Math.min(0.15, slipAmount * 0.2);
     this.screechGain?.gain.setTargetAtTime(screechVol, t, 0.02);
+
+    // ── Rain ambience ───────────────────────────────────────────────────────
+    const rainVol = raining ? 0.12 : 0;
+    this.rainGain?.gain.setTargetAtTime(rainVol, t, 0.3);
   }
 
   // ── One-shot: collision thud ──────────────────────────────────────────────

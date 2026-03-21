@@ -12,6 +12,7 @@ import { useTouchControls } from '@/hooks/useTouchControls';
 import { useQuizManager } from '@/systems/QuizManager';
 import { AudioManager } from '@/systems/AudioManager';
 import { getSlipState } from '@/systems/VehicleController';
+import { getWeather } from './Skybox';
 import { isLowEndDevice, recordDelta } from '@/utils/performance';
 
 import { Lighting } from './Lighting';
@@ -54,10 +55,11 @@ function PerformanceMonitor() {
 // ─── Audio bridge (runs inside Canvas for useFrame) ─────────────────────────
 function AudioBridge() {
   useFrame(() => {
-    const { engineRPM, velocityMph, phase, isMuted } = useGameStore.getState();
+    const { engineRPM, velocityMph, phase, isMuted, mileage } = useGameStore.getState();
     const slip = getSlipState();
+    const raining = getWeather(mileage) === 'rain';
     AudioManager.setMuted(isMuted);
-    AudioManager.update(engineRPM, velocityMph, slip.slipAmount, phase === 'driving');
+    AudioManager.update(engineRPM, velocityMph, slip.slipAmount, phase === 'driving', raining);
 
     if (phase === 'paused' || phase === 'quiz' || phase === 'gasStation') {
       AudioManager.suspend();
