@@ -339,7 +339,7 @@ export function tickVehicle(
         const ro = new rapier.Vector(wheelMount.x, wheelMount.y, wheelMount.z);
         const rd = new rapier.Vector(-up.x, -up.y, -up.z);
         const ray = new rapier.Ray(ro, rd);
-        const hit = world.castRay(ray, rayLen, true);
+        const hit = world.castRay(ray, rayLen, true, undefined, undefined, undefined, body);
         if (hit) {
           // Rapier returns toi (time of impact) = distance along the ray
           const toi = hit.toi ?? hit.timeOfImpact ?? null;
