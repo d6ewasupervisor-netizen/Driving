@@ -199,28 +199,27 @@ export function tickVehicle(
   // ── Compute net forward acceleration ───────────────────────────────────
   let accel = 0;
 
-  if (hasDriveContact) {
-    // Drive (forward)
-    if (isAccelerating) {
-      accel += getDriveAccel(throttleInput, engine.rpm, engine.gear);
-    }
+  // Longitudinal motion should not be hard-disabled by contact heuristics.
+  // If grounding probes glitch, keep allowing drive/brake/reverse response.
+  if (isAccelerating) {
+    accel += getDriveAccel(throttleInput, engine.rpm, engine.gear);
+  }
 
-    // Braking (opposes velocity, cannot reverse sign)
-    if (isBraking && contactSpeed > 0.1) {
-      const activeBrakeInput = (forwardSpeed > 0) ? brakeInput : throttleInput;
-      const brakeDecel = MAX_BRAKE_DECEL * activeBrakeInput;
-      accel -= Math.sign(forwardSpeed) * brakeDecel;
-    }
+  // Braking (opposes velocity, cannot reverse sign)
+  if (isBraking && contactSpeed > 0.1) {
+    const activeBrakeInput = (forwardSpeed > 0) ? brakeInput : throttleInput;
+    const brakeDecel = MAX_BRAKE_DECEL * activeBrakeInput;
+    accel -= Math.sign(forwardSpeed) * brakeDecel;
+  }
 
-    // Reverse (accelerate backward)
-    if (isReversing && forwardSpeed > -reverseSpeedMs) {
-      accel -= REVERSE_ACCEL * brakeInput;
-    }
+  // Reverse (accelerate backward)
+  if (isReversing && forwardSpeed > -reverseSpeedMs) {
+    accel -= REVERSE_ACCEL * brakeInput;
+  }
 
-    // Rolling resistance
-    if (contactSpeed > 0.1) {
-      accel -= Math.sign(forwardSpeed) * (ROLLING_RESISTANCE_N / VEHICLE_MASS);
-    }
+  // Rolling resistance
+  if (contactSpeed > 0.1) {
+    accel -= Math.sign(forwardSpeed) * (ROLLING_RESISTANCE_N / VEHICLE_MASS);
   }
 
   // Aerodynamic drag (always, signed to oppose motion)

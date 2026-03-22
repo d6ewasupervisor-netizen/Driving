@@ -38,6 +38,14 @@ export function useTouchControls() {
 
   useEffect(() => {
     const store = () => useGameStore.getState();
+    const maybeEnterDriving = (controls: { steering: number; throttle: number; brake: number }) => {
+      const phase = store().phase;
+      const hasMovementIntent =
+        Math.abs(controls.steering) > 0.05 || controls.throttle > 0.05 || controls.brake > 0.05;
+      if ((phase === 'menu' || phase === 'paused') && hasMovementIntent) {
+        store().setPhase('driving');
+      }
+    };
 
     // ── Keyboard ─────────────────────────────────────────────────────────────
     const keys = new Set<string>();
@@ -52,11 +60,13 @@ export function useTouchControls() {
       const sensitivity = store().steeringSensitivity;
       const steering = left ? -1 * sensitivity : right ? 1 * sensitivity : 0;
 
-      store().setControls({
+      const controls = {
         steering: Math.max(-1, Math.min(1, steering)),
         throttle: fwd ? 1 : 0,
         brake: back ? 1 : 0,
-      });
+      };
+      store().setControls(controls);
+      maybeEnterDriving(controls);
     }
 
     const onKeyDown = (e: KeyboardEvent) => {
@@ -88,11 +98,13 @@ export function useTouchControls() {
       const hasThrottle = entries.some((t) => t.zone === 'throttle');
       const sensitivity = store().steeringSensitivity;
 
-      store().setControls({
+      const controls = {
         steering: Math.max(-1, Math.min(1, steerValue.current * sensitivity)),
         throttle: hasThrottle ? 1 : 0,
         brake: hasBrake ? 1 : 0,
-      });
+      };
+      store().setControls(controls);
+      maybeEnterDriving(controls);
     }
 
     function onTouchStart(e: TouchEvent) {
@@ -227,11 +239,13 @@ export function useTouchControls() {
       if (hasMovementInput) {
         gamepadActive.current = true;
         const sensitivity = store().steeringSensitivity;
-        store().setControls({
+        const controls = {
           steering: Math.max(-1, Math.min(1, steering * sensitivity)),
           throttle: Math.min(1, Math.max(throttle, kbThrottle)),
           brake: Math.min(1, Math.max(brake, kbBrake)),
-        });
+        };
+        store().setControls(controls);
+        maybeEnterDriving(controls);
       } else {
         gamepadActive.current = false;
         if (keys.size > 0) applyKeyboard();
