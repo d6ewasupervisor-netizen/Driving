@@ -45,13 +45,14 @@ const env = {
   VITE_API_TARGET: `http://localhost:${port}`,
 };
 
-// Windows: spawning npm.cmd with shell:false causes EINVAL; use shell so PATH resolves npm.
-const child = spawn('npm', ['run', 'dev:inner'], {
-  cwd: root,
-  env,
-  stdio: 'inherit',
-  shell: true,
-});
+// Windows: direct spawn of npm without a shell often yields EINVAL; avoid `shell:true` + argv
+// (Node deprecates that). Use cmd.exe /c or sh -c instead.
+const isWin = process.platform === 'win32';
+const child = spawn(
+  isWin ? process.env.ComSpec || 'cmd.exe' : '/bin/sh',
+  isWin ? ['/d', '/s', '/c', 'npm run dev:inner'] : ['-c', 'npm run dev:inner'],
+  { cwd: root, env, stdio: 'inherit' }
+);
 
 child.on('exit', (code, signal) => {
   if (signal) process.kill(process.pid, signal);
