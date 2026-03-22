@@ -11,20 +11,38 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, '..');
 
-function portFree(port) {
+/** Something already accepts connections on 127.0.0.1 (detects busy :::port on Windows). */
+function localhostPortAccepts(port) {
+  return new Promise((resolve) => {
+    const c = net.createConnection({ port, host: '127.0.0.1', timeout: 400 });
+    c.on('connect', () => {
+      c.destroy();
+      resolve(true);
+    });
+    c.on('timeout', () => {
+      c.destroy();
+      resolve(false);
+    });
+    c.on('error', () => resolve(false));
+  });
+}
+
+/** True if we can bind the same way Node's http.Server.listen(port) typically does (all interfaces). */
+function canBindPort(port) {
   return new Promise((resolve) => {
     const srv = net.createServer();
     srv.once('error', () => resolve(false));
     srv.once('listening', () => {
       srv.close(() => resolve(true));
     });
-    srv.listen(port, '0.0.0.0');
+    srv.listen(port);
   });
 }
 
 async function pickPort(start, endInclusive) {
   for (let p = start; p <= endInclusive; p++) {
-    if (await portFree(p)) return p;
+    if (await localhostPortAccepts(p)) continue;
+    if (await canBindPort(p)) return p;
   }
   throw new Error(`No free TCP port between ${start} and ${endInclusive}`);
 }
@@ -33,11 +51,10 @@ const start = Number(process.env.API_PORT_START || 3001);
 const span = Number(process.env.API_PORT_SPAN || 10);
 const port = await pickPort(start, start + span - 1);
 
-if (port !== start) {
-  console.log(
-    `[dev] Port ${start} is in use; API will use ${port}. Vite proxy target is set automatically.`
-  );
-}
+console.log(
+  `[dev] API port ${port}` +
+    (port !== start ? ` (${start} was busy; Vite proxy updated via VITE_API_TARGET)` : '')
+);
 
 const env = {
   ...process.env,
