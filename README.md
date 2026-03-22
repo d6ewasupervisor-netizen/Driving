@@ -33,9 +33,11 @@ cd ../client && npm install
 npm run dev
 
 # Or start individually:
-npm run server  # Starts auth server on http://localhost:3001
-npm run client  # Starts Next.js client on http://localhost:3000
+npm run server  # Express API on http://localhost:3001
+npm run client  # Vite + React on http://localhost:5173
 ```
+
+The client URL is Vite’s default; if **5173** is already in use, Vite picks the next free port (5174, 5175, …). Add that origin to **ALLOWED_ORIGINS** on the server if the browser shows CORS errors.
 
 ### Seed Test Data
 
@@ -80,7 +82,7 @@ alis-aigoo-apocalypse/
 │   │   └── scripts/seedUsers.js
 │   └── data/                  # SQLite database
 │
-├── client/
+├── client/                    # Vite + React frontend
 │   ├── src/
 │   │   ├── lib/
 │   │   │   ├── auth.js           # Auth client
@@ -247,7 +249,7 @@ PORT=3001
 JWT_SECRET=your-secret-key
 JWT_EXPIRES_IN=7d
 DB_PATH=./data/aigoo.db
-ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
+ALLOWED_ORIGINS=http://localhost:5173
 ```
 
 ### Client (`.env.local`)
