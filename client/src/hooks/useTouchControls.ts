@@ -34,6 +34,7 @@ export function useTouchControls() {
   const steerValue = useRef(0);
   const gamepadActive = useRef(false);
   const lastPausePress = useRef(0);
+  const startPressedRef = useRef(false);
 
   useEffect(() => {
     const store = () => useGameStore.getState();
@@ -161,6 +162,7 @@ export function useTouchControls() {
 
       if (!pad) {
         gamepadActive.current = false;
+        startPressedRef.current = false;
         if (keys.size > 0) applyKeyboard();
         return;
       }
@@ -238,10 +240,11 @@ export function useTouchControls() {
       // Pause button (Start/Menu) — debounced
       const startButton = pad.buttons[9]?.pressed ?? false;
       const now = Date.now();
-      if (startButton && now - lastPausePress.current > 300) {
+      if (startButton && !startPressedRef.current && now - lastPausePress.current > 300) {
         lastPausePress.current = now;
         store().togglePause();
       }
+      startPressedRef.current = startButton;
     }
 
     // Poll gamepad at ~60fps
@@ -254,6 +257,7 @@ export function useTouchControls() {
     };
     const onGamepadDisconnected = () => {
       gamepadActive.current = false;
+      startPressedRef.current = false;
     };
 
     window.addEventListener('gamepadconnected', onGamepadConnected);

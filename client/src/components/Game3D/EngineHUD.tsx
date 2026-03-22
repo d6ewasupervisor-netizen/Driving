@@ -12,6 +12,10 @@ export function EngineHUD() {
   const absActive = useGameStore((s) => s.absActive);
   const isMuted = useGameStore((s) => s.isMuted);
   const toggleMute = useGameStore((s) => s.toggleMute);
+  const phase = useGameStore((s) => s.phase);
+  const throttle = useGameStore((s) => s.throttle);
+  const brake = useGameStore((s) => s.brake);
+  const steering = useGameStore((s) => s.steering);
 
   const handleMute = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -49,6 +53,11 @@ export function EngineHUD() {
           ABS
         </div>
       )}
+
+      {/* Input diagnostics */}
+      <div style={{ fontSize: 10, color: '#7f8c8d', textAlign: 'right' }}>
+        {phase} | T {throttle.toFixed(2)} B {brake.toFixed(2)} S {steering.toFixed(2)}
+      </div>
 
       {/* Speed */}
       <div style={{ fontSize: 13, color: '#aaa' }}>

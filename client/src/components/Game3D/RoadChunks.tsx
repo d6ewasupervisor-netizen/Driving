@@ -6,8 +6,13 @@ import { useMemo, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import { RigidBody, CuboidCollider } from '@react-three/rapier';
+import * as THREE from 'three';
 import { useGameStore, Biome } from '@/stores/gameStore';
 import { ChunkData, CHUNK_LENGTH, initChunks, updateChunks } from '@/systems/RoadChunkManager';
+import {
+  getBuildingColormapTexture,
+  getSharedRoadMaterial,
+} from './proceduralKenneyTextures';
 
 // ─── Preload all assets used in chunks ────────────────────────────────────────
 useGLTF.preload('/models/road/road-straight.glb');
@@ -33,9 +38,37 @@ const ROAD_TILE_SCALE_Z = 4;  // 1 * 4 = 4m per tile along Z
 const ROAD_TILE_LENGTH = 4;   // scaled tile covers 4 world-units along Z
 const TILES_PER_CHUNK = Math.ceil(CHUNK_LENGTH / ROAD_TILE_LENGTH); // 50 tiles
 
-// ─── Road surface using tiled GLB ────────────────────────────────────────────
+// ─── Road surface using tiled GLB + procedural colormap (bundled GLBs miss Textures/colormap.png)
+function RoadTileInstance({
+  baseScene,
+  material,
+  z,
+}: {
+  baseScene: THREE.Object3D;
+  material: THREE.MeshStandardMaterial;
+  z: number;
+}) {
+  const object = useMemo(() => {
+    const root = baseScene.clone(true);
+    root.traverse((o) => {
+      if (o instanceof THREE.Mesh) o.material = material;
+    });
+    return root;
+  }, [baseScene, material]);
+
+  return (
+    <primitive
+      object={object}
+      position={[0, 0, z]}
+      scale={[ROAD_TILE_SCALE_X, 1, ROAD_TILE_SCALE_Z]}
+      receiveShadow
+    />
+  );
+}
+
 function RoadSurface() {
   const { scene } = useGLTF('/models/road/road-straight.glb');
+  const roadMaterial = useMemo(() => getSharedRoadMaterial(scene), [scene]);
   const tilePositions = useMemo(() => {
     const positions: number[] = [];
     for (let i = 0; i < TILES_PER_CHUNK; i++) {
@@ -47,13 +80,7 @@ function RoadSurface() {
   return (
     <>
       {tilePositions.map((z, i) => (
-        <primitive
-          key={i}
-          object={scene.clone(true)}
-          position={[0, 0, z]}
-          scale={[ROAD_TILE_SCALE_X, 1, ROAD_TILE_SCALE_Z]}
-          receiveShadow
-        />
+        <RoadTileInstance key={i} baseScene={scene} material={roadMaterial} z={z} />
       ))}
     </>
   );
@@ -83,9 +110,31 @@ function CityBuilding({ modelPath, position, rotation }: {
   rotation?: number;
 }) {
   const { scene } = useGLTF(modelPath);
+  const colormap = useMemo(
+    () => getBuildingColormapTexture(modelPath, position[0], position[2]),
+    [modelPath, position[0], position[2]]
+  );
+  const object = useMemo(() => {
+    const root = scene.clone(true);
+    root.traverse((obj) => {
+      if (!(obj instanceof THREE.Mesh)) return;
+      const src = Array.isArray(obj.material) ? obj.material[0] : obj.material;
+      if (src instanceof THREE.MeshStandardMaterial) {
+        const m = src.clone();
+        m.map = colormap;
+        m.color.setHex(0xffffff);
+        m.roughness = 0.88;
+        m.metalness = 0.06;
+        m.needsUpdate = true;
+        obj.material = m;
+      }
+    });
+    return root;
+  }, [scene, colormap]);
+
   return (
     <primitive
-      object={scene.clone(true)}
+      object={object}
       position={position}
       rotation={[0, rotation ?? 0, 0]}
       scale={5.0}
@@ -100,7 +149,7 @@ function StreetLight({ position }: { position: [number, number, number] }) {
     <primitive
       object={scene.clone(true)}
       position={position}
-      scale={4.4}
+      scale={[4.4, 8.8, 4.4]}
       castShadow
     />
   );
