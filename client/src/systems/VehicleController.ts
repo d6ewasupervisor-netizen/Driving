@@ -147,11 +147,14 @@ export function tickVehicle(
   const contactSpeed = Math.abs(forwardSpeed);
 
   // ── Ground check (any wheel near ground plane) ─────────────────────────
+  // Road top ≈ y=0; allow margin for suspension jitter / small hops so we
+  // don't drop drive torque when wheels briefly read slightly high.
+  const groundProbeMaxY = 1.2;
   let anyGrounded = false;
   const bodyPos = body.translation();
   for (const lp of WHEEL_POSITIONS) {
     const worldY = bodyPos.y + new THREE.Vector3().copy(lp).applyQuaternion(quat).y;
-    if (worldY < 0.35 + 0.5) { anyGrounded = true; break; }
+    if (worldY < groundProbeMaxY) { anyGrounded = true; break; }
   }
 
   // ── Drive / Brake / Reverse Logic (Arcade Style) ───────────────────────

@@ -161,6 +161,7 @@ export function useTouchControls() {
 
       if (!pad) {
         gamepadActive.current = false;
+        if (keys.size > 0) applyKeyboard();
         return;
       }
 
@@ -202,20 +203,23 @@ export function useTouchControls() {
       if (dpadLeft) steering = -1;
       if (dpadRight) steering = 1;
 
-      // Check if any gamepad input is active
-      const hasInput = Math.abs(steering) > 0 || throttle > 0 || brake > 0 ||
-        pad.buttons.some((b) => b.pressed);
+      // Only treat real stick/pedal input as gamepad driving. (Any-button checks
+      // cause phantom "input" on some drivers and overwrite keyboard with zeros.)
+      const eps = 0.02;
+      const hasMovementInput =
+        Math.abs(steering) > eps || throttle > eps || brake > eps;
 
-      if (hasInput) {
+      if (hasMovementInput) {
         gamepadActive.current = true;
-        // gamepad active
-
         const sensitivity = store().steeringSensitivity;
         store().setControls({
           steering: Math.max(-1, Math.min(1, steering * sensitivity)),
           throttle: Math.min(1, throttle),
           brake: Math.min(1, brake),
         });
+      } else {
+        gamepadActive.current = false;
+        if (keys.size > 0) applyKeyboard();
       }
 
       // Pause button (Start/Menu) — debounced
