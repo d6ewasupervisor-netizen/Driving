@@ -37,8 +37,6 @@ const ROLLING_RESISTANCE_N = 200;
 // Reverse
 const MAX_REVERSE_MPH = 15;
 const REVERSE_ACCEL = 1.2;           // m/s² (gentle)
-const REVERSE_ENGAGE_DELAY = 0.5;    // must be stopped this long before reverse
-const REVERSE_RAMP_TIME = 1.5;       // seconds to reach full reverse force
 
 // Traction: rear axle weight fraction × friction coeff
 const VEHICLE_MASS = 1400;
@@ -60,7 +58,6 @@ const WHEEL_POSITIONS = [
 
 // ─── Module-level state ──────────────────────────────────────────────────────
 let mileageAccumulator = 0;
-let reverseEngageTimer = 0;
 
 let _lateralSlip = 0;
 let _brakeSlip = 0;
@@ -157,23 +154,30 @@ export function tickVehicle(
     if (worldY < 0.35 + 0.5) { anyGrounded = true; break; }
   }
 
-  // ── Reverse detection (delayed to prevent brake → reverse snap) ────────
+  // ── Drive / Brake / Reverse Logic (Arcade Style) ───────────────────────
   const reverseSpeedMs = MAX_REVERSE_MPH * MPH_TO_MS;
-  const carStopped = Math.abs(forwardSpeed) < 0.3;
 
-  if (brakeInput > 0 && throttleInput < 0.1 && carStopped) {
-    reverseEngageTimer += dt;
-  } else if (!carStopped || brakeInput < 0.1) {
-    reverseEngageTimer = 0;
+  // Decide what pedals mean based on current velocity
+  let isAccelerating = false;
+  let isBraking = false;
+  let isReversing = false;
+
+  if (forwardSpeed > 0.3) {
+    // Moving forward
+    isAccelerating = throttleInput > 0;
+    isBraking = brakeInput > 0;
+  } else if (forwardSpeed < -0.3) {
+    // Moving backward
+    isBraking = throttleInput > 0;
+    isReversing = brakeInput > 0;
+  } else {
+    // Stopped
+    isAccelerating = throttleInput > 0;
+    isReversing = brakeInput > 0 && throttleInput === 0;
   }
 
-  const wantReverse = reverseEngageTimer > REVERSE_ENGAGE_DELAY;
-  const reverseRamp = wantReverse
-    ? Math.min(1, (reverseEngageTimer - REVERSE_ENGAGE_DELAY) / REVERSE_RAMP_TIME)
-    : 0;
-
   // ── Engine state ───────────────────────────────────────────────────────
-  if (wantReverse) {
+  if (isReversing) {
     engine.gear = -1;
     engine.rpm = Math.max(IDLE_RPM, Math.min(3000,
       (Math.abs(forwardSpeed) / reverseSpeedMs) * 3000));
@@ -190,19 +194,20 @@ export function tickVehicle(
 
   if (anyGrounded) {
     // Drive (forward)
-    if (throttleInput > 0 && !wantReverse) {
+    if (isAccelerating) {
       accel += getDriveAccel(throttleInput, engine.rpm, engine.gear);
     }
 
     // Braking (opposes velocity, cannot reverse sign)
-    if (brakeInput > 0 && !wantReverse && contactSpeed > 0.1) {
-      const brakeDecel = MAX_BRAKE_DECEL * brakeInput;
+    if (isBraking && contactSpeed > 0.1) {
+      const activeBrakeInput = (forwardSpeed > 0) ? brakeInput : throttleInput;
+      const brakeDecel = MAX_BRAKE_DECEL * activeBrakeInput;
       accel -= Math.sign(forwardSpeed) * brakeDecel;
     }
 
-    // Reverse
-    if (wantReverse && forwardSpeed > -reverseSpeedMs) {
-      accel -= REVERSE_ACCEL * reverseRamp * brakeInput;
+    // Reverse (accelerate backward)
+    if (isReversing && forwardSpeed > -reverseSpeedMs) {
+      accel -= REVERSE_ACCEL * brakeInput;
     }
 
     // Rolling resistance
@@ -220,13 +225,13 @@ export function tickVehicle(
   let newSpeed = forwardSpeed + accel * dt;
 
   // Brake clamp: braking can never flip the velocity sign
-  if (brakeInput > 0 && !wantReverse) {
+  if (isBraking) {
     if (forwardSpeed > 0 && newSpeed < 0) newSpeed = 0;
     if (forwardSpeed < 0 && newSpeed > 0) newSpeed = 0;
   }
 
   // Rolling-resistance / drag bringing car to a natural stop
-  if (throttleInput < 0.1 && !wantReverse && Math.abs(newSpeed) < 0.15) {
+  if (!isAccelerating && !isReversing && Math.abs(newSpeed) < 0.15) {
     newSpeed = 0;
   }
 
@@ -235,9 +240,9 @@ export function tickVehicle(
 
   // ── Apply forward velocity change ──────────────────────────────────────
   const dv = newSpeed - forwardSpeed;
+  const targetVel = vel.clone();
   if (Math.abs(dv) > 0.0001) {
-    const impulse = forward.clone().multiplyScalar(VEHICLE_MASS * dv);
-    body.applyImpulse({ x: impulse.x, y: 0, z: impulse.z }, true);
+    targetVel.add(forward.clone().multiplyScalar(dv));
   }
 
   // ── Lateral grip ───────────────────────────────────────────────────────
@@ -248,12 +253,11 @@ export function tickVehicle(
     _isAnyWheelSlipping = _lateralSlip > 0.1 || _brakeSlip > 0.2;
 
     const correction = right.clone().multiplyScalar(-lateralSpeed * 0.9);
-    const lv2 = body.linvel();
-    body.setLinvel(
-      { x: lv2.x + correction.x, y: lv2.y, z: lv2.z + correction.z },
-      true,
-    );
+    targetVel.add(correction);
   }
+
+  // Apply combined velocity changes, preserving Y (gravity/vertical movement)
+  body.setLinvel({ x: targetVel.x, y: vel.y, z: targetVel.z }, true);
 
   // ── Steering ───────────────────────────────────────────────────────────
   const absSpd = Math.abs(forwardSpeed);
@@ -309,7 +313,6 @@ export function tickVehicle(
 /** Reset module state */
 export function resetVehicleController(): void {
   mileageAccumulator = 0;
-  reverseEngageTimer = 0;
   engine.rpm = IDLE_RPM;
   engine.gear = 1;
   engine.throttle = 0;
