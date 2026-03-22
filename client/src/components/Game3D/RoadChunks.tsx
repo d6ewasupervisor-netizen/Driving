@@ -133,25 +133,39 @@ function CityBuilding({ modelPath, position, rotation }: {
   }, [scene, colormap]);
 
   return (
-    <primitive
-      object={object}
-      position={position}
-      rotation={[0, rotation ?? 0, 0]}
-      scale={5.0}
-      castShadow
-    />
+    <>
+      <primitive
+        object={object}
+        position={position}
+        rotation={[0, rotation ?? 0, 0]}
+        scale={5.0}
+        castShadow
+      />
+      <CuboidCollider
+        args={[2.5, 6, 2.5]}
+        position={[position[0], 6, position[2]]}
+        restitution={0.15}
+      />
+    </>
   );
 }
 
 function StreetLight({ position }: { position: [number, number, number] }) {
   const { scene } = useGLTF('/models/road/light-curved.glb');
   return (
-    <primitive
-      object={scene.clone(true)}
-      position={position}
-      scale={[4.4, 8.8, 4.4]}
-      castShadow
-    />
+    <>
+      <primitive
+        object={scene.clone(true)}
+        position={position}
+        scale={[4.4, 8.8, 4.4]}
+        castShadow
+      />
+      <CuboidCollider
+        args={[0.15, 4, 0.15]}
+        position={[position[0], 4, position[2]]}
+        restitution={0.1}
+      />
+    </>
   );
 }
 
@@ -293,7 +307,16 @@ function CityDecorations({ lowEnd, variation }: { lowEnd?: boolean; variation: n
 // ─── Highway decorations — barriers, cones, sign ─────────────────────────────
 function BarrierModel({ position }: { position: [number, number, number] }) {
   const { scene } = useGLTF('/models/road/construction-barrier.glb');
-  return <primitive object={scene.clone(true)} position={position} castShadow />;
+  return (
+    <>
+      <primitive object={scene.clone(true)} position={position} castShadow />
+      <CuboidCollider
+        args={[0.3, 0.3, 0.2]}
+        position={[position[0], 0.3, position[2]]}
+        restitution={0.2}
+      />
+    </>
+  );
 }
 
 function ConeModel({ position }: { position: [number, number, number] }) {
@@ -317,6 +340,11 @@ function Guardrail({ side, length }: { side: 'left' | 'right'; length: number })
 
   return (
     <group>
+      <CuboidCollider
+        args={[0.1, 0.4, length / 2]}
+        position={[x, 0.3, 0]}
+        restitution={0.3}
+      />
       {/* Continuous rail */}
       <mesh position={[x, 0.45, 0]}>
         <boxGeometry args={[0.06, 0.15, length]} />
@@ -430,6 +458,11 @@ function FenceSection({ x, zStart, zEnd }: { x: number; zStart: number; zEnd: nu
 
   return (
     <group>
+      <CuboidCollider
+        args={[0.08, 0.4, length / 2]}
+        position={[x, 0.35, midZ]}
+        restitution={0.2}
+      />
       {/* Horizontal rails */}
       <mesh position={[x, 0.5, midZ]}>
         <boxGeometry args={[0.04, 0.04, length]} />

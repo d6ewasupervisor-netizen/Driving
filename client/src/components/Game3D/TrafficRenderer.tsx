@@ -47,7 +47,7 @@ function NpcCar({
     <group ref={groupRef} visible={false}>
       <primitive
         object={scene.clone(true)}
-        scale={1}
+        scale={1.4}
         rotation={[0, Math.PI, 0]}
         castShadow
       />

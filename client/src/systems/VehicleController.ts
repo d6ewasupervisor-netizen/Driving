@@ -1,11 +1,13 @@
 /**
  * VehicleController — Arcade vehicle physics with engine simulation
  *
- * We track forward speed as a module-level number and move the rigid body
- * by directly updating its translation each frame.  Rapier is only used
- * for gravity (keeping the car on the road) and collision detection.
- * The car collider's friction MUST be 0 so the contact solver does not
- * fight our programmatic velocity.
+ * Forward speed is tracked as a module-level number. Each frame we compute
+ * the desired velocity and use setLinvel so Rapier's collision solver can
+ * handle contacts with world geometry (buildings, barriers, curbs) naturally.
+ * Rapier also handles gravity and ground contact.
+ *
+ * The car collider's friction MUST be 0 so road-surface contacts don't
+ * fight our programmatic speed.
  */
 import { RapierRigidBody } from '@react-three/rapier';
 import * as THREE from 'three';
@@ -19,28 +21,29 @@ const PEAK_TORQUE_NM = 350;
 const GEAR_RATIOS = [0, 3.5, 2.1, 1.4, 1.0, 0.8, 0.65];
 const FINAL_DRIVE = 1.63;
 const WHEEL_RADIUS = 0.35;
-const WHEELBASE = 2.4;
+const WHEELBASE = 1.8;
 
-// Shifting thresholds
 const UPSHIFT_RPM = 6500;
 const DOWNSHIFT_RPM = 1800;
 
-// Braking
 const MAX_BRAKE_DECEL = 8.0;
 
-// Drag
 const AERO_DRAG_COEFF = 0.5;
 const ROLLING_RESISTANCE_N = 200;
 
-// Reverse
 const MAX_REVERSE_MPH = 15;
 const REVERSE_ACCEL = 1.2;
 
-// Traction
 const VEHICLE_MASS = 1400;
-const MAX_DRIVE_ACCEL = (9.81 * 0.45 * 0.8);
+const MAX_DRIVE_ACCEL = 9.81 * 0.45 * 0.8;
 
-// Game metrics
+// Smoothing — eliminates surging from abrupt throttle / gear changes
+const THROTTLE_SMOOTH_UP = 3.5;
+const THROTTLE_SMOOTH_DOWN = 5.0;
+const ACCEL_SMOOTH_RATE = 10.0;
+const LATERAL_DAMP_RATE = 5.0;
+const COLLISION_SPEED_BLEND = 0.6;
+
 const MPH_TO_MS = 0.44704;
 const MILEAGE_BATCH = 0.1;
 const METERS_PER_MILE = 400;
@@ -48,7 +51,9 @@ const FUEL_PER_BATCH = 0.08;
 
 // ─── Module-level state ──────────────────────────────────────────────────────
 let mileageAccumulator = 0;
-let currentSpeed = 0;   // m/s along forward axis; positive = forward
+let currentSpeed = 0;
+let smoothedThrottle = 0;
+let smoothedAccel = 0;
 
 let _lateralSlip = 0;
 let _brakeSlip = 0;
@@ -64,6 +69,11 @@ export function getSlipState() {
 }
 
 const engine = { rpm: IDLE_RPM, gear: 1, throttle: 0 };
+
+/** Called by CollisionSystem to simulate impact with an NPC. */
+export function applyCollisionImpact(factor: number): void {
+  currentSpeed *= 1 - factor;
+}
 
 // ─── Engine helpers ──────────────────────────────────────────────────────────
 
@@ -97,7 +107,6 @@ function getDriveAccel(throttle: number, rpm: number, gear: number): number {
   return Math.min(accel, MAX_DRIVE_ACCEL);
 }
 
-// Kept for backward compat
 export function getSlipRatio(wheelAngularVel: number, contactVel: number, radius: number): number {
   const ws = wheelAngularVel * radius;
   return (ws - contactVel) / Math.max(Math.abs(contactVel), 0.1);
@@ -130,6 +139,30 @@ export function tickVehicle(
   const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(quat).normalize();
   const right   = new THREE.Vector3(1, 0, 0).applyQuaternion(quat).normalize();
 
+  // ── Read back actual velocity — captures collision responses from Rapier ──
+  const linvel = body.linvel();
+  const actualForwardSpeed = forward.x * linvel.x + forward.z * linvel.z;
+  const lateralSpeed = right.x * linvel.x + right.z * linvel.z;
+
+  if (Math.abs(actualForwardSpeed - currentSpeed) > 1.0) {
+    currentSpeed = THREE.MathUtils.lerp(
+      currentSpeed,
+      actualForwardSpeed,
+      COLLISION_SPEED_BLEND,
+    );
+  }
+
+  _lateralSlip = Math.abs(lateralSpeed) / Math.max(1, Math.abs(currentSpeed));
+  _brakeSlip = brakeInput > 0.1 ? brakeInput * (Math.abs(currentSpeed) > 2 ? 0.5 : 0) : 0;
+  _isAnyWheelSlipping = _lateralSlip > 0.1 || _brakeSlip > 0.2;
+
+  // ── Smooth throttle input ─────────────────────────────────────────────
+  if (throttleInput > smoothedThrottle) {
+    smoothedThrottle = Math.min(throttleInput, smoothedThrottle + THROTTLE_SMOOTH_UP * dt);
+  } else {
+    smoothedThrottle = Math.max(throttleInput, smoothedThrottle - THROTTLE_SMOOTH_DOWN * dt);
+  }
+
   // ── Decide pedal roles based on current speed ──────────────────────────
   const reverseSpeedMs = MAX_REVERSE_MPH * MPH_TO_MS;
   let isAccelerating = false;
@@ -137,14 +170,14 @@ export function tickVehicle(
   let isReversing = false;
 
   if (currentSpeed > 0.3) {
-    isAccelerating = throttleInput > 0;
+    isAccelerating = smoothedThrottle > 0;
     isBraking = brakeInput > 0;
   } else if (currentSpeed < -0.3) {
-    isBraking = throttleInput > 0;
+    isBraking = smoothedThrottle > 0;
     isReversing = brakeInput > 0;
   } else {
-    isAccelerating = throttleInput > 0;
-    isReversing = brakeInput > 0 && throttleInput === 0;
+    isAccelerating = smoothedThrottle > 0;
+    isReversing = brakeInput > 0 && smoothedThrottle === 0;
   }
 
   // ── Engine state ───────────────────────────────────────────────────────
@@ -154,42 +187,46 @@ export function tickVehicle(
       (Math.abs(currentSpeed) / reverseSpeedMs) * 3000));
     engine.throttle = brakeInput;
   } else {
-    engine.throttle = throttleInput;
+    engine.throttle = smoothedThrottle;
     engine.rpm = rpmFromSpeed(Math.abs(currentSpeed), engine.gear);
     if (engine.gear === -1) engine.gear = 1;
     engine.gear = autoShift(engine.rpm, engine.gear);
   }
 
   // ── Compute net forward acceleration ───────────────────────────────────
-  let accel = 0;
+  let rawAccel = 0;
 
   if (isAccelerating) {
-    accel += getDriveAccel(throttleInput, engine.rpm, engine.gear);
+    rawAccel += getDriveAccel(smoothedThrottle, engine.rpm, engine.gear);
   }
 
   if (isBraking && Math.abs(currentSpeed) > 0.1) {
-    const activeBrakeInput = (currentSpeed > 0) ? brakeInput : throttleInput;
-    accel -= Math.sign(currentSpeed) * MAX_BRAKE_DECEL * activeBrakeInput;
+    const activeBrakeInput = currentSpeed > 0 ? brakeInput : smoothedThrottle;
+    rawAccel -= Math.sign(currentSpeed) * MAX_BRAKE_DECEL * activeBrakeInput;
   }
 
   if (isReversing && currentSpeed > -reverseSpeedMs) {
-    accel -= REVERSE_ACCEL * brakeInput;
+    rawAccel -= REVERSE_ACCEL * brakeInput;
   }
 
   if (Math.abs(currentSpeed) > 0.1) {
-    accel -= Math.sign(currentSpeed) * (ROLLING_RESISTANCE_N / VEHICLE_MASS);
+    rawAccel -= Math.sign(currentSpeed) * (ROLLING_RESISTANCE_N / VEHICLE_MASS);
   }
 
   if (Math.abs(currentSpeed) > 0.5) {
-    accel -= (AERO_DRAG_COEFF * currentSpeed * Math.abs(currentSpeed)) / VEHICLE_MASS;
+    rawAccel -= (AERO_DRAG_COEFF * currentSpeed * Math.abs(currentSpeed)) / VEHICLE_MASS;
   }
 
+  // Smooth acceleration to eliminate gear-shift surges
+  const maxAccelDelta = ACCEL_SMOOTH_RATE * dt;
+  smoothedAccel += THREE.MathUtils.clamp(rawAccel - smoothedAccel, -maxAccelDelta, maxAccelDelta);
+
   // ── Integrate speed ────────────────────────────────────────────────────
-  currentSpeed += accel * dt;
+  currentSpeed += smoothedAccel * dt;
 
   if (isBraking) {
-    if (currentSpeed > 0 && currentSpeed - accel * dt < 0) currentSpeed = 0;
-    if (currentSpeed < 0 && currentSpeed - accel * dt > 0) currentSpeed = 0;
+    if (currentSpeed > 0 && currentSpeed - smoothedAccel * dt < 0) currentSpeed = 0;
+    if (currentSpeed < 0 && currentSpeed - smoothedAccel * dt > 0) currentSpeed = 0;
   }
 
   if (!isAccelerating && !isReversing && Math.abs(currentSpeed) < 0.15) {
@@ -198,26 +235,19 @@ export function tickVehicle(
 
   if (currentSpeed < -reverseSpeedMs) currentSpeed = -reverseSpeedMs;
 
-  // ── Move the body directly ─────────────────────────────────────────────
-  const pos = body.translation();
-  const moveX = forward.x * currentSpeed * dt;
-  const moveZ = forward.z * currentSpeed * dt;
+  // ── Set velocity via Rapier so the collision solver works properly ─────
+  const lateralDamp = Math.max(0, 1 - LATERAL_DAMP_RATE * dt);
+  const dampedLateralX = right.x * lateralSpeed * lateralDamp;
+  const dampedLateralZ = right.z * lateralSpeed * lateralDamp;
 
-  // Lateral drift removal: kill any sideways velocity Rapier might add
-  const linvel = body.linvel();
-  const lateralSpeed = linvel.x * right.x + linvel.z * right.z;
-  _lateralSlip = Math.abs(lateralSpeed) / Math.max(1, Math.abs(currentSpeed));
-  _brakeSlip = brakeInput > 0.1 ? brakeInput * (Math.abs(currentSpeed) > 2 ? 0.5 : 0) : 0;
-  _isAnyWheelSlipping = _lateralSlip > 0.1 || _brakeSlip > 0.2;
-
-  body.setTranslation(
-    { x: pos.x + moveX, y: pos.y, z: pos.z + moveZ },
+  body.setLinvel(
+    {
+      x: forward.x * currentSpeed + dampedLateralX,
+      y: linvel.y,
+      z: forward.z * currentSpeed + dampedLateralZ,
+    },
     true,
   );
-
-  // Let Rapier handle only vertical velocity (gravity + ground contact).
-  // Zero out horizontal linvel so the solver doesn't accumulate drift.
-  body.setLinvel({ x: 0, y: linvel.y, z: 0 }, true);
 
   // ── Steering ───────────────────────────────────────────────────────────
   const absSpd = Math.abs(currentSpeed);
@@ -238,7 +268,7 @@ export function tickVehicle(
     if (p.y < 0.3) {
       body.setTranslation({ x: p.x, y: 0.3, z: p.z }, true);
       const lv = body.linvel();
-      if (lv.y < 0) body.setLinvel({ x: 0, y: 0, z: 0 }, true);
+      if (lv.y < 0) body.setLinvel({ x: lv.x, y: 0, z: lv.z }, true);
     }
   }
 
@@ -271,6 +301,8 @@ export function tickVehicle(
 export function resetVehicleController(): void {
   mileageAccumulator = 0;
   currentSpeed = 0;
+  smoothedThrottle = 0;
+  smoothedAccel = 0;
   engine.rpm = IDLE_RPM;
   engine.gear = 1;
   engine.throttle = 0;

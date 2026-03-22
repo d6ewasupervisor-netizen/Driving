@@ -24,10 +24,11 @@ import { tickVehicle, resetVehicleController } from '@/systems/VehicleController
 import { useGameStore } from '@/stores/gameStore';
 import { VehicleParticles } from './VehicleParticles';
 
-// ─── Collider half-extents (VW Beetle ≈ 1.55m wide, 1.5m tall, 4.1m long) ──
-const COLLIDER_HX = 0.78;
-const COLLIDER_HY = 0.5;
-const COLLIDER_HZ = 2.05;
+// ─── Collider half-extents (scaled 0.75× for better road proportion) ─────────
+const VEHICLE_SCALE = 0.75;
+const COLLIDER_HX = 0.58;
+const COLLIDER_HY = 0.38;
+const COLLIDER_HZ = 1.54;
 
 // ─── Material colours ─────────────────────────────────────────────────────────
 const BODY_COLOR        = new THREE.Color('#c47a6a'); // rusty pink
@@ -289,7 +290,7 @@ function VWBeetleModel({ plowAngle }: { plowAngle: number }) {
   });
 
   return (
-    <group>
+    <group scale={VEHICLE_SCALE}>
       {/* GLB model natively faces -Z which matches physics forward (-Z).
           No rotation needed. */}
       <group>
@@ -388,7 +389,7 @@ export function Vehicle() {
   return (
     <RigidBody
       ref={bodyRef}
-      mass={1400}
+      mass={1200}
       position={[0, 0.5, 0]}
       canSleep={false}
       enabledRotations={[false, true, false]}
@@ -402,7 +403,7 @@ export function Vehicle() {
         args={[COLLIDER_HX, COLLIDER_HY, COLLIDER_HZ]}
         position={[0, 0, 0]}
         friction={0}
-        restitution={0.0}
+        restitution={0.2}
       />
       <VWBeetleModel plowAngle={plowAngleDisplay.current} />
       <VehicleParticles />
