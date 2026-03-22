@@ -156,6 +156,10 @@ export function tickVehicle(
     const worldY = bodyPos.y + new THREE.Vector3().copy(lp).applyQuaternion(quat).y;
     if (worldY < groundProbeMaxY) { anyGrounded = true; break; }
   }
+  // Fallback: if wheel probes miss for a frame, still allow drive/brake while
+  // the chassis is clearly near road height and not rapidly airborne.
+  const nearRoadByChassis = bodyPos.y < 1.25 && Math.abs(linvel.y) < 3.0;
+  const hasDriveContact = anyGrounded || nearRoadByChassis;
 
   // ── Drive / Brake / Reverse Logic (Arcade Style) ───────────────────────
   const reverseSpeedMs = MAX_REVERSE_MPH * MPH_TO_MS;
@@ -195,7 +199,7 @@ export function tickVehicle(
   // ── Compute net forward acceleration ───────────────────────────────────
   let accel = 0;
 
-  if (anyGrounded) {
+  if (hasDriveContact) {
     // Drive (forward)
     if (isAccelerating) {
       accel += getDriveAccel(throttleInput, engine.rpm, engine.gear);
@@ -249,7 +253,7 @@ export function tickVehicle(
   }
 
   // ── Lateral grip ───────────────────────────────────────────────────────
-  if (anyGrounded) {
+  if (hasDriveContact) {
     const lateralSpeed = vel.dot(right);
     _lateralSlip = Math.abs(lateralSpeed) / Math.max(1, speedMs);
     _brakeSlip = brakeInput > 0.1 ? brakeInput * (contactSpeed > 2 ? 0.5 : 0) : 0;
@@ -264,7 +268,7 @@ export function tickVehicle(
 
   // ── Steering ───────────────────────────────────────────────────────────
   const absSpd = Math.abs(forwardSpeed);
-  if (absSpd > 0.5 && anyGrounded) {
+  if (absSpd > 0.5 && hasDriveContact) {
     const maxSteer = THREE.MathUtils.lerp(0.52, 0.14, Math.min(absSpd / 15, 1));
     const steerAngle = steering * maxSteer;
     const angvel = body.angvel();
