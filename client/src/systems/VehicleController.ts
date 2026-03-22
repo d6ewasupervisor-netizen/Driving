@@ -1,13 +1,11 @@
 /**
- * VehicleController — Direct velocity-based vehicle physics
+ * VehicleController — Arcade vehicle physics with engine simulation
  *
- * Instead of applying impulses at wheel contact points (which is unpredictable
- * with variable timesteps and causes oscillation), this controller computes
- * a net forward acceleration from engine/brake/drag forces and directly updates
- * the rigid body's velocity. This guarantees:
- *   - Braking can never overshoot to reverse
- *   - Acceleration is smooth and frame-rate independent
- *   - Reverse engages only after a deliberate pause at standstill
+ * We track forward speed as a module-level number and move the rigid body
+ * by directly updating its translation each frame.  Rapier is only used
+ * for gravity (keeping the car on the road) and collision detection.
+ * The car collider's friction MUST be 0 so the contact solver does not
+ * fight our programmatic velocity.
  */
 import { RapierRigidBody } from '@react-three/rapier';
 import * as THREE from 'three';
@@ -28,7 +26,7 @@ const UPSHIFT_RPM = 6500;
 const DOWNSHIFT_RPM = 1800;
 
 // Braking
-const MAX_BRAKE_DECEL = 8.0;         // m/s² (~0.82g — firm but realistic)
+const MAX_BRAKE_DECEL = 8.0;
 
 // Drag
 const AERO_DRAG_COEFF = 0.5;
@@ -36,11 +34,11 @@ const ROLLING_RESISTANCE_N = 200;
 
 // Reverse
 const MAX_REVERSE_MPH = 15;
-const REVERSE_ACCEL = 1.2;           // m/s² (gentle)
+const REVERSE_ACCEL = 1.2;
 
-// Traction: rear axle weight fraction × friction coeff
+// Traction
 const VEHICLE_MASS = 1400;
-const MAX_DRIVE_ACCEL = (9.81 * 0.45 * 0.8);  // ~3.53 m/s² traction ceiling
+const MAX_DRIVE_ACCEL = (9.81 * 0.45 * 0.8);
 
 // Game metrics
 const MPH_TO_MS = 0.44704;
@@ -48,22 +46,14 @@ const MILEAGE_BATCH = 0.1;
 const METERS_PER_MILE = 400;
 const FUEL_PER_BATCH = 0.08;
 
-// Wheel mount positions (for ground detection only)
-const WHEEL_POSITIONS = [
-  new THREE.Vector3(-0.9, -0.3, 1.5),
-  new THREE.Vector3(0.9, -0.3, 1.5),
-  new THREE.Vector3(-0.9, -0.3, -1.5),
-  new THREE.Vector3(0.9, -0.3, -1.5),
-];
-
 // ─── Module-level state ──────────────────────────────────────────────────────
 let mileageAccumulator = 0;
+let currentSpeed = 0;   // m/s along forward axis; positive = forward
 
 let _lateralSlip = 0;
 let _brakeSlip = 0;
 let _isAnyWheelSlipping = false;
 
-/** Slip state for audio / particle systems */
 export function getSlipState() {
   return {
     lateralSlip: _lateralSlip,
@@ -73,7 +63,6 @@ export function getSlipState() {
   };
 }
 
-// Engine state
 const engine = { rpm: IDLE_RPM, gear: 1, throttle: 0 };
 
 // ─── Engine helpers ──────────────────────────────────────────────────────────
@@ -99,7 +88,6 @@ function autoShift(rpm: number, gear: number): number {
   return gear;
 }
 
-/** Drive acceleration (m/s²) for current engine state */
 function getDriveAccel(throttle: number, rpm: number, gear: number): number {
   if (gear <= 0 || throttle <= 0) return 0;
   const torqueNm = PEAK_TORQUE_NM * getTorqueMultiplier(rpm) * throttle;
@@ -109,7 +97,7 @@ function getDriveAccel(throttle: number, rpm: number, gear: number): number {
   return Math.min(accel, MAX_DRIVE_ACCEL);
 }
 
-// Kept for backward compat (exported but unused externally)
+// Kept for backward compat
 export function getSlipRatio(wheelAngularVel: number, contactVel: number, radius: number): number {
   const ws = wheelAngularVel * radius;
   return (ws - contactVel) / Math.max(Math.abs(contactVel), 0.1);
@@ -133,65 +121,28 @@ export function tickVehicle(
 
   const dt = Math.min(delta, 0.05);
 
-  // ── Read current state ─────────────────────────────────────────────────
-  const linvel = body.linvel();
-  const vel = new THREE.Vector3(linvel.x, linvel.y, linvel.z);
-  const speedMs = vel.length();
-
+  // ── Orientation ────────────────────────────────────────────────────────
   const rot = body.rotation();
   const quat = new THREE.Quaternion(rot.x, rot.y, rot.z, rot.w);
-  // Defensive fallback: occasionally invalid/zero quaternions can produce
-  // a zero forward vector, which prevents velocity projection from moving.
-  const quatLenSq = quat.lengthSq();
-  if (!Number.isFinite(quatLenSq) || quatLenSq < 1e-6) {
-    quat.set(0, 0, 0, 1);
-  } else {
-    quat.normalize();
-  }
+  if (quat.lengthSq() < 1e-6) quat.set(0, 0, 0, 1);
+  else quat.normalize();
 
-  const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(quat);
-  const right = new THREE.Vector3(1, 0, 0).applyQuaternion(quat);
-  if (forward.lengthSq() < 1e-6) forward.set(0, 0, -1);
-  if (right.lengthSq() < 1e-6) right.set(1, 0, 0);
-  forward.normalize();
-  right.normalize();
+  const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(quat).normalize();
+  const right   = new THREE.Vector3(1, 0, 0).applyQuaternion(quat).normalize();
 
-  const forwardSpeed = vel.dot(forward);      // positive = forward
-  const contactSpeed = Math.abs(forwardSpeed);
-
-  // ── Ground check (any wheel near ground plane) ─────────────────────────
-  // Road top ≈ y=0; allow margin for suspension jitter / small hops so we
-  // don't drop drive torque when wheels briefly read slightly high.
-  const groundProbeMaxY = 1.2;
-  let anyGrounded = false;
-  const bodyPos = body.translation();
-  for (const lp of WHEEL_POSITIONS) {
-    const worldY = bodyPos.y + new THREE.Vector3().copy(lp).applyQuaternion(quat).y;
-    if (worldY < groundProbeMaxY) { anyGrounded = true; break; }
-  }
-  // Fallback: if wheel probes miss for a frame, still allow drive/brake while
-  // the chassis is clearly near road height and not rapidly airborne.
-  const nearRoadByChassis = bodyPos.y < 1.25 && Math.abs(linvel.y) < 3.0;
-  const hasDriveContact = anyGrounded || nearRoadByChassis;
-
-  // ── Drive / Brake / Reverse Logic (Arcade Style) ───────────────────────
+  // ── Decide pedal roles based on current speed ──────────────────────────
   const reverseSpeedMs = MAX_REVERSE_MPH * MPH_TO_MS;
-
-  // Decide what pedals mean based on current velocity
   let isAccelerating = false;
   let isBraking = false;
   let isReversing = false;
 
-  if (forwardSpeed > 0.3) {
-    // Moving forward
+  if (currentSpeed > 0.3) {
     isAccelerating = throttleInput > 0;
     isBraking = brakeInput > 0;
-  } else if (forwardSpeed < -0.3) {
-    // Moving backward
+  } else if (currentSpeed < -0.3) {
     isBraking = throttleInput > 0;
     isReversing = brakeInput > 0;
   } else {
-    // Stopped
     isAccelerating = throttleInput > 0;
     isReversing = brakeInput > 0 && throttleInput === 0;
   }
@@ -200,11 +151,11 @@ export function tickVehicle(
   if (isReversing) {
     engine.gear = -1;
     engine.rpm = Math.max(IDLE_RPM, Math.min(3000,
-      (Math.abs(forwardSpeed) / reverseSpeedMs) * 3000));
+      (Math.abs(currentSpeed) / reverseSpeedMs) * 3000));
     engine.throttle = brakeInput;
   } else {
     engine.throttle = throttleInput;
-    engine.rpm = rpmFromSpeed(contactSpeed, engine.gear);
+    engine.rpm = rpmFromSpeed(Math.abs(currentSpeed), engine.gear);
     if (engine.gear === -1) engine.gear = 1;
     engine.gear = autoShift(engine.rpm, engine.gear);
   }
@@ -212,95 +163,73 @@ export function tickVehicle(
   // ── Compute net forward acceleration ───────────────────────────────────
   let accel = 0;
 
-  // Longitudinal motion should not be hard-disabled by contact heuristics.
-  // If grounding probes glitch, keep allowing drive/brake/reverse response.
   if (isAccelerating) {
     accel += getDriveAccel(throttleInput, engine.rpm, engine.gear);
   }
 
-  // Braking (opposes velocity, cannot reverse sign)
-  if (isBraking && contactSpeed > 0.1) {
-    const activeBrakeInput = (forwardSpeed > 0) ? brakeInput : throttleInput;
-    const brakeDecel = MAX_BRAKE_DECEL * activeBrakeInput;
-    accel -= Math.sign(forwardSpeed) * brakeDecel;
+  if (isBraking && Math.abs(currentSpeed) > 0.1) {
+    const activeBrakeInput = (currentSpeed > 0) ? brakeInput : throttleInput;
+    accel -= Math.sign(currentSpeed) * MAX_BRAKE_DECEL * activeBrakeInput;
   }
 
-  // Reverse (accelerate backward)
-  if (isReversing && forwardSpeed > -reverseSpeedMs) {
+  if (isReversing && currentSpeed > -reverseSpeedMs) {
     accel -= REVERSE_ACCEL * brakeInput;
   }
 
-  // Rolling resistance
-  if (contactSpeed > 0.1) {
-    accel -= Math.sign(forwardSpeed) * (ROLLING_RESISTANCE_N / VEHICLE_MASS);
+  if (Math.abs(currentSpeed) > 0.1) {
+    accel -= Math.sign(currentSpeed) * (ROLLING_RESISTANCE_N / VEHICLE_MASS);
   }
 
-  // Aerodynamic drag (always, signed to oppose motion)
-  if (contactSpeed > 0.5) {
-    accel -= (AERO_DRAG_COEFF * forwardSpeed * contactSpeed) / VEHICLE_MASS;
+  if (Math.abs(currentSpeed) > 0.5) {
+    accel -= (AERO_DRAG_COEFF * currentSpeed * Math.abs(currentSpeed)) / VEHICLE_MASS;
   }
 
-  // ── Integrate and clamp ────────────────────────────────────────────────
-  let newSpeed = forwardSpeed + accel * dt;
+  // ── Integrate speed ────────────────────────────────────────────────────
+  currentSpeed += accel * dt;
 
-  // Brake clamp: braking can never flip the velocity sign
   if (isBraking) {
-    if (forwardSpeed > 0 && newSpeed < 0) newSpeed = 0;
-    if (forwardSpeed < 0 && newSpeed > 0) newSpeed = 0;
+    if (currentSpeed > 0 && currentSpeed - accel * dt < 0) currentSpeed = 0;
+    if (currentSpeed < 0 && currentSpeed - accel * dt > 0) currentSpeed = 0;
   }
 
-  // Rolling-resistance / drag bringing car to a natural stop
-  if (!isAccelerating && !isReversing && Math.abs(newSpeed) < 0.15) {
-    newSpeed = 0;
+  if (!isAccelerating && !isReversing && Math.abs(currentSpeed) < 0.15) {
+    currentSpeed = 0;
   }
 
-  // Reverse speed cap
-  if (newSpeed < -reverseSpeedMs) newSpeed = -reverseSpeedMs;
+  if (currentSpeed < -reverseSpeedMs) currentSpeed = -reverseSpeedMs;
 
-  // ── Apply forward velocity change ──────────────────────────────────────
-  const dv = newSpeed - forwardSpeed;
-  const targetVel = vel.clone();
-  if (Math.abs(dv) > 0.0001) {
-    targetVel.add(forward.clone().multiplyScalar(dv));
-  }
+  // ── Move the body directly ─────────────────────────────────────────────
+  const pos = body.translation();
+  const moveX = forward.x * currentSpeed * dt;
+  const moveZ = forward.z * currentSpeed * dt;
 
-  // ── Lateral grip ───────────────────────────────────────────────────────
-  if (hasDriveContact) {
-    const lateralSpeed = vel.dot(right);
-    _lateralSlip = Math.abs(lateralSpeed) / Math.max(1, speedMs);
-    _brakeSlip = brakeInput > 0.1 ? brakeInput * (contactSpeed > 2 ? 0.5 : 0) : 0;
-    _isAnyWheelSlipping = _lateralSlip > 0.1 || _brakeSlip > 0.2;
+  // Lateral drift removal: kill any sideways velocity Rapier might add
+  const linvel = body.linvel();
+  const lateralSpeed = linvel.x * right.x + linvel.z * right.z;
+  _lateralSlip = Math.abs(lateralSpeed) / Math.max(1, Math.abs(currentSpeed));
+  _brakeSlip = brakeInput > 0.1 ? brakeInput * (Math.abs(currentSpeed) > 2 ? 0.5 : 0) : 0;
+  _isAnyWheelSlipping = _lateralSlip > 0.1 || _brakeSlip > 0.2;
 
-    const correction = right.clone().multiplyScalar(-lateralSpeed * 0.9);
-    targetVel.add(correction);
-  }
+  body.setTranslation(
+    { x: pos.x + moveX, y: pos.y, z: pos.z + moveZ },
+    true,
+  );
 
-  // Apply combined velocity changes, preserving Y (gravity/vertical movement)
-  body.setLinvel({ x: targetVel.x, y: vel.y, z: targetVel.z }, true);
-
-  // Emergency launch nudge: if throttle is held and longitudinal speed is still
-  // near zero, move a tiny amount along forward so the car cannot stay stuck.
-  if (isAccelerating && throttleInput > 0.2 && Math.abs(newSpeed) < 0.05) {
-    const p = body.translation();
-    const nudge = 0.03 * throttleInput;
-    body.setTranslation(
-      { x: p.x + forward.x * nudge, y: p.y, z: p.z + forward.z * nudge },
-      true,
-    );
-  }
+  // Let Rapier handle only vertical velocity (gravity + ground contact).
+  // Zero out horizontal linvel so the solver doesn't accumulate drift.
+  body.setLinvel({ x: 0, y: linvel.y, z: 0 }, true);
 
   // ── Steering ───────────────────────────────────────────────────────────
-  const absSpd = Math.abs(forwardSpeed);
-  if (absSpd > 0.5 && hasDriveContact) {
+  const absSpd = Math.abs(currentSpeed);
+  if (absSpd > 0.5) {
     const maxSteer = THREE.MathUtils.lerp(0.52, 0.14, Math.min(absSpd / 15, 1));
     const steerAngle = steering * maxSteer;
+    const targetYaw = -(currentSpeed * Math.tan(steerAngle)) / WHEELBASE;
     const angvel = body.angvel();
-    const targetYaw = -(forwardSpeed * Math.tan(steerAngle)) / WHEELBASE;
     const newYaw = angvel.y + (targetYaw - angvel.y) * Math.min(8.0 * dt, 1);
-    body.setAngvel({ x: angvel.x * 0.8, y: newYaw, z: angvel.z * 0.8 }, true);
+    body.setAngvel({ x: 0, y: newYaw, z: 0 }, true);
   } else {
-    const angvel = body.angvel();
-    body.setAngvel({ x: angvel.x * 0.8, y: angvel.y * 0.9, z: angvel.z * 0.8 }, true);
+    body.setAngvel({ x: 0, y: 0, z: 0 }, true);
   }
 
   // ── Safety: keep above ground ──────────────────────────────────────────
@@ -308,30 +237,29 @@ export function tickVehicle(
     const p = body.translation();
     if (p.y < 0.3) {
       body.setTranslation({ x: p.x, y: 0.3, z: p.z }, true);
-      const lv3 = body.linvel();
-      if (lv3.y < 0) body.setLinvel({ x: lv3.x, y: 0, z: lv3.z }, true);
+      const lv = body.linvel();
+      if (lv.y < 0) body.setLinvel({ x: 0, y: 0, z: 0 }, true);
     }
   }
 
   // ── Sync to store ──────────────────────────────────────────────────────
-  const pos = body.translation();
-  store.setVehiclePosition([pos.x, pos.y, pos.z]);
+  const finalPos = body.translation();
+  store.setVehiclePosition([finalPos.x, finalPos.y, finalPos.z]);
 
   const heading = Math.atan2(-forward.x, -forward.z);
   store.setVehicleHeading(heading);
 
-  const displayMph = Math.abs(newSpeed) / MPH_TO_MS;
+  const displayMph = Math.abs(currentSpeed) / MPH_TO_MS;
   store.setVelocityMph(Math.round(displayMph));
   store.setEngineRPM(Math.round(engine.rpm));
   store.setEngineGear(engine.gear);
   store.setEngineSpeed(Math.round(displayMph));
 
-  // ── ABS indicator (visual only — brakes don't actually pulse anymore) ──
-  store.setABSActive(brakeInput > 0.5 && contactSpeed > 8);
+  store.setABSActive(brakeInput > 0.5 && Math.abs(currentSpeed) > 8);
 
   // ── Mileage ────────────────────────────────────────────────────────────
-  if (forwardSpeed > 0.5) {
-    mileageAccumulator += (forwardSpeed * dt) / METERS_PER_MILE;
+  if (currentSpeed > 0.5) {
+    mileageAccumulator += (currentSpeed * dt) / METERS_PER_MILE;
     if (mileageAccumulator >= MILEAGE_BATCH) {
       store.addMileage(mileageAccumulator);
       store.consumeFuel(FUEL_PER_BATCH);
@@ -340,9 +268,9 @@ export function tickVehicle(
   }
 }
 
-/** Reset module state */
 export function resetVehicleController(): void {
   mileageAccumulator = 0;
+  currentSpeed = 0;
   engine.rpm = IDLE_RPM;
   engine.gear = 1;
   engine.throttle = 0;

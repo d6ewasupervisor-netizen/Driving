@@ -391,7 +391,7 @@ export function Vehicle() {
       <CuboidCollider
         args={[COLLIDER_HX, COLLIDER_HY, COLLIDER_HZ]}
         position={[0, 0, 0]}
-        friction={0.3}
+        friction={0}
         restitution={0.0}
       />
       <VWBeetleModel plowAngle={plowAngleDisplay.current} />
