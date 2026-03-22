@@ -2,7 +2,7 @@
  * RoadChunks — Renders pooled road chunks with Kenney GLB assets.
  * Vehicle travels in -Z direction.
  */
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import { RigidBody, CuboidCollider } from '@react-three/rapier';
@@ -611,6 +611,11 @@ export function RoadChunks({ lowEnd }: { lowEnd?: boolean }) {
 
   const vehiclePosition = useGameStore((s) => s.vehiclePosition);
   const currentBiome = useGameStore((s) => s.currentBiome);
+  const resetCounter = useGameStore((s) => s.resetCounter);
+
+  useEffect(() => {
+    setChunks(initChunks());
+  }, [resetCounter]);
 
   useFrame(() => {
     // Update chunk positions every 10 frames (save CPU)

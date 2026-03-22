@@ -20,7 +20,7 @@ import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { RigidBody, CuboidCollider, RapierRigidBody, useRapier } from '@react-three/rapier';
-import { tickVehicle } from '@/systems/VehicleController';
+import { tickVehicle, resetVehicleController } from '@/systems/VehicleController';
 import { useGameStore } from '@/stores/gameStore';
 import { VehicleParticles } from './VehicleParticles';
 
@@ -366,8 +366,18 @@ export function Vehicle() {
   const bodyRef = useRef<RapierRigidBody>(null);
   const { plowAngle, update: updatePlow } = usePlowAngle();
   const plowAngleDisplay = useRef(0);
+  const resetCounter = useGameStore((s) => s.resetCounter);
 
   const { world, rapier } = useRapier();
+
+  useEffect(() => {
+    if (!bodyRef.current) return;
+    resetVehicleController();
+    bodyRef.current.setTranslation({ x: 0, y: 0.5, z: 0 }, true);
+    bodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+    bodyRef.current.setAngvel({ x: 0, y: 0, z: 0 }, true);
+    bodyRef.current.setRotation({ x: 0, y: 0, z: 0, w: 1 }, true);
+  }, [resetCounter]);
 
   useFrame((_, delta) => {
     if (bodyRef.current) tickVehicle(bodyRef.current, delta, world, rapier);

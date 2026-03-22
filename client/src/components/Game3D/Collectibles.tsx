@@ -6,7 +6,7 @@
  *
  * Collision detection is distance-based (checked in CollisionSystem).
  */
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { useGameStore } from '@/stores/gameStore';
@@ -45,26 +45,35 @@ export function getCollectibles(): CollectibleState[] {
   return _collectibles;
 }
 
+function resetCollectibles() {
+  _collectibles = [];
+  _nextCoinZ = -50;
+  _nextFuelZ = -200;
+  for (let i = 0; i < MAX_COINS + MAX_FUEL_CANS; i++) {
+    _collectibles.push({
+      position: new THREE.Vector3(0, -100, 0),
+      type: i < MAX_COINS ? 'coin' : 'fuel',
+      collected: false,
+      active: false,
+    });
+  }
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 export function Collectibles() {
   const coinMeshRef = useRef<THREE.InstancedMesh>(null);
   const fuelMeshRef = useRef<THREE.InstancedMesh>(null);
   const rotationRef = useRef(0);
+  const resetCounter = useGameStore((s) => s.resetCounter);
 
   // Initialize pool
   useMemo(() => {
-    _collectibles = [];
-    _nextCoinZ = -50;
-    _nextFuelZ = -200;
-    for (let i = 0; i < MAX_COINS + MAX_FUEL_CANS; i++) {
-      _collectibles.push({
-        position: new THREE.Vector3(0, -100, 0), // off-screen
-        type: i < MAX_COINS ? 'coin' : 'fuel',
-        collected: false,
-        active: false,
-      });
-    }
+    resetCollectibles();
   }, []);
+
+  useEffect(() => {
+    resetCollectibles();
+  }, [resetCounter]);
 
   useFrame((_, delta) => {
     const { vehiclePosition, phase } = useGameStore.getState();

@@ -95,6 +95,7 @@ interface SettingsSlice {
   isMuted: boolean;
   sfxVolume: number;    // 0–1
   musicVolume: number;  // 0–1
+  resetCounter: number;
 }
 
 type GameState = ControlsSlice &
@@ -178,6 +179,7 @@ export const useGameStore = create<GameState>()(
       isMuted: false,
       sfxVolume: 0.7,
       musicVolume: 0.3,
+      resetCounter: 0,
 
       // ── Controls ────────────────────────────────────────────────────────────
       setControls: (partial) => set((s) => ({ ...s, ...partial })),
@@ -335,8 +337,20 @@ export const useGameStore = create<GameState>()(
 
       // ── Reset ───────────────────────────────────────────────────────────────
       resetProgress: () => {
-        const { steeringSensitivity } = get();
-        set({ ...defaultGameState, steeringSensitivity, phase: 'menu' });
+        const { steeringSensitivity, resetCounter } = get();
+        set({
+          ...defaultGameState,
+          steeringSensitivity,
+          phase: 'menu',
+          vehiclePosition: [0, 0.7, 0] as [number, number, number],
+          vehicleHeading: 0,
+          velocityMph: 0,
+          engineRPM: 800,
+          engineGear: 1,
+          engineSpeed: 0,
+          absActive: false,
+          resetCounter: resetCounter + 1,
+        });
       },
     }),
     {

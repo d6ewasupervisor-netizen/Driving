@@ -68,16 +68,15 @@ export function TrafficRenderer({ lowEnd, onNpcsRef }: {
 
   const vehiclePosition = useGameStore((s) => s.vehiclePosition);
   const phase = useGameStore((s) => s.phase);
+  const resetCounter = useGameStore((s) => s.resetCounter);
 
   useEffect(() => {
     npcsRef.current = initNpcs(vehiclePosition[2], lowEnd);
-    // Seed slot refs with initial state
     npcsRef.current.forEach((npc, i) => {
       if (npcSlotRefs.current[i]) npcSlotRefs.current[i].current = npc;
     });
-    // Expose ref to parent for collision system
     onNpcsRef?.(npcsRef);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [resetCounter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useFrame((_, delta) => {
     if (phase !== 'driving') return;
