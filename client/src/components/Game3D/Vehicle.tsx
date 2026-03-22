@@ -380,6 +380,7 @@ export function Vehicle() {
       ref={bodyRef}
       mass={1400}
       position={[0, 0.5, 0]}
+      canSleep={false}
       enabledRotations={[false, true, false]}
       linearDamping={0}
       angularDamping={0.5}

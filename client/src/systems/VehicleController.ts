@@ -140,8 +140,21 @@ export function tickVehicle(
 
   const rot = body.rotation();
   const quat = new THREE.Quaternion(rot.x, rot.y, rot.z, rot.w);
+  // Defensive fallback: occasionally invalid/zero quaternions can produce
+  // a zero forward vector, which prevents velocity projection from moving.
+  const quatLenSq = quat.lengthSq();
+  if (!Number.isFinite(quatLenSq) || quatLenSq < 1e-6) {
+    quat.set(0, 0, 0, 1);
+  } else {
+    quat.normalize();
+  }
+
   const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(quat);
   const right = new THREE.Vector3(1, 0, 0).applyQuaternion(quat);
+  if (forward.lengthSq() < 1e-6) forward.set(0, 0, -1);
+  if (right.lengthSq() < 1e-6) right.set(1, 0, 0);
+  forward.normalize();
+  right.normalize();
 
   const forwardSpeed = vel.dot(forward);      // positive = forward
   const contactSpeed = Math.abs(forwardSpeed);
@@ -264,6 +277,17 @@ export function tickVehicle(
 
   // Apply combined velocity changes, preserving Y (gravity/vertical movement)
   body.setLinvel({ x: targetVel.x, y: vel.y, z: targetVel.z }, true);
+
+  // Emergency launch nudge: if throttle is held and longitudinal speed is still
+  // near zero, move a tiny amount along forward so the car cannot stay stuck.
+  if (isAccelerating && throttleInput > 0.2 && Math.abs(newSpeed) < 0.05) {
+    const p = body.translation();
+    const nudge = 0.03 * throttleInput;
+    body.setTranslation(
+      { x: p.x + forward.x * nudge, y: p.y, z: p.z + forward.z * nudge },
+      true,
+    );
+  }
 
   // ── Steering ───────────────────────────────────────────────────────────
   const absSpd = Math.abs(forwardSpeed);
