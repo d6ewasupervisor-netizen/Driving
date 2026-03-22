@@ -165,6 +165,11 @@ export function useTouchControls() {
         return;
       }
 
+      const kbLeft = keys.has('ArrowLeft') || keys.has('a') || keys.has('A');
+      const kbRight = keys.has('ArrowRight') || keys.has('d') || keys.has('D');
+      const kbForward = keys.has('ArrowUp') || keys.has('w') || keys.has('W');
+      const kbBack = keys.has('ArrowDown') || keys.has('s') || keys.has('S') || keys.has(' ');
+
       // Standard gamepad mapping:
       // axes[0] = left stick X, axes[1] = left stick Y
       // buttons[0] = A, buttons[1] = B, buttons[2] = X, buttons[3] = Y
@@ -203,19 +208,27 @@ export function useTouchControls() {
       if (dpadLeft) steering = -1;
       if (dpadRight) steering = 1;
 
+      // Merge keyboard + gamepad so a connected pad with slight stick drift
+      // cannot suppress keyboard throttle/brake.
+      const kbThrottle = kbForward ? 1 : 0;
+      const kbBrake = kbBack ? 1 : 0;
+      if (kbLeft || kbRight) steering = kbLeft ? -1 : 1;
+
       // Only treat real stick/pedal input as gamepad driving. (Any-button checks
       // cause phantom "input" on some drivers and overwrite keyboard with zeros.)
       const eps = 0.02;
       const hasMovementInput =
-        Math.abs(steering) > eps || throttle > eps || brake > eps;
+        Math.abs(steering) > eps ||
+        Math.max(throttle, kbThrottle) > eps ||
+        Math.max(brake, kbBrake) > eps;
 
       if (hasMovementInput) {
         gamepadActive.current = true;
         const sensitivity = store().steeringSensitivity;
         store().setControls({
           steering: Math.max(-1, Math.min(1, steering * sensitivity)),
-          throttle: Math.min(1, throttle),
-          brake: Math.min(1, brake),
+          throttle: Math.min(1, Math.max(throttle, kbThrottle)),
+          brake: Math.min(1, Math.max(brake, kbBrake)),
         });
       } else {
         gamepadActive.current = false;
