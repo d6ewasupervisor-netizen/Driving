@@ -12,14 +12,27 @@ const { initDatabase } = require('./db/database');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const isProd = process.env.NODE_ENV === 'production';
 
 // Parse allowed origins from env
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'];
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:5174',
+];
 
-// Middleware
+const localhostDev = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+
+// Middleware — in dev, allow any localhost origin so alternate Vite ports work
 app.use(cors({
-  origin: allowedOrigins,
-  credentials: true
+  origin(origin, cb) {
+    if (!origin) return cb(null, true);
+    if (allowedOrigins.includes(origin)) return cb(null, true);
+    if (!isProd && localhostDev.test(origin)) return cb(null, true);
+    cb(null, false);
+  },
+  credentials: true,
 }));
 app.use(express.json());
 

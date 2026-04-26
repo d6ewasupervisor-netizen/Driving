@@ -34,9 +34,18 @@ export function useTouchControls() {
   const steerValue = useRef(0);
   const gamepadActive = useRef(false);
   const lastPausePress = useRef(0);
+  const startPressedRef = useRef(false);
 
   useEffect(() => {
     const store = () => useGameStore.getState();
+    const maybeEnterDriving = (controls: { steering: number; throttle: number; brake: number }) => {
+      const phase = store().phase;
+      const hasMovementIntent =
+        Math.abs(controls.steering) > 0.05 || controls.throttle > 0.05 || controls.brake > 0.05;
+      if ((phase === 'menu' || phase === 'paused') && hasMovementIntent) {
+        store().setPhase('driving');
+      }
+    };
 
     // ── Keyboard ─────────────────────────────────────────────────────────────
     const keys = new Set<string>();
@@ -51,11 +60,13 @@ export function useTouchControls() {
       const sensitivity = store().steeringSensitivity;
       const steering = left ? -1 * sensitivity : right ? 1 * sensitivity : 0;
 
-      store().setControls({
+      const controls = {
         steering: Math.max(-1, Math.min(1, steering)),
         throttle: fwd ? 1 : 0,
         brake: back ? 1 : 0,
-      });
+      };
+      store().setControls(controls);
+      maybeEnterDriving(controls);
     }
 
     const onKeyDown = (e: KeyboardEvent) => {
@@ -87,11 +98,13 @@ export function useTouchControls() {
       const hasThrottle = entries.some((t) => t.zone === 'throttle');
       const sensitivity = store().steeringSensitivity;
 
-      store().setControls({
+      const controls = {
         steering: Math.max(-1, Math.min(1, steerValue.current * sensitivity)),
         throttle: hasThrottle ? 1 : 0,
         brake: hasBrake ? 1 : 0,
-      });
+      };
+      store().setControls(controls);
+      maybeEnterDriving(controls);
     }
 
     function onTouchStart(e: TouchEvent) {
@@ -161,8 +174,15 @@ export function useTouchControls() {
 
       if (!pad) {
         gamepadActive.current = false;
+        startPressedRef.current = false;
+        if (keys.size > 0) applyKeyboard();
         return;
       }
+
+      const kbLeft = keys.has('ArrowLeft') || keys.has('a') || keys.has('A');
+      const kbRight = keys.has('ArrowRight') || keys.has('d') || keys.has('D');
+      const kbForward = keys.has('ArrowUp') || keys.has('w') || keys.has('W');
+      const kbBack = keys.has('ArrowDown') || keys.has('s') || keys.has('S') || keys.has(' ');
 
       // Standard gamepad mapping:
       // axes[0] = left stick X, axes[1] = left stick Y
@@ -202,29 +222,43 @@ export function useTouchControls() {
       if (dpadLeft) steering = -1;
       if (dpadRight) steering = 1;
 
-      // Check if any gamepad input is active
-      const hasInput = Math.abs(steering) > 0 || throttle > 0 || brake > 0 ||
-        pad.buttons.some((b) => b.pressed);
+      // Merge keyboard + gamepad so a connected pad with slight stick drift
+      // cannot suppress keyboard throttle/brake.
+      const kbThrottle = kbForward ? 1 : 0;
+      const kbBrake = kbBack ? 1 : 0;
+      if (kbLeft || kbRight) steering = kbLeft ? -1 : 1;
 
-      if (hasInput) {
+      // Only treat real stick/pedal input as gamepad driving. (Any-button checks
+      // cause phantom "input" on some drivers and overwrite keyboard with zeros.)
+      const eps = 0.02;
+      const hasMovementInput =
+        Math.abs(steering) > eps ||
+        Math.max(throttle, kbThrottle) > eps ||
+        Math.max(brake, kbBrake) > eps;
+
+      if (hasMovementInput) {
         gamepadActive.current = true;
-        // gamepad active
-
         const sensitivity = store().steeringSensitivity;
-        store().setControls({
+        const controls = {
           steering: Math.max(-1, Math.min(1, steering * sensitivity)),
-          throttle: Math.min(1, throttle),
-          brake: Math.min(1, brake),
-        });
+          throttle: Math.min(1, Math.max(throttle, kbThrottle)),
+          brake: Math.min(1, Math.max(brake, kbBrake)),
+        };
+        store().setControls(controls);
+        maybeEnterDriving(controls);
+      } else {
+        gamepadActive.current = false;
+        if (keys.size > 0) applyKeyboard();
       }
 
       // Pause button (Start/Menu) — debounced
       const startButton = pad.buttons[9]?.pressed ?? false;
       const now = Date.now();
-      if (startButton && now - lastPausePress.current > 300) {
+      if (startButton && !startPressedRef.current && now - lastPausePress.current > 300) {
         lastPausePress.current = now;
         store().togglePause();
       }
+      startPressedRef.current = startButton;
     }
 
     // Poll gamepad at ~60fps
@@ -237,6 +271,7 @@ export function useTouchControls() {
     };
     const onGamepadDisconnected = () => {
       gamepadActive.current = false;
+      startPressedRef.current = false;
     };
 
     window.addEventListener('gamepadconnected', onGamepadConnected);

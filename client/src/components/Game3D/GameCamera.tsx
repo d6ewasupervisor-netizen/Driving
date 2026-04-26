@@ -24,22 +24,22 @@ const MODES: Record<CameraMode, ModeConfig> = {
   chase: {
     offset:  new THREE.Vector3(0, 3.2, 8),   // behind and above
     lookAt:  new THREE.Vector3(0, 0.8, -12),  // look ahead of car
-    lerpPos: 0.06,
-    lerpRot: 0.10,
+    lerpPos: 8.0,                              // exponential rate (per second)
+    lerpRot: 10.0,
     followHeading: true,
   },
   birdseye: {
     offset:  new THREE.Vector3(0, 10, 3),     // ~10m up
     lookAt:  new THREE.Vector3(0, 0, -3),
-    lerpPos: 0.08,
-    lerpRot: 0.12,
+    lerpPos: 6.0,
+    lerpRot: 8.0,
     followHeading: true,
   },
   profile: {
     offset:  new THREE.Vector3(12, 3, 0),
     lookAt:  new THREE.Vector3(0, 1, -4),
-    lerpPos: 0.07,
-    lerpRot: 0.10,
+    lerpPos: 7.0,
+    lerpRot: 8.0,
     followHeading: false,
   },
 };
@@ -120,8 +120,10 @@ export function GameCamera() {
       _shakeIntensity = Math.max(0, _shakeIntensity - _shakeDecay * dt);
     }
 
-    camera.position.lerp(_targetPos, mode.lerpPos);
-    lookRef.current.lerp(_targetLook, mode.lerpRot);
+    const posFactor = 1 - Math.exp(-mode.lerpPos * dt);
+    const rotFactor = 1 - Math.exp(-mode.lerpRot * dt);
+    camera.position.lerp(_targetPos, posFactor);
+    lookRef.current.lerp(_targetLook, rotFactor);
     camera.lookAt(lookRef.current);
   });
 

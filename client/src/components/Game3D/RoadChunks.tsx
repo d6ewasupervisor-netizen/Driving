@@ -2,13 +2,17 @@
  * RoadChunks — Renders pooled road chunks with Kenney GLB assets.
  * Vehicle travels in -Z direction.
  */
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
-import * as THREE from 'three';
 import { RigidBody, CuboidCollider } from '@react-three/rapier';
+import * as THREE from 'three';
 import { useGameStore, Biome } from '@/stores/gameStore';
 import { ChunkData, CHUNK_LENGTH, initChunks, updateChunks } from '@/systems/RoadChunkManager';
+import {
+  getBuildingColormapTexture,
+  getSharedRoadMaterial,
+} from './proceduralKenneyTextures';
 
 // ─── Preload all assets used in chunks ────────────────────────────────────────
 useGLTF.preload('/models/road/road-straight.glb');
@@ -34,9 +38,37 @@ const ROAD_TILE_SCALE_Z = 4;  // 1 * 4 = 4m per tile along Z
 const ROAD_TILE_LENGTH = 4;   // scaled tile covers 4 world-units along Z
 const TILES_PER_CHUNK = Math.ceil(CHUNK_LENGTH / ROAD_TILE_LENGTH); // 50 tiles
 
-// ─── Road surface using tiled GLB ────────────────────────────────────────────
+// ─── Road surface using tiled GLB + procedural colormap (bundled GLBs miss Textures/colormap.png)
+function RoadTileInstance({
+  baseScene,
+  material,
+  z,
+}: {
+  baseScene: THREE.Object3D;
+  material: THREE.MeshStandardMaterial;
+  z: number;
+}) {
+  const object = useMemo(() => {
+    const root = baseScene.clone(true);
+    root.traverse((o) => {
+      if (o instanceof THREE.Mesh) o.material = material;
+    });
+    return root;
+  }, [baseScene, material]);
+
+  return (
+    <primitive
+      object={object}
+      position={[0, 0, z]}
+      scale={[ROAD_TILE_SCALE_X, 1, ROAD_TILE_SCALE_Z]}
+      receiveShadow
+    />
+  );
+}
+
 function RoadSurface() {
   const { scene } = useGLTF('/models/road/road-straight.glb');
+  const roadMaterial = useMemo(() => getSharedRoadMaterial(scene), [scene]);
   const tilePositions = useMemo(() => {
     const positions: number[] = [];
     for (let i = 0; i < TILES_PER_CHUNK; i++) {
@@ -48,13 +80,7 @@ function RoadSurface() {
   return (
     <>
       {tilePositions.map((z, i) => (
-        <primitive
-          key={i}
-          object={scene.clone(true)}
-          position={[0, 0, z]}
-          scale={[ROAD_TILE_SCALE_X, 1, ROAD_TILE_SCALE_Z]}
-          receiveShadow
-        />
+        <RoadTileInstance key={i} baseScene={scene} material={roadMaterial} z={z} />
       ))}
     </>
   );
@@ -84,26 +110,62 @@ function CityBuilding({ modelPath, position, rotation }: {
   rotation?: number;
 }) {
   const { scene } = useGLTF(modelPath);
+  const colormap = useMemo(
+    () => getBuildingColormapTexture(modelPath, position[0], position[2]),
+    [modelPath, position[0], position[2]]
+  );
+  const object = useMemo(() => {
+    const root = scene.clone(true);
+    root.traverse((obj) => {
+      if (!(obj instanceof THREE.Mesh)) return;
+      const src = Array.isArray(obj.material) ? obj.material[0] : obj.material;
+      if (src instanceof THREE.MeshStandardMaterial) {
+        const m = src.clone();
+        m.map = colormap;
+        m.color.setHex(0xffffff);
+        m.roughness = 0.88;
+        m.metalness = 0.06;
+        m.needsUpdate = true;
+        obj.material = m;
+      }
+    });
+    return root;
+  }, [scene, colormap]);
+
   return (
-    <primitive
-      object={scene.clone(true)}
-      position={position}
-      rotation={[0, rotation ?? 0, 0]}
-      scale={5.0}
-      castShadow
-    />
+    <>
+      <primitive
+        object={object}
+        position={position}
+        rotation={[0, rotation ?? 0, 0]}
+        scale={5.0}
+        castShadow
+      />
+      <CuboidCollider
+        args={[2.5, 6, 2.5]}
+        position={[position[0], 6, position[2]]}
+        restitution={0.15}
+      />
+    </>
   );
 }
 
 function StreetLight({ position }: { position: [number, number, number] }) {
   const { scene } = useGLTF('/models/road/light-curved.glb');
   return (
-    <primitive
-      object={scene.clone(true)}
-      position={position}
-      scale={4.4}
-      castShadow
-    />
+    <>
+      <primitive
+        object={scene.clone(true)}
+        position={position}
+        scale={[4.4, 8.8, 4.4]}
+        castShadow
+      />
+      <CuboidCollider
+        args={[0.15, 4, 0.15]}
+        position={[position[0], 4, position[2]]}
+        restitution={0.1}
+      />
+    </>
   );
 }
 
@@ -245,7 +307,16 @@ function CityDecorations({ lowEnd, variation }: { lowEnd?: boolean; variation: n
 // ─── Highway decorations — barriers, cones, sign ─────────────────────────────
 function BarrierModel({ position }: { position: [number, number, number] }) {
   const { scene } = useGLTF('/models/road/construction-barrier.glb');
-  return <primitive object={scene.clone(true)} position={position} castShadow />;
+  return (
+    <>
+      <primitive object={scene.clone(true)} position={position} castShadow />
+      <CuboidCollider
+        args={[0.3, 0.3, 0.2]}
+        position={[position[0], 0.3, position[2]]}
+        restitution={0.2}
+      />
+    </>
+  );
 }
 
 function ConeModel({ position }: { position: [number, number, number] }) {
@@ -269,6 +340,11 @@ function Guardrail({ side, length }: { side: 'left' | 'right'; length: number })
 
   return (
     <group>
+      <CuboidCollider
+        args={[0.1, 0.4, length / 2]}
+        position={[x, 0.3, 0]}
+        restitution={0.3}
+      />
       {/* Continuous rail */}
       <mesh position={[x, 0.45, 0]}>
         <boxGeometry args={[0.06, 0.15, length]} />
@@ -382,6 +458,11 @@ function FenceSection({ x, zStart, zEnd }: { x: number; zStart: number; zEnd: nu
 
   return (
     <group>
+      <CuboidCollider
+        args={[0.08, 0.4, length / 2]}
+        position={[x, 0.35, midZ]}
+        restitution={0.2}
+      />
       {/* Horizontal rails */}
       <mesh position={[x, 0.5, midZ]}>
         <boxGeometry args={[0.04, 0.04, length]} />
@@ -563,6 +644,11 @@ export function RoadChunks({ lowEnd }: { lowEnd?: boolean }) {
 
   const vehiclePosition = useGameStore((s) => s.vehiclePosition);
   const currentBiome = useGameStore((s) => s.currentBiome);
+  const resetCounter = useGameStore((s) => s.resetCounter);
+
+  useEffect(() => {
+    setChunks(initChunks());
+  }, [resetCounter]);
 
   useFrame(() => {
     // Update chunk positions every 10 frames (save CPU)

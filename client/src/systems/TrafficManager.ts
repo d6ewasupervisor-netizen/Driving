@@ -34,6 +34,8 @@ export interface NpcState {
   x: number;
   z: number;
   active: boolean;
+  xOffset: number;
+  zOffset: number;
 }
 
 function randomSpeed() {
@@ -68,6 +70,8 @@ function spawnAhead(playerZ: number, excludeColor: Set<number>): NpcState {
     x,
     z,
     active: true,
+    xOffset: 0,
+    zOffset: 0,
   };
 }
 
@@ -92,6 +96,8 @@ export function initNpcs(playerZ: number, lowEnd = false): NpcState[] {
       x,
       z,
       active: true,
+      xOffset: 0,
+      zOffset: 0,
     };
   });
 }
@@ -152,9 +158,15 @@ export function updateNpcs(
       }
     }
 
+    // ── Decay collision offsets ─────────────────────────────────────────────
+    npc.xOffset *= Math.max(0, 1 - 3.0 * clampedDelta);
+    npc.zOffset *= Math.max(0, 1 - 3.0 * clampedDelta);
+    if (Math.abs(npc.xOffset) < 0.01) npc.xOffset = 0;
+    if (Math.abs(npc.zOffset) < 0.01) npc.zOffset = 0;
+
     // ── Sync convenience fields ───────────────────────────────────────────────
-    npc.x = npc.currentX;
-    npc.z = npc.zPosition;
+    npc.x = npc.currentX + npc.xOffset;
+    npc.z = npc.zPosition + npc.zOffset;
     npc.active = true;
 
     // ── Write to InstancedMesh (legacy path) ──────────────────────────────────

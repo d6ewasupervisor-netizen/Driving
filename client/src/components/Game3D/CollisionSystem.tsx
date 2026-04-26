@@ -1,11 +1,9 @@
 /**
- * CollisionSystem — Distance-based collision detection
+ * CollisionSystem — Distance-based collision detection with physical response
  *
  * Checks vehicle position against:
- *   - NPC traffic vehicles → damage + knockback audio
+ *   - NPC traffic vehicles → damage + knockback audio + speed reduction + NPC push
  *   - Collectibles (coins, fuel cans) → pickup
- *
- * Runs in useFrame, lightweight sphere-vs-sphere checks.
  */
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
@@ -15,19 +13,23 @@ import { AudioManager } from '@/systems/AudioManager';
 import { triggerScreenShake } from './GameCamera';
 import { getCollectibles } from './Collectibles';
 import { NpcState } from '@/systems/TrafficManager';
+import { applyCollisionImpact } from '@/systems/VehicleController';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-const VEHICLE_RADIUS = 2.0;       // collision sphere radius for player car
-const NPC_RADIUS = 1.8;           // NPC car collision radius
-const COIN_RADIUS = 1.2;          // coin pickup radius (generous)
-const FUEL_RADIUS = 1.5;          // fuel can pickup radius (generous)
+const VEHICLE_RADIUS = 1.5;
+const NPC_RADIUS = 1.5;
+const COIN_RADIUS = 1.2;
+const FUEL_RADIUS = 1.5;
 
-const TRAFFIC_DAMAGE = 5;         // HP per traffic collision
-const TRAFFIC_COOLDOWN = 1.5;     // seconds between traffic damage ticks
+const TRAFFIC_DAMAGE = 5;
+const TRAFFIC_COOLDOWN = 1.5;
+const NPC_KNOCKBACK_STRENGTH = 4.0;
+const PLAYER_SPEED_LOSS = 0.45;
 
 // ─── Temp vectors ─────────────────────────────────────────────────────────────
 const _vPos = new THREE.Vector3();
 const _other = new THREE.Vector3();
+const _normal = new THREE.Vector3();
 
 // ─── Component ────────────────────────────────────────────────────────────────
 interface CollisionSystemProps {
@@ -57,8 +59,19 @@ export function CollisionSystem({ npcsRef }: CollisionSystemProps) {
           store.addTrafficHit();
           AudioManager.playCollision();
           triggerScreenShake(0.6, 0.35);
+
+          applyCollisionImpact(PLAYER_SPEED_LOSS);
+
+          _normal.set(npc.x - _vPos.x, 0, npc.z - _vPos.z);
+          const len = _normal.length();
+          if (len > 0.01) {
+            _normal.divideScalar(len);
+            npc.xOffset = (npc.xOffset ?? 0) + _normal.x * NPC_KNOCKBACK_STRENGTH;
+            npc.zOffset = (npc.zOffset ?? 0) + _normal.z * NPC_KNOCKBACK_STRENGTH;
+          }
+
           trafficCooldown.current = TRAFFIC_COOLDOWN;
-          break; // only one hit per cooldown
+          break;
         }
       }
     }
@@ -77,7 +90,7 @@ export function CollisionSystem({ npcsRef }: CollisionSystemProps) {
           AudioManager.playCoinPickup();
         } else {
           store.collectFuelCan();
-          AudioManager.playCoinPickup(); // reuse chime for now
+          AudioManager.playCoinPickup();
         }
       }
     }
