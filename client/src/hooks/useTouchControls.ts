@@ -20,7 +20,10 @@ import { useGameStore } from '@/stores/gameStore';
 
 const DEAD_ZONE_PX = 5;
 const STEER_DRAG_SCALE = 0.004; // px → steering value
-const GAMEPAD_DEAD_ZONE = 0.12; // stick dead zone
+// Bumped from 0.12 → 0.20 because cheap controllers (and worn sticks) report
+// resting offsets up to ~0.15 on one axis, which manifests as the car drifting
+// hard to one side even when nothing is touching the stick.
+const GAMEPAD_DEAD_ZONE = 0.20;
 const GAMEPAD_POLL_INTERVAL = 16; // ~60fps polling
 
 interface ActiveTouch {

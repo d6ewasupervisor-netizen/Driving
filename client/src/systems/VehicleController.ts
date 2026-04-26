@@ -37,7 +37,8 @@ const COAST_DECEL   = 2.0;     // engine + rolling friction when off throttle
 const WHEELBASE         = 2.4;
 const STEER_MAX_LOW     = 0.52;   // ~30° at low speed
 const STEER_MAX_HIGH    = 0.16;   // ~9°  at top speed
-const STEER_LERP        = 8.0;
+const STEER_LERP        = 4.0;    // yaw-rate blend (lower = gentler corrections)
+const STEER_INPUT_SMOOTH = 5.0;   // rate at which raw input is approached (1/s)
 const STEER_FULL_SPEED  = MAX_FORWARD_MS;
 
 // Lateral grip (cancel sideways velocity)
@@ -62,6 +63,7 @@ let mileageAccumulator = 0;
 let currentSpeed = 0;          // m/s, signed (positive = forward)
 let smoothedThrottle = 0;
 let smoothedBrake = 0;
+let smoothedSteering = 0;      // smoothed -1..1 input
 
 let _lateralSlip = 0;
 let _brakeSlip = 0;
@@ -150,6 +152,10 @@ export function tickVehicle(
   } else {
     smoothedBrake = Math.max(brakeInput, smoothedBrake - THROTTLE_SMOOTH_DOWN * dt);
   }
+  // Smooth steering input — kills abrupt yaw spikes from instant ±1 keyboard
+  // presses (and any residual gamepad jitter past the dead zone).
+  smoothedSteering += (steering - smoothedSteering) * Math.min(STEER_INPUT_SMOOTH * dt, 1);
+  if (Math.abs(smoothedSteering) < 0.01) smoothedSteering = 0;
 
   // ── Pedal logic ────────────────────────────────────────────────────────
   // Forward: throttle accelerates up to MAX_FORWARD_MS, brake decelerates.
@@ -220,7 +226,7 @@ export function tickVehicle(
   if (absSpd > 0.5) {
     const speedT = Math.min(absSpd / STEER_FULL_SPEED, 1);
     const maxSteer = THREE.MathUtils.lerp(STEER_MAX_LOW, STEER_MAX_HIGH, speedT);
-    const steerAngle = steering * maxSteer;
+    const steerAngle = smoothedSteering * maxSteer;
     const targetYaw = -(currentSpeed * Math.tan(steerAngle)) / WHEELBASE;
     const angvel = body.angvel();
     const blend = Math.min(STEER_LERP * dt, 1);
@@ -278,6 +284,7 @@ export function resetVehicleController(): void {
   currentSpeed = 0;
   smoothedThrottle = 0;
   smoothedBrake = 0;
+  smoothedSteering = 0;
   _lateralSlip = 0;
   _brakeSlip = 0;
   _isAnyWheelSlipping = false;

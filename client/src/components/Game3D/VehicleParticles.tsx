@@ -21,10 +21,11 @@ const TIRE_SMOKE_COLOR = new THREE.Color(0.85, 0.85, 0.85);
 const DUST_COLOR = new THREE.Color(0.65, 0.55, 0.4);
 const EXHAUST_COLOR = new THREE.Color(0.3, 0.3, 0.32);
 
-// Wheel positions in vehicle local space (matching VehicleController)
-const REAR_LEFT = new THREE.Vector3(-0.9, -0.3, -1.5);
-const REAR_RIGHT = new THREE.Vector3(0.9, -0.3, -1.5);
-const EXHAUST_POS = new THREE.Vector3(-0.4, -0.1, -2.1); // behind rear bumper
+// Wheel positions in vehicle local space (matching VehicleController).
+// IMPORTANT: forward is -Z, so the REAR of the car is at +Z.
+const REAR_LEFT = new THREE.Vector3(-0.9, -0.3, 1.5);
+const REAR_RIGHT = new THREE.Vector3(0.9, -0.3, 1.5);
+const EXHAUST_POS = new THREE.Vector3(-0.4, -0.1, 2.1); // behind rear bumper (+Z)
 
 interface Particle {
   position: THREE.Vector3;
@@ -135,12 +136,12 @@ export function VehicleParticles() {
             wheel.clone().add(new THREE.Vector3(
               (Math.random() - 0.5) * 0.4,
               -0.05,
-              -0.3 + Math.random() * -0.3,
+              0.3 + Math.random() * 0.3, // behind rear wheel (+Z)
             )),
             new THREE.Vector3(
               (Math.random() - 0.5) * 0.4,
               0.1 + Math.random() * 0.3,
-              -0.5 - Math.random() * 0.5, // trail behind
+              0.5 + Math.random() * 0.5, // trail behind (+Z)
             ),
             DUST_COLOR,
             0.1 + Math.random() * 0.15,
@@ -161,7 +162,7 @@ export function VehicleParticles() {
           new THREE.Vector3(
             (Math.random() - 0.5) * 0.1,
             0.1 + Math.random() * 0.15,
-            -0.2 - Math.random() * 0.3,
+            0.2 + Math.random() * 0.3, // puff back behind car (+Z)
           ),
           EXHAUST_COLOR,
           0.04 + Math.random() * 0.06,

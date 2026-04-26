@@ -378,7 +378,7 @@ export function Vehicle() {
   useEffect(() => {
     if (!bodyRef.current) return;
     resetVehicleController();
-    bodyRef.current.setTranslation({ x: 0, y: 0.5, z: 0 }, true);
+    bodyRef.current.setTranslation({ x: 0, y: 0.7, z: 0 }, true);
     bodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
     bodyRef.current.setAngvel({ x: 0, y: 0, z: 0 }, true);
     bodyRef.current.setRotation({ x: 0, y: 0, z: 0, w: 1 }, true);
@@ -394,7 +394,7 @@ export function Vehicle() {
     <RigidBody
       ref={bodyRef}
       mass={1200}
-      position={[0, 0.5, 0]}
+      position={[0, 0.7, 0]}
       canSleep={false}
       enabledRotations={[false, true, false]}
       linearDamping={0}
@@ -402,12 +402,16 @@ export function Vehicle() {
       colliders={false}
       ccd
     >
-      {/* Main body collider – sits at body center so Rapier rests it on the road */}
+      {/* Main body collider – shifted down so the rigid-body origin (the visible
+          car's center) rests higher above the road. Without this offset the
+          visible chassis sits flush with the asphalt and the wheel cuffs scrape.
+          Friction is non-zero so the vehicle can climb curbs / sidewalks
+          instead of skating along them. */}
       <CuboidCollider
         args={[COLLIDER_HX, COLLIDER_HY, COLLIDER_HZ]}
-        position={[0, 0, 0]}
-        friction={0}
-        restitution={0.2}
+        position={[0, -0.2, 0]}
+        friction={0.6}
+        restitution={0.15}
       />
       <VWBeetleModel plowAngle={plowAngleDisplay.current} />
       <VehicleParticles />
