@@ -37,8 +37,12 @@ const COAST_DECEL   = 2.0;     // engine + rolling friction when off throttle
 const WHEELBASE         = 2.4;
 const STEER_MAX_LOW     = 0.52;   // ~30° at low speed
 const STEER_MAX_HIGH    = 0.16;   // ~9°  at top speed
-const STEER_LERP        = 4.0;    // yaw-rate blend (lower = gentler corrections)
-const STEER_INPUT_SMOOTH = 5.0;   // rate at which raw input is approached (1/s)
+// NOTE: these two filters run in series — keep them tight so they only de-jitter,
+// never add perceptible lag.  Previously (4.0 + 5.0) they compounded into a
+// noticeable "pulls right, can't turn left" feeling whenever there was any
+// rightward bias (gamepad drift, post-collision yaw, slope).
+const STEER_LERP        = 10.0;   // yaw-rate blend toward target (1/s)
+const STEER_INPUT_SMOOTH = 20.0;  // smooths raw input (1/s) — fast enough to feel instant
 const STEER_FULL_SPEED  = MAX_FORWARD_MS;
 
 // Lateral grip (cancel sideways velocity)

@@ -20,10 +20,11 @@ import { useGameStore } from '@/stores/gameStore';
 
 const DEAD_ZONE_PX = 5;
 const STEER_DRAG_SCALE = 0.004; // px → steering value
-// Bumped from 0.12 → 0.20 because cheap controllers (and worn sticks) report
-// resting offsets up to ~0.15 on one axis, which manifests as the car drifting
-// hard to one side even when nothing is touching the stick.
-const GAMEPAD_DEAD_ZONE = 0.20;
+// Bumped from 0.12 → 0.25 because cheap / worn sticks rest at offsets up to
+// ~0.20 on one axis (manifesting as the car constantly steering right). The
+// raw value is also re-mapped after the dead zone so the output starts cleanly
+// from 0 rather than jumping to ±0.25.
+const GAMEPAD_DEAD_ZONE = 0.25;
 const GAMEPAD_POLL_INTERVAL = 16; // ~60fps polling
 
 interface ActiveTouch {
@@ -159,8 +160,15 @@ export function useTouchControls() {
     }
 
     // ── Gamepad ───────────────────────────────────────────────────────────────
+    // Re-map after the dead zone so output ramps from 0 → 1 across the LIVE
+    // range. Without re-mapping, a stick that just barely crosses the dead
+    // zone instantly snaps the steering to ±DEAD_ZONE, producing a constant
+    // hard pull when the stick is resting near its boundary.
     function applyDeadZone(value: number): number {
-      return Math.abs(value) < GAMEPAD_DEAD_ZONE ? 0 : value;
+      const a = Math.abs(value);
+      if (a < GAMEPAD_DEAD_ZONE) return 0;
+      const scaled = (a - GAMEPAD_DEAD_ZONE) / (1 - GAMEPAD_DEAD_ZONE);
+      return Math.sign(value) * Math.min(1, scaled);
     }
 
     function pollGamepad() {
