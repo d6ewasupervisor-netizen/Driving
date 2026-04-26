@@ -46,11 +46,11 @@ const STEER_INPUT_SMOOTH = 20.0;  // smooth raw input (1/s)
 const STEER_FULL_SPEED  = MAX_FORWARD_MS;
 
 // Larger dead-zone & faster center bias learning to eliminate constant pull
-const STEER_DEADZONE    = 0.08;   // removes tiny gamepad drift
-const STEER_CENTER_TRACK = 4.0;   // how fast we learn neutral bias (1/s)
+const STEER_DEADZONE    = 0.10;   // wider deadzone for zero-input straight tracking
+const STEER_CENTER_TRACK = 8.0;   // learn center bias quickly (1/s)
 
 // Lateral grip (cancel sideways velocity)
-const LATERAL_GRIP_RATE = 6.0;   // exponential decay rate per second
+const LATERAL_GRIP_RATE = 8.0;   // hug the lane harder – faster sideways decay
 
 // Smoothing
 const THROTTLE_SMOOTH_UP   = 6.0;

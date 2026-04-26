@@ -398,7 +398,7 @@ export function Vehicle() {
       canSleep={false}
       enabledRotations={[false, true, false]}
       linearDamping={0.5}
-      angularDamping={0.5}
+      angularDamping={1.0}
       colliders={false}
       ccd
     >
@@ -410,8 +410,8 @@ export function Vehicle() {
       <CuboidCollider
         args={[COLLIDER_HX, COLLIDER_HY, COLLIDER_HZ]}
         position={[0, -0.2, 0]}
-        friction={0.6}
-        restitution={0.15}
+        friction={0.45}
+        restitution={0.12}
       />
       <VWBeetleModel plowAngle={plowAngleDisplay.current} />
       <VehicleParticles />
