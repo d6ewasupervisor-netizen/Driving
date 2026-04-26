@@ -33,21 +33,42 @@ const BRAKE_DECEL   = 12.0;    // strong, predictable
 const REVERSE_ACCEL = 4.0;
 const COAST_DECEL   = 2.0;     // engine + rolling friction when off throttle
 
-// Steering
+// Steering — semi-sim model (Forza Horizon / Rocket League feel)
+//
+// Architecture (no double-filtering — that was the source of the lag):
+//   1. Raw input → deadzone + learned center-bias → "steerRaw" (-1..1)
+//   2. Rate limiter (NOT exponential smoothing) → "smoothedSteering"
+//      Reaches full lock in ~1/STEER_INPUT_RATE seconds, no perceptible lag.
+//   3. Speed-scaled max steer angle → bicycle-model target yaw rate
+//   4. Grip-limited cap on yaw rate (LAT_GRIP_MS2) — prevents impossible
+//      cornering at speed and produces understeer-on-the-edge feel.
+//   5. Yaw rate blended toward target at YAW_GAIN (single filter only).
 const WHEELBASE         = 2.4;
 
 // Reduced maximum steering angles for more realistic response
-const STEER_MAX_LOW     = 0.35;   // ~20° at low speed
+const STEER_MAX_LOW     = 0.42;   // ~24° at low speed (a bit tighter for parking)
 const STEER_MAX_HIGH    = 0.09;   // ~5°  at top speed
-
-// Keep filters tight – only de-jitter, no visible lag
-const STEER_LERP        = 10.0;   // yaw-rate blend toward target (1/s)
-const STEER_INPUT_SMOOTH = 20.0;  // smooth raw input (1/s)
 const STEER_FULL_SPEED  = MAX_FORWARD_MS;
 
-// Larger dead-zone & faster center bias learning to eliminate constant pull
-const STEER_DEADZONE    = 0.10;   // wider deadzone for zero-input straight tracking
-const STEER_CENTER_TRACK = 8.0;   // learn center bias quickly (1/s)
+// Rate limiter on input (1/s) — full lock travel takes ~1/8 s. High enough
+// that the player perceives "instant", low enough to filter pad jitter.
+const STEER_INPUT_RATE  = 8.0;
+
+// Yaw-rate controller (single-stage)
+const YAW_GAIN          = 18.0;   // turn-in responsiveness (1/s)
+const YAW_GAIN_RECENTER = 26.0;   // stronger self-centering when input released
+
+// Grip cap — peak lateral acceleration the tires can sustain (m/s²).
+// At 75 mph (≈33.5 m/s) this caps yaw rate at ~14/33.5 ≈ 0.42 rad/s,
+// matching a Forza-style "front tires saturate, car pushes wide" feel.
+const LAT_GRIP_MS2      = 14.0;
+
+// Deadzone + center bias (gamepad drift compensation — keep)
+// Bias-learning window must be WIDER than realistic worn-stick rest (~0.20)
+// or the bias never trains and the car pulls toward the resting direction.
+const STEER_DEADZONE    = 0.10;
+const STEER_BIAS_WINDOW = 0.32;   // train bias whenever |raw input| stays in this band
+const STEER_CENTER_TRACK = 4.0;   // slow learn so brief pad sweeps through 0 don't pollute
 
 // Lateral grip (cancel sideways velocity)
 const LATERAL_GRIP_RATE = 8.0;   // hug the lane harder – faster sideways decay
@@ -140,15 +161,16 @@ export function tickVehicle(
   const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(quat).normalize();
   const right   = new THREE.Vector3(1, 0, 0).applyQuaternion(quat).normalize();
 
-  // ── Sample real velocity (so collisions / external pushes register) ───
+  // ── Sample real velocity ───────────────────────────────────────────────
+  // We only read the lateral component (for grip decay & slip metrics) and
+  // the vertical (to preserve gravity). The forward component is *intentionally
+  // not* echoed back into `currentSpeed`: solver-side micro-collisions with
+  // chunk seams, curbs, or scenery would otherwise show up as sudden speed
+  // drops ("invisible wall" / stutter). NPC impacts route through
+  // applyCollisionImpact() explicitly, which is the only sanctioned external
+  // speed change.
   const linvel = body.linvel();
-  const realForward = forward.x * linvel.x + forward.z * linvel.z;
   const lateralSpeed = right.x * linvel.x + right.z * linvel.z;
-
-  // If something external (collision) changed our speed dramatically, adopt it.
-  if (Math.abs(realForward - currentSpeed) > 2.0) {
-    currentSpeed = realForward;
-  }
 
   // ── Smooth pedal inputs (kills throttle-induced surging) ──────────────
   if (throttleInput > smoothedThrottle) {
@@ -161,9 +183,15 @@ export function tickVehicle(
   } else {
     smoothedBrake = Math.max(brakeInput, smoothedBrake - THROTTLE_SMOOTH_DOWN * dt);
   }
-  // Steering input: deadzone + bias calibration, then smoothing
-  // Track neutral bias only when input is near center.
-  if (Math.abs(steering) < STEER_DEADZONE * 1.5) {
+  // Steering input: deadzone + bias calibration, then RATE-LIMITED slew.
+  // Rate limiting (vs. exponential smoothing) gives instant response with
+  // a guaranteed max d|steer|/dt — no perceptible lag, but no jitter either.
+  //
+  // Bias-learning window (STEER_BIAS_WINDOW) must comfortably exceed the
+  // resting position of a worn analog stick (typically up to ~0.25). If the
+  // window is too narrow the stick's rest value never enters it, the bias
+  // never trains, and the car pulls toward the rest direction.
+  if (Math.abs(steering) < STEER_BIAS_WINDOW) {
     steerCenterBias += (steering - steerCenterBias) * Math.min(STEER_CENTER_TRACK * dt, 1);
   }
   let steerRaw = steering - steerCenterBias;
@@ -171,10 +199,19 @@ export function tickVehicle(
     steerRaw = 0;
   } else {
     const s = Math.sign(steerRaw);
-    steerRaw = s * (Math.min(1, (Math.abs(steerRaw) - STEER_DEADZONE) / (1 - STEER_DEADZONE)));
+    steerRaw = s * Math.min(1, (Math.abs(steerRaw) - STEER_DEADZONE) / (1 - STEER_DEADZONE));
   }
-  smoothedSteering += (steerRaw - smoothedSteering) * Math.min(STEER_INPUT_SMOOTH * dt, 1);
-  if (Math.abs(smoothedSteering) < 0.005) smoothedSteering = 0;
+  // Rate limiter: linear approach toward target at STEER_INPUT_RATE units/sec.
+  // Snap-to-zero on release prevents any "drift back to center" lag.
+  const maxStep = STEER_INPUT_RATE * dt;
+  const diff = steerRaw - smoothedSteering;
+  if (steerRaw === 0 && Math.abs(smoothedSteering) < maxStep) {
+    smoothedSteering = 0;
+  } else if (Math.abs(diff) <= maxStep) {
+    smoothedSteering = steerRaw;
+  } else {
+    smoothedSteering += Math.sign(diff) * maxStep;
+  }
 
   // ── Pedal logic ────────────────────────────────────────────────────────
   // Forward: throttle accelerates up to MAX_FORWARD_MS, brake decelerates.
@@ -240,23 +277,30 @@ export function tickVehicle(
     true,
   );
 
-  // ── Steering (bicycle model with speed scaling and neutral self-center) ─
+  // ── Steering: bicycle model + grip-limited yaw rate (single-stage filter) ─
+  // Modern semi-sim feel: the bicycle model gives a *desired* yaw rate from
+  // steering angle and speed; we then cap it by what the front tires can
+  // physically sustain (a = v·ω → ω_max = LAT_GRIP_MS2 / |v|). Beyond the cap
+  // the car understeers ("pushes wide"), exactly like a real grippy hatchback.
   const absSpd = Math.abs(currentSpeed);
   if (absSpd > 0.5) {
     const speedT = Math.min(absSpd / STEER_FULL_SPEED, 1);
     const maxSteer = THREE.MathUtils.lerp(STEER_MAX_LOW, STEER_MAX_HIGH, speedT);
     const steerAngle = smoothedSteering * maxSteer;
     const curvature = Math.tan(steerAngle) / WHEELBASE;
-    const targetYaw = -(currentSpeed * curvature);
+    let targetYaw = -(currentSpeed * curvature);
+
+    // Grip cap — peak lateral acceleration the tires can sustain
+    const yawCap = LAT_GRIP_MS2 / Math.max(absSpd, 1);
+    if (targetYaw >  yawCap) targetYaw =  yawCap;
+    if (targetYaw < -yawCap) targetYaw = -yawCap;
+
+    // Single-stage blend. Stronger gain when recentering than when turning in
+    // — gives a confident, tight feel without wobble.
+    const gain = (smoothedSteering === 0) ? YAW_GAIN_RECENTER : YAW_GAIN;
+    const blend = 1 - Math.exp(-gain * dt); // frame-rate independent
     const angvel = body.angvel();
-    let newYaw: number;
-    if (steerAngle === 0) {
-      const blend = Math.min((STEER_LERP + 6) * dt, 1);
-      newYaw = angvel.y + (0 - angvel.y) * blend;
-    } else {
-      const blend = Math.min(STEER_LERP * dt, 1);
-      newYaw = angvel.y + (targetYaw - angvel.y) * blend;
-    }
+    let newYaw = angvel.y + (targetYaw - angvel.y) * blend;
     if (Math.abs(newYaw) < 1e-3) newYaw = 0;
     body.setAngvel({ x: 0, y: newYaw, z: 0 }, true);
   } else {
