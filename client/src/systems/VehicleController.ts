@@ -44,6 +44,8 @@ const STEER_MAX_HIGH    = 0.16;   // ~9°  at top speed
 const STEER_LERP        = 10.0;   // yaw-rate blend toward target (1/s)
 const STEER_INPUT_SMOOTH = 20.0;  // smooths raw input (1/s) — fast enough to feel instant
 const STEER_FULL_SPEED  = MAX_FORWARD_MS;
+const STEER_DEADZONE    = 0.06;   // removes tiny gamepad drift
+const STEER_CENTER_TRACK = 1.5;   // how fast we learn neutral bias (1/s)
 
 // Lateral grip (cancel sideways velocity)
 const LATERAL_GRIP_RATE = 6.0;   // exponential decay rate per second
@@ -68,6 +70,7 @@ let currentSpeed = 0;          // m/s, signed (positive = forward)
 let smoothedThrottle = 0;
 let smoothedBrake = 0;
 let smoothedSteering = 0;      // smoothed -1..1 input
+let steerCenterBias = 0;       // learned neutral offset
 
 let _lateralSlip = 0;
 let _brakeSlip = 0;
@@ -156,10 +159,20 @@ export function tickVehicle(
   } else {
     smoothedBrake = Math.max(brakeInput, smoothedBrake - THROTTLE_SMOOTH_DOWN * dt);
   }
-  // Smooth steering input — kills abrupt yaw spikes from instant ±1 keyboard
-  // presses (and any residual gamepad jitter past the dead zone).
-  smoothedSteering += (steering - smoothedSteering) * Math.min(STEER_INPUT_SMOOTH * dt, 1);
-  if (Math.abs(smoothedSteering) < 0.01) smoothedSteering = 0;
+  // Steering input: deadzone + bias calibration, then smoothing
+  // Track neutral bias only when input is near center.
+  if (Math.abs(steering) < STEER_DEADZONE * 1.5) {
+    steerCenterBias += (steering - steerCenterBias) * Math.min(STEER_CENTER_TRACK * dt, 1);
+  }
+  let steerRaw = steering - steerCenterBias;
+  if (Math.abs(steerRaw) < STEER_DEADZONE) {
+    steerRaw = 0;
+  } else {
+    const s = Math.sign(steerRaw);
+    steerRaw = s * (Math.min(1, (Math.abs(steerRaw) - STEER_DEADZONE) / (1 - STEER_DEADZONE)));
+  }
+  smoothedSteering += (steerRaw - smoothedSteering) * Math.min(STEER_INPUT_SMOOTH * dt, 1);
+  if (Math.abs(smoothedSteering) < 0.005) smoothedSteering = 0;
 
   // ── Pedal logic ────────────────────────────────────────────────────────
   // Forward: throttle accelerates up to MAX_FORWARD_MS, brake decelerates.
@@ -225,16 +238,24 @@ export function tickVehicle(
     true,
   );
 
-  // ── Steering (yaw rate from bicycle model, scaled by speed) ───────────
+  // ── Steering (bicycle model with speed scaling and neutral self-center) ─
   const absSpd = Math.abs(currentSpeed);
   if (absSpd > 0.5) {
     const speedT = Math.min(absSpd / STEER_FULL_SPEED, 1);
     const maxSteer = THREE.MathUtils.lerp(STEER_MAX_LOW, STEER_MAX_HIGH, speedT);
     const steerAngle = smoothedSteering * maxSteer;
-    const targetYaw = -(currentSpeed * Math.tan(steerAngle)) / WHEELBASE;
+    const curvature = Math.tan(steerAngle) / WHEELBASE;
+    const targetYaw = -(currentSpeed * curvature);
     const angvel = body.angvel();
-    const blend = Math.min(STEER_LERP * dt, 1);
-    const newYaw = angvel.y + (targetYaw - angvel.y) * blend;
+    let newYaw: number;
+    if (steerAngle === 0) {
+      const blend = Math.min((STEER_LERP + 6) * dt, 1);
+      newYaw = angvel.y + (0 - angvel.y) * blend;
+    } else {
+      const blend = Math.min(STEER_LERP * dt, 1);
+      newYaw = angvel.y + (targetYaw - angvel.y) * blend;
+    }
+    if (Math.abs(newYaw) < 1e-3) newYaw = 0;
     body.setAngvel({ x: 0, y: newYaw, z: 0 }, true);
   } else {
     body.setAngvel({ x: 0, y: 0, z: 0 }, true);
@@ -289,6 +310,7 @@ export function resetVehicleController(): void {
   smoothedThrottle = 0;
   smoothedBrake = 0;
   smoothedSteering = 0;
+  steerCenterBias = 0;
   _lateralSlip = 0;
   _brakeSlip = 0;
   _isAnyWheelSlipping = false;
