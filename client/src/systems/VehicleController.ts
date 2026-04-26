@@ -35,24 +35,26 @@ const COAST_DECEL   = 2.0;     // engine + rolling friction when off throttle
 
 // Steering
 const WHEELBASE         = 2.4;
-const STEER_MAX_LOW     = 0.52;   // ~30° at low speed
-const STEER_MAX_HIGH    = 0.16;   // ~9°  at top speed
-// NOTE: these two filters run in series — keep them tight so they only de-jitter,
-// never add perceptible lag.  Previously (4.0 + 5.0) they compounded into a
-// noticeable "pulls right, can't turn left" feeling whenever there was any
-// rightward bias (gamepad drift, post-collision yaw, slope).
+
+// Reduced maximum steering angles for more realistic response
+const STEER_MAX_LOW     = 0.35;   // ~20° at low speed
+const STEER_MAX_HIGH    = 0.09;   // ~5°  at top speed
+
+// Keep filters tight – only de-jitter, no visible lag
 const STEER_LERP        = 10.0;   // yaw-rate blend toward target (1/s)
-const STEER_INPUT_SMOOTH = 20.0;  // smooths raw input (1/s) — fast enough to feel instant
+const STEER_INPUT_SMOOTH = 20.0;  // smooth raw input (1/s)
 const STEER_FULL_SPEED  = MAX_FORWARD_MS;
-const STEER_DEADZONE    = 0.06;   // removes tiny gamepad drift
-const STEER_CENTER_TRACK = 1.5;   // how fast we learn neutral bias (1/s)
+
+// Larger dead-zone & faster center bias learning to eliminate constant pull
+const STEER_DEADZONE    = 0.08;   // removes tiny gamepad drift
+const STEER_CENTER_TRACK = 4.0;   // how fast we learn neutral bias (1/s)
 
 // Lateral grip (cancel sideways velocity)
 const LATERAL_GRIP_RATE = 6.0;   // exponential decay rate per second
 
 // Smoothing
-const THROTTLE_SMOOTH_UP   = 4.0;
-const THROTTLE_SMOOTH_DOWN = 6.0;
+const THROTTLE_SMOOTH_UP   = 6.0;
+const THROTTLE_SMOOTH_DOWN = 8.0;
 
 // Mileage / fuel
 const MILEAGE_BATCH    = 0.1;
