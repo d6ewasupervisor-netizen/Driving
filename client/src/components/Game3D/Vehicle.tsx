@@ -24,11 +24,15 @@ import { tickVehicle, resetVehicleController } from '@/systems/VehicleController
 import { useGameStore } from '@/stores/gameStore';
 import { VehicleParticles } from './VehicleParticles';
 
-// ─── Collider half-extents (scaled 0.75× for better road proportion) ─────────
-const VEHICLE_SCALE = 0.75;
-const COLLIDER_HX = 0.58;
-const COLLIDER_HY = 0.38;
-const COLLIDER_HZ = 1.54;
+// ─── Vehicle scale + collider half-extents ──────────────────────────────────
+// VEHICLE_SCALE shrinks the GLB visual + plow (rendered inside the scaled group).
+// Collider half-extents are independent and tuned to match the visual silhouette.
+// At scale 0.6, the visible car is ~1m wide × 0.6m tall × 2.5m long — reads as a
+// compact hatchback in 8m-wide lanes.
+const VEHICLE_SCALE = 0.6;
+const COLLIDER_HX = 0.5;
+const COLLIDER_HY = 0.32;
+const COLLIDER_HZ = 1.25;
 
 // ─── Material colours ─────────────────────────────────────────────────────────
 const BODY_COLOR        = new THREE.Color('#c47a6a'); // rusty pink
