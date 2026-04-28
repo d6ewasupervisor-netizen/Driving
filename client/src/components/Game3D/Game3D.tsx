@@ -210,7 +210,7 @@ export function Game3D({ onExit }: Game3DProps) {
         frameloop="always"
         dpr={LOW_END ? [1, 1] : [1, 1.5]}
         shadows={LOW_END ? false : 'soft'}
-        camera={{ fov: 75, near: 0.1, far: 500 }}
+        camera={{ fov: 75, near: 0.1, far: 1500 }}
         gl={{ antialias: !LOW_END, powerPreference: 'high-performance' }}
         style={{ position: 'absolute', inset: 0 }}
       >

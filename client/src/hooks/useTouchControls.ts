@@ -186,7 +186,10 @@ export function useTouchControls() {
       if (!pad) {
         gamepadActive.current = false;
         startPressedRef.current = false;
+        // Push zeros if neither pad nor keyboard is providing input,
+        // so a previously-set steering value can't persist after disconnect.
         if (keys.size > 0) applyKeyboard();
+        else store().setControls({ steering: 0, throttle: 0, brake: 0 });
         return;
       }
 
@@ -258,8 +261,15 @@ export function useTouchControls() {
         store().setControls(controls);
         maybeEnterDriving(controls);
       } else {
+        // No live input — but we MUST still push zeros, otherwise the store
+        // retains the last non-zero steering/throttle/brake (e.g. nudge the
+        // stick right, let go → the car keeps turning right indefinitely).
         gamepadActive.current = false;
-        if (keys.size > 0) applyKeyboard();
+        if (keys.size > 0) {
+          applyKeyboard();
+        } else {
+          store().setControls({ steering: 0, throttle: 0, brake: 0 });
+        }
       }
 
       // Pause button (Start/Menu) — debounced

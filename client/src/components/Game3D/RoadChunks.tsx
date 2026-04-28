@@ -651,9 +651,11 @@ export function RoadChunks({ lowEnd }: { lowEnd?: boolean }) {
   }, [resetCounter]);
 
   useFrame(() => {
-    // Update chunk positions every 10 frames (save CPU)
+    // Recycle cadence: every 4 frames (~67ms @ 60fps). At 75mph the player
+    // crosses 2.2m in that window, far less than CHUNK_LENGTH (200m), so a
+    // single chunk recycle never lags behind the leading edge.
     frameRef.current++;
-    if (frameRef.current % 10 === 0) {
+    if (frameRef.current % 4 === 0) {
       setChunks((prev) => updateChunks(prev, vehiclePosition[2], currentBiome));
     }
   });
