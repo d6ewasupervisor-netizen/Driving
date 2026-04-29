@@ -31,7 +31,7 @@ const MAX_REVERSE_MS = MAX_REVERSE_MPH * MPH_TO_MS;
 const FORWARD_ACCEL = 7.0;     // ~0→75mph in ~4.8s
 const BRAKE_DECEL   = 12.0;    // strong, predictable
 const REVERSE_ACCEL = 4.0;
-const COAST_DECEL   = 2.0;     // engine + rolling friction when off throttle
+const COAST_DECEL   = 1.5;     // engine + rolling friction when off throttle
 
 // Steering — semi-sim model (Forza Horizon / Rocket League feel)
 //
@@ -67,7 +67,7 @@ const LAT_GRIP_MS2      = 14.0;
 // Bias-learning window must be WIDER than realistic worn-stick rest (~0.20)
 // or the bias never trains and the car pulls toward the resting direction.
 const STEER_DEADZONE    = 0.10;
-const STEER_BIAS_WINDOW = 0.32;   // train bias whenever |raw input| stays in this band
+const STEER_BIAS_WINDOW = 0.50;   // train bias whenever |raw input| stays in this band
 const STEER_CENTER_TRACK = 4.0;   // slow learn so brief pad sweeps through 0 don't pollute
 
 // Lateral grip (cancel sideways velocity)
@@ -75,7 +75,7 @@ const LATERAL_GRIP_RATE = 8.0;   // hug the lane harder – faster sideways deca
 
 // Smoothing
 const THROTTLE_SMOOTH_UP   = 6.0;
-const THROTTLE_SMOOTH_DOWN = 8.0;
+const THROTTLE_SMOOTH_DOWN = 5.0;
 
 // Mileage / fuel
 const MILEAGE_BATCH    = 0.1;

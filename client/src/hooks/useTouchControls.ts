@@ -20,11 +20,11 @@ import { useGameStore } from '@/stores/gameStore';
 
 const DEAD_ZONE_PX = 5;
 const STEER_DRAG_SCALE = 0.004; // px → steering value
-// Bumped from 0.12 → 0.25 because cheap / worn sticks rest at offsets up to
-// ~0.20 on one axis (manifesting as the car constantly steering right). The
-// raw value is also re-mapped after the dead zone so the output starts cleanly
-// from 0 rather than jumping to ±0.25.
-const GAMEPAD_DEAD_ZONE = 0.25;
+// Bumped from 0.12 → 0.35 because cheap / worn sticks can rest at offsets
+// up to ~0.20 and occasional controllers report weak non-zero axis values.
+// Larger dead zones help keep the car centered when the player is not touching
+// the stick.
+const GAMEPAD_DEAD_ZONE = 0.35;
 const GAMEPAD_POLL_INTERVAL = 16; // ~60fps polling
 
 interface ActiveTouch {
@@ -209,6 +209,14 @@ export function useTouchControls() {
       const stickX = applyDeadZone(pad.axes[0] ?? 0);
 
       // Triggers — some gamepads report as axes[2]/axes[5], others as buttons[6]/buttons[7]
+      function mapTriggerAxis(axis?: number): number {
+        if (typeof axis !== 'number') return 0;
+        return Math.max(0, Math.min(1, (axis + 1) / 2));
+      }
+      function applyTriggerDeadZone(value: number): number {
+        return value > 0.05 ? value : 0;
+      }
+
       let triggerThrottle = 0;
       let triggerBrake = 0;
 
@@ -219,6 +227,16 @@ export function useTouchControls() {
       if (pad.buttons[6]) {
         triggerBrake = pad.buttons[6].value; // LT
       }
+
+      // Fallback to common trigger axes when button mapping is absent.
+      if (triggerThrottle < 0.05) {
+        triggerThrottle = Math.max(triggerThrottle, mapTriggerAxis(pad.axes[5]));
+      }
+      if (triggerBrake < 0.05) {
+        triggerBrake = Math.max(triggerBrake, mapTriggerAxis(pad.axes[2]));
+      }
+      triggerThrottle = applyTriggerDeadZone(triggerThrottle);
+      triggerBrake = applyTriggerDeadZone(triggerBrake);
 
       // Digital fallbacks
       const aButton = pad.buttons[0]?.pressed ?? false;  // A = throttle
@@ -244,7 +262,7 @@ export function useTouchControls() {
 
       // Only treat real stick/pedal input as gamepad driving. (Any-button checks
       // cause phantom "input" on some drivers and overwrite keyboard with zeros.)
-      const eps = 0.02;
+      const eps = 0.05;
       const hasMovementInput =
         Math.abs(steering) > eps ||
         Math.max(throttle, kbThrottle) > eps ||
