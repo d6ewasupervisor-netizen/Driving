@@ -1,9 +1,14 @@
 /**
  * Zustand Game Store — Ali's Aigoo Apocalypse
  * All game state, persisted via localStorage
+ *
+ * PERFORMANCE: Store uses subscribeWithSelector middleware to enable
+ * transient subscriptions for per-frame readers (60Hz updates).
+ * This bypasses React rendering — critical inside <Canvas>.
+ * See zustand-patterns skill for optimization patterns.
  */
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, subscribeWithSelector } from 'zustand/middleware';
 import { Question } from '@/types/quiz';
 
 export type GamePhase =
@@ -156,8 +161,9 @@ const defaultGameState: GameSlice & QuizSlice & EconomySlice = {
 
 // ─── Store ────────────────────────────────────────────────────────────────────
 export const useGameStore = create<GameState>()(
-  persist(
-    (set, get) => ({
+  subscribeWithSelector(
+    persist(
+      (set, get) => ({
       // Runtime (not persisted)
       steering: 0,
       throttle: 0,
@@ -380,5 +386,6 @@ export const useGameStore = create<GameState>()(
         musicVolume: state.musicVolume,
       }),
     }
+    )
   )
 );

@@ -85,7 +85,8 @@ function Scene({ lowEnd }: { lowEnd: boolean }) {
   return (
     <Physics
       gravity={[0, -9.7119, 0]}
-      timeStep="vary"
+      timeStep={1 / 60}
+      interpolation={true}
     >
       <Lighting />
       <Skybox />

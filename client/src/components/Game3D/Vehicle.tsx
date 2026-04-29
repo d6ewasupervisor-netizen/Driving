@@ -17,6 +17,7 @@
  */
 import { useRef, useEffect, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
+import { useBeforePhysicsStep } from '@react-three/rapier';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { RigidBody, CuboidCollider, RapierRigidBody, useRapier } from '@react-three/rapier';
@@ -384,8 +385,18 @@ export function Vehicle() {
     bodyRef.current.setRotation({ x: 0, y: 0, z: 0, w: 1 }, true);
   }, [resetCounter]);
 
+  // ── Apply inputs and forces at fixed physics timestep ─────────────────────
+  // OPTIMIZATION: useBeforePhysicsStep ensures tickVehicle runs once per fixed
+  // physics step (1/60s), not once per render frame. This is critical for:
+  // • Deterministic input handling across refresh rates
+  // • Correct force application (no triple-force on 144Hz displays)
+  // • Consistent vehicle behavior on all machines
+  useBeforePhysicsStep((deltaTime) => {
+    if (bodyRef.current) tickVehicle(bodyRef.current, deltaTime, world, rapier);
+  });
+
+  // ── Update plow visuals at render rate (visual-only, safe in useFrame) ────
   useFrame((_, delta) => {
-    if (bodyRef.current) tickVehicle(bodyRef.current, delta, world, rapier);
     updatePlow(delta);
     plowAngleDisplay.current = plowAngle.current;
   });
