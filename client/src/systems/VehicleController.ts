@@ -161,6 +161,22 @@ export function tickVehicle(
   const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(quat).normalize();
   const right   = new THREE.Vector3(1, 0, 0).applyQuaternion(quat).normalize();
 
+  // Project onto the horizontal plane to avoid pitch/roll introducing
+  // misleading X/Z velocity components. This makes the car more stable on
+  // bumps and prevents slight tilting from killing forward progress.
+  const flatForward = new THREE.Vector3(forward.x, 0, forward.z);
+  const flatRight = new THREE.Vector3(right.x, 0, right.z);
+  if (flatForward.lengthSq() < 1e-6) {
+    flatForward.set(0, 0, -1);
+  } else {
+    flatForward.normalize();
+  }
+  if (flatRight.lengthSq() < 1e-6) {
+    flatRight.set(1, 0, 0);
+  } else {
+    flatRight.normalize();
+  }
+
   // ── Sample real velocity ───────────────────────────────────────────────
   // We only read the lateral component (for grip decay & slip metrics) and
   // the vertical (to preserve gravity). The forward component is *intentionally
@@ -170,7 +186,7 @@ export function tickVehicle(
   // applyCollisionImpact() explicitly, which is the only sanctioned external
   // speed change.
   const linvel = body.linvel();
-  const lateralSpeed = right.x * linvel.x + right.z * linvel.z;
+  const lateralSpeed = flatRight.x * linvel.x + flatRight.z * linvel.z;
 
   // ── Smooth pedal inputs (kills throttle-induced surging) ──────────────
   if (throttleInput > smoothedThrottle) {
@@ -270,9 +286,9 @@ export function tickVehicle(
 
   body.setLinvel(
     {
-      x: forward.x * currentSpeed + right.x * newLateral,
+      x: flatForward.x * currentSpeed + flatRight.x * newLateral,
       y: linvel.y, // let Rapier handle vertical (gravity + ground)
-      z: forward.z * currentSpeed + right.z * newLateral,
+      z: flatForward.z * currentSpeed + flatRight.z * newLateral,
     },
     true,
   );

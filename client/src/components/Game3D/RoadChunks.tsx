@@ -671,7 +671,7 @@ export function RoadChunks({ lowEnd }: { lowEnd?: boolean }) {
         >
           {/* Road surface collider - thick slab to prevent tunneling */}
           <CuboidCollider
-            args={[6, 0.5, CHUNK_LENGTH / 2]}
+            args={[6, 0.5, CHUNK_LENGTH / 2 + 0.25]}
             position={[0, -0.5, 0]}
             friction={0.9}
             restitution={0.0}
@@ -685,14 +685,14 @@ export function RoadChunks({ lowEnd }: { lowEnd?: boolean }) {
           />
           {/* Curb colliders - prevent flying off road */}
           <CuboidCollider
-            args={[0.15, 0.08, CHUNK_LENGTH / 2]}
-            position={[-4.2, 0.04, 0]}
+            args={[0.15, 0.06, CHUNK_LENGTH / 2]}
+            position={[-4.2, 0.03, 0]}
             friction={0.8}
             restitution={0.1}
           />
           <CuboidCollider
-            args={[0.15, 0.08, CHUNK_LENGTH / 2]}
-            position={[4.2, 0.04, 0]}
+            args={[0.15, 0.06, CHUNK_LENGTH / 2]}
+            position={[4.2, 0.03, 0]}
             friction={0.8}
             restitution={0.1}
           />

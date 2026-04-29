@@ -24,7 +24,7 @@ const STEER_DRAG_SCALE = 0.004; // px → steering value
 // up to ~0.20 and occasional controllers report weak non-zero axis values.
 // Larger dead zones help keep the car centered when the player is not touching
 // the stick.
-const GAMEPAD_DEAD_ZONE = 0.35;
+const GAMEPAD_DEAD_ZONE = 0.40;
 const GAMEPAD_POLL_INTERVAL = 16; // ~60fps polling
 
 interface ActiveTouch {
@@ -262,7 +262,7 @@ export function useTouchControls() {
 
       // Only treat real stick/pedal input as gamepad driving. (Any-button checks
       // cause phantom "input" on some drivers and overwrite keyboard with zeros.)
-      const eps = 0.05;
+      const eps = 0.08;
       const hasMovementInput =
         Math.abs(steering) > eps ||
         Math.max(throttle, kbThrottle) > eps ||
