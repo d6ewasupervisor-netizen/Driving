@@ -17,7 +17,9 @@ import { isLowEndDevice, recordDelta } from '@/utils/performance';
 
 import { Lighting } from './Lighting';
 import { Skybox } from './Skybox';
+import { RoadChunks } from './RoadChunks';
 import { Vehicle } from './Vehicle';
+import { TrafficRenderer } from './TrafficRenderer';
 import { GameCamera } from './GameCamera';
 import { LoadingScreen } from './LoadingScreen';
 import { GameHUD } from './GameHUD';
@@ -71,8 +73,12 @@ function AudioBridge() {
 }
 
 // ─── Inner scene (needs Canvas context) ──────────────────────────────────────
-function Scene() {
+function Scene({ lowEnd }: { lowEnd: boolean }) {
   const npcsRef = useRef<NpcState[]>([]);
+
+  const handleNpcsRef = useRef((ref: React.MutableRefObject<NpcState[]>) => {
+    npcsRef.current = ref.current;
+  }).current;
 
   return (
     <Physics
@@ -82,7 +88,9 @@ function Scene() {
     >
       <Lighting />
       <Skybox />
+      <RoadChunks lowEnd={lowEnd} />
       <Vehicle />
+      <TrafficRenderer lowEnd={lowEnd} onNpcsRef={handleNpcsRef} />
       <Collectibles />
       <CollisionSystem npcsRef={npcsRef} />
       <SkidMarks />
@@ -206,7 +214,7 @@ export function Game3D({ onExit }: Game3DProps) {
         style={{ position: 'absolute', inset: 0 }}
       >
         <Suspense fallback={null}>
-          <Scene />
+          <Scene lowEnd={LOW_END} />
           <PostProcessing lowEnd={LOW_END} />
           <AudioBridge />
           <PerformanceMonitor />
