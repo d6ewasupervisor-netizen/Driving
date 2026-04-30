@@ -15,7 +15,7 @@
  * Plow geometry sits in world-space forward (-Z), attached via a pivot group
  * that lets the plow angle between -5° (scraping) and +5° (lifted).
  */
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useBeforePhysicsStep } from '@react-three/rapier';
 import { useGLTF } from '@react-three/drei';
@@ -129,44 +129,40 @@ function SuspensionCoil({ position, height }: { position: [number, number, numbe
 // ─── VW Beetle model with material overrides ──────────────────────────────────
 function VWBeetleModel({ plowAngle }: { plowAngle: number }) {
   const { scene } = useGLTF('/models/cars/vw_beetle.glb');
-  const [model, setModel] = useState<THREE.Group | null>(null);
+  const appliedRef = useRef(false);
 
-  useEffect(() => {
-    const clone = scene.clone(true);
-    clone.traverse((child) => {
-      if (!(child instanceof THREE.Mesh)) return;
-      child.castShadow = true;
-      child.receiveShadow = true;
-      const mat = child.material as THREE.MeshStandardMaterial;
-      if (!mat?.name) return;
+  // Apply material + wheel overrides once on the original scene
+  if (!appliedRef.current) {
+    appliedRef.current = true;
 
-      // Body → classic VW light blue
-      if (mat.name === 'Chassi') {
-        child.material = mat.clone();
-        (child.material as THREE.MeshStandardMaterial).color.set('#6BA5C9');
-      } else if (mat.name === 'Details_02') {
-        child.material = mat.clone();
-        (child.material as THREE.MeshStandardMaterial).color.set('#333333');
-      }
-    });
-
-    // Scale wheels + drop them for suspension gap
     const wheelNodes: Record<string, { scale: number; drop: number }> = {
       WheelF_Left:  { scale: FRONT_WHEEL_SCALE, drop: FRONT_WHEEL_DROP },
       WheelF_Right: { scale: FRONT_WHEEL_SCALE, drop: FRONT_WHEEL_DROP },
       WheelR_Left:  { scale: REAR_WHEEL_SCALE,  drop: REAR_WHEEL_DROP },
       WheelR_Right: { scale: REAR_WHEEL_SCALE,  drop: REAR_WHEEL_DROP },
     };
-    clone.traverse((child) => {
+
+    scene.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+        const mat = child.material as THREE.MeshStandardMaterial;
+        if (mat?.name === 'Chassi') {
+          child.material = mat.clone();
+          (child.material as THREE.MeshStandardMaterial).color.set('#6BA5C9');
+        } else if (mat?.name === 'Details_02') {
+          child.material = mat.clone();
+          (child.material as THREE.MeshStandardMaterial).color.set('#333333');
+        }
+      }
+      // Scale wheels + drop for suspension gap
       const cfg = wheelNodes[child.name];
       if (cfg) {
         child.scale.multiplyScalar(cfg.scale);
         child.position.y += cfg.drop;
       }
     });
-
-    setModel(clone);
-  }, [scene]);
+  }
 
   // Suspension coil positions (in GLB-local space before VEHICLE_SCALE)
   // Front wheels are roughly at X ±0.65, rear at X ±0.65
@@ -180,7 +176,7 @@ function VWBeetleModel({ plowAngle }: { plowAngle: number }) {
   return (
     <group scale={VEHICLE_SCALE}>
       {/* GLB natively faces -Z — no rotation needed */}
-      {model && <primitive object={model} />}
+      <primitive object={scene} />
       {/* Visible suspension coils */}
       {suspensions.map((pos, i) => (
         <SuspensionCoil
