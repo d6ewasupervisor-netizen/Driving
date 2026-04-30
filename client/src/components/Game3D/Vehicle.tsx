@@ -8,16 +8,17 @@
  *   Details_02    → body trim / wiper area
  *   WheelF_Left__0 → all four wheels
  *
- * The beetle's local axes (after the baked Y-flip in the GLB):
- *   front = +Z local, rear = -Z local, up = +Y local
- *   We rotate the whole group π about Y so front faces -Z (forward in world).
+ * The beetle's local axes:
+ *   front = -Z local (natively faces -Z, matching world forward)
+ *   No rotation needed — GLB already faces the correct direction.
  *
  * Plow geometry sits in world-space forward (-Z), attached via a pivot group
  * that lets the plow angle between -5° (scraping) and +5° (lifted).
  */
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useBeforePhysicsStep } from '@react-three/rapier';
+import { useGLTF } from '@react-three/drei';
 
 import * as THREE from 'three';
 import { RigidBody, CuboidCollider, RapierRigidBody, useRapier } from '@react-three/rapier';
@@ -96,20 +97,105 @@ function Plow({ angleDeg }: { angleDeg: number }) {
   );
 }
 
+// ─── Wheel + suspension constants ─────────────────────────────────────────────
+const REAR_WHEEL_SCALE  = 2.0;   // 2× bigger rear tires
+const FRONT_WHEEL_SCALE = 1.33;  // 1.33× bigger front tires
+const REAR_WHEEL_DROP   = -0.25; // how far below body the rear wheels sit
+const FRONT_WHEEL_DROP  = -0.15; // how far below body the front wheels sit
+// Suspension coil visual
+const COIL_RADIUS       = 0.04;
+const COIL_COLOR        = '#888888';
+
+// ─── Suspension coil spring visual ────────────────────────────────────────────
+function SuspensionCoil({ position, height }: { position: [number, number, number]; height: number }) {
+  return (
+    <group position={position}>
+      {/* Shock absorber cylinder */}
+      <mesh castShadow>
+        <cylinderGeometry args={[COIL_RADIUS, COIL_RADIUS, height, 8]} />
+        <meshStandardMaterial color={COIL_COLOR} metalness={0.9} roughness={0.3} />
+      </mesh>
+      {/* Coil spring (torus rings stacked) */}
+      {[0.25, 0.0, -0.25].map((yOff, i) => (
+        <mesh key={i} position={[0, yOff * height, 0]} rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[COIL_RADIUS * 2.5, COIL_RADIUS * 0.6, 6, 12]} />
+          <meshStandardMaterial color="#666666" metalness={0.8} roughness={0.4} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
 // ─── VW Beetle model with material overrides ──────────────────────────────────
 function VWBeetleModel({ plowAngle }: { plowAngle: number }) {
-  // Temporarily render a box instead of GLB to test if the issue is with the model loading
+  const { scene } = useGLTF('/models/cars/vw_beetle.glb');
+  const [model, setModel] = useState<THREE.Group | null>(null);
+
+  useEffect(() => {
+    const clone = scene.clone(true);
+    clone.traverse((child) => {
+      if (!(child instanceof THREE.Mesh)) return;
+      child.castShadow = true;
+      child.receiveShadow = true;
+      const mat = child.material as THREE.MeshStandardMaterial;
+      if (!mat?.name) return;
+
+      // Body → classic VW light blue
+      if (mat.name === 'Chassi') {
+        child.material = mat.clone();
+        (child.material as THREE.MeshStandardMaterial).color.set('#6BA5C9');
+      } else if (mat.name === 'Details_02') {
+        child.material = mat.clone();
+        (child.material as THREE.MeshStandardMaterial).color.set('#333333');
+      }
+    });
+
+    // Scale wheels + drop them for suspension gap
+    const wheelNodes: Record<string, { scale: number; drop: number }> = {
+      WheelF_Left:  { scale: FRONT_WHEEL_SCALE, drop: FRONT_WHEEL_DROP },
+      WheelF_Right: { scale: FRONT_WHEEL_SCALE, drop: FRONT_WHEEL_DROP },
+      WheelR_Left:  { scale: REAR_WHEEL_SCALE,  drop: REAR_WHEEL_DROP },
+      WheelR_Right: { scale: REAR_WHEEL_SCALE,  drop: REAR_WHEEL_DROP },
+    };
+    clone.traverse((child) => {
+      const cfg = wheelNodes[child.name];
+      if (cfg) {
+        child.scale.multiplyScalar(cfg.scale);
+        child.position.y += cfg.drop;
+      }
+    });
+
+    setModel(clone);
+  }, [scene]);
+
+  // Suspension coil positions (in GLB-local space before VEHICLE_SCALE)
+  // Front wheels are roughly at X ±0.65, rear at X ±0.65
+  const suspensions: [number, number, number][] = [
+    [-0.65, -0.05, -0.9],  // front-left
+    [ 0.65, -0.05, -0.9],  // front-right
+    [-0.65, -0.1,   0.8],  // rear-left
+    [ 0.65, -0.1,   0.8],  // rear-right
+  ];
+
   return (
     <group scale={VEHICLE_SCALE}>
-      <mesh position={[0, 0.5, 0]} castShadow receiveShadow>
-        <boxGeometry args={[2, 1, 4]} />
-        <meshStandardMaterial color="red" />
-      </mesh>
+      {/* GLB natively faces -Z — no rotation needed */}
+      {model && <primitive object={model} />}
+      {/* Visible suspension coils */}
+      {suspensions.map((pos, i) => (
+        <SuspensionCoil
+          key={i}
+          position={pos}
+          height={i < 2 ? 0.35 : 0.45}
+        />
+      ))}
       {/* Plow in physics space — -Z is forward */}
       <Plow angleDeg={plowAngle} />
     </group>
   );
 }
+
+useGLTF.preload('/models/cars/vw_beetle.glb');
 
 // ─── Plow angle controlled via keyboard (Q/E) or store ────────────────────────
 function usePlowAngle() {
@@ -193,7 +279,7 @@ export function Vehicle() {
         args={[COLLIDER_HX, COLLIDER_HY, COLLIDER_HZ]}
         position={[0, -0.2, 0]}
         friction={0.45}
-        restitution={0.12}
+        restitution={0.35}
       />
       <VWBeetleModel plowAngle={plowAngleDisplay.current} />
       <VehicleParticles />
