@@ -47,6 +47,32 @@ function clearAuth(): void {
   localStorage.removeItem(USER_KEY);
 }
 
+function decodeJwtPayload(token: string): Record<string, unknown> | null {
+  try {
+    const payload = token.split('.')[1];
+    const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+    return JSON.parse(decoded);
+  } catch {
+    return null;
+  }
+}
+
+export function isTokenExpired(token: string | null = getToken()): boolean {
+  if (!token) return true;
+  const payload = decodeJwtPayload(token);
+  if (!payload || typeof payload.exp !== 'number') return false;
+  return Date.now() / 1000 >= payload.exp - 10;
+}
+
+function ensureTokenValid(token: string | null): boolean {
+  if (!token) return true;
+  if (isTokenExpired(token)) {
+    clearAuth();
+    return false;
+  }
+  return true;
+}
+
 /**
  * Make authenticated API request
  */
@@ -59,6 +85,10 @@ async function authFetch<T = unknown>(endpoint: string, options: RequestInit = {
   };
   
   if (token) {
+    if (!ensureTokenValid(token)) {
+      notifyAuthStateChange();
+      throw new Error('Authentication token expired')
+    }
     (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
   }
   
@@ -70,6 +100,10 @@ async function authFetch<T = unknown>(endpoint: string, options: RequestInit = {
   const data = await response.json();
   
   if (!response.ok) {
+    if (response.status === 401) {
+      clearAuth();
+      notifyAuthStateChange();
+    }
     throw new Error(data.error || 'Request failed');
   }
   
@@ -204,8 +238,13 @@ let authStateListeners: AuthStateCallback[] = [];
 export function onAuthStateChanged(callback: AuthStateCallback): () => void {
   authStateListeners.push(callback);
   
-  // Immediately call with current state
-  callback(getCurrentUser());
+  // Immediately call with current state.
+  const token = getToken();
+  if (token && !ensureTokenValid(token)) {
+    notifyAuthStateChange();
+  } else {
+    callback(getCurrentUser());
+  }
   
   // Return unsubscribe function
   return () => {

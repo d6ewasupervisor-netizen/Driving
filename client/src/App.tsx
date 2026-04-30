@@ -1,6 +1,7 @@
 import { AuthProvider, useAuth } from '@/lib/authContext'
 import { useState } from 'react'
 import ZombieRoadWarrior from '@/components/ZombieRoadWarrior'
+import { useGameStore } from '@/stores/gameStore'
 
 type AppView = 'dashboard' | 'game'
 
@@ -148,7 +149,10 @@ function AppContent() {
     return <ZombieRoadWarrior onExit={() => setView('dashboard')} />
   }
 
-  return <Dashboard onPlayGame={() => setView('game')} />
+  return <Dashboard onPlayGame={() => {
+    useGameStore.getState().setPhase('driving')
+    setView('game')
+  }} />
 }
 
 function App() {

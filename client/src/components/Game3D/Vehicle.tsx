@@ -15,7 +15,7 @@
  * Plow geometry sits in world-space forward (-Z), attached via a pivot group
  * that lets the plow angle between -5° (scraping) and +5° (lifted).
  */
-import { useRef, useEffect, useMemo } from 'react';
+import { useRef, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useBeforePhysicsStep } from '@react-three/rapier';
 
@@ -35,15 +35,6 @@ const COLLIDER_HX = 0.5;
 const COLLIDER_HY = 0.32;
 const COLLIDER_HZ = 1.25;
 
-// ─── Material colours ─────────────────────────────────────────────────────────
-const BODY_COLOR        = new THREE.Color('#c47a6a'); // rusty pink
-const WINDOW_COLOR      = new THREE.Color('#111111'); // reflective black
-const CHROME_COLOR      = new THREE.Color('#d4d4d4'); // chrome wipers
-const TAILLIGHT_COLOR   = new THREE.Color('#ff1111'); // red
-const REVERSE_COLOR     = new THREE.Color('#ffffff'); // white reverse
-const HEADLIGHT_COLOR   = new THREE.Color('#ffffff'); // bright white
-
-
 // ─── Plow constants ───────────────────────────────────────────────────────────
 const PLOW_MIN_DEG  = -5;   // scraping
 const PLOW_MAX_DEG  =  5;   // lifted
@@ -56,21 +47,6 @@ const PLOW_Y        = 0.62;  // raised to hood/upper bumper level (52" up from g
 const PLOW_WIDTH    = 1.61;  // total width (extended 8" each end = 16" total)
 const PLOW_HEIGHT   = 0.5;   // blade height (extended 8" downward)
 const PLOW_DEPTH    = 1.57;  // blade length - extended 12% to meet at center point
-
-// ─── Material traversal helper ────────────────────────────────────────────────
-function applyToMaterial(
-  scene: THREE.Object3D,
-  matName: string,
-  fn: (mat: THREE.MeshStandardMaterial) => void
-) {
-  scene.traverse((obj) => {
-    if (!(obj instanceof THREE.Mesh)) return;
-    const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
-    mats.forEach((m) => {
-      if (m instanceof THREE.MeshStandardMaterial && m.name === matName) fn(m);
-    });
-  });
-}
 
 // ─── Plow geometry — simple V-shape at front bumper ──────────────────────────
 function Plow({ angleDeg }: { angleDeg: number }) {
@@ -172,7 +148,7 @@ export function Vehicle() {
   const plowAngleDisplay = useRef(0);
   const resetCounter = useGameStore((s) => s.resetCounter);
 
-  const { world, rapier } = useRapier();
+  const { rapier } = useRapier();
 
   useEffect(() => {
     if (!bodyRef.current) return;
@@ -184,13 +160,10 @@ export function Vehicle() {
   }, [resetCounter]);
 
   // ── Apply inputs and forces at fixed physics timestep ─────────────────────
-  // OPTIMIZATION: useBeforePhysicsStep ensures tickVehicle runs once per fixed
-  // physics step (1/60s), not once per render frame. This is critical for:
-  // • Deterministic input handling across refresh rates
-  // • Correct force application (no triple-force on 144Hz displays)
-  // • Consistent vehicle behavior on all machines
-  useBeforePhysicsStep((deltaTime) => {
-    if (bodyRef.current) tickVehicle(bodyRef.current, deltaTime, world, rapier);
+  // useBeforePhysicsStep runs once per fixed physics step (1/60s).
+  // The delta is the fixed timestep configured in <Physics timeStep={1/60}>.
+  useBeforePhysicsStep((world) => {
+    if (bodyRef.current) tickVehicle(bodyRef.current, 1 / 60, world, rapier);
   });
 
   // ── Update plow visuals at render rate (visual-only, safe in useFrame) ────
