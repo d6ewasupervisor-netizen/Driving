@@ -11,7 +11,7 @@ const linkingRoutes = require('./routes/linking');
 const { initDatabase } = require('./db/database');
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 const isProd = process.env.NODE_ENV === 'production';
 
 // Parse allowed origins from env

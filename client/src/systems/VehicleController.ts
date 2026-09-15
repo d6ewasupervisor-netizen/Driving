@@ -42,6 +42,10 @@ const THROTTLE_SMOOTH_UP = 3.5;
 const THROTTLE_SMOOTH_DOWN = 5.0;
 const ACCEL_SMOOTH_RATE = 10.0;
 const LATERAL_DAMP_RATE = 5.0;
+const LATERAL_DAMP_STRAIGHT = 18.0;
+const YAW_CENTER_RATE = 20.0;
+const STEER_DEADZONE = 0.06;
+const COLLISION_SPEED_DROP = 3.0; // m/s — only blend speed after real impacts
 const COLLISION_SPEED_BLEND = 0.6;
 
 const MPH_TO_MS = 0.44704;
@@ -144,7 +148,7 @@ export function tickVehicle(
   const actualForwardSpeed = forward.x * linvel.x + forward.z * linvel.z;
   const lateralSpeed = right.x * linvel.x + right.z * linvel.z;
 
-  if (Math.abs(actualForwardSpeed - currentSpeed) > 1.0) {
+  if (actualForwardSpeed < currentSpeed - COLLISION_SPEED_DROP) {
     currentSpeed = THREE.MathUtils.lerp(
       currentSpeed,
       actualForwardSpeed,
@@ -235,8 +239,12 @@ export function tickVehicle(
 
   if (currentSpeed < -reverseSpeedMs) currentSpeed = -reverseSpeedMs;
 
+  const steerInput = Math.abs(steering) < STEER_DEADZONE ? 0 : steering;
+  const goingStraight = steerInput === 0;
+
   // ── Set velocity via Rapier so the collision solver works properly ─────
-  const lateralDamp = Math.max(0, 1 - LATERAL_DAMP_RATE * dt);
+  const lateralRate = goingStraight ? LATERAL_DAMP_STRAIGHT : LATERAL_DAMP_RATE;
+  const lateralDamp = Math.max(0, 1 - lateralRate * dt);
   const dampedLateralX = right.x * lateralSpeed * lateralDamp;
   const dampedLateralZ = right.z * lateralSpeed * lateralDamp;
 
@@ -249,15 +257,20 @@ export function tickVehicle(
     true,
   );
 
-  // ── Steering ───────────────────────────────────────────────────────────
+  // ── Steering — auto-center yaw when input is neutral ───────────────────
   const absSpd = Math.abs(currentSpeed);
-  if (absSpd > 0.5) {
+  const angvel = body.angvel();
+
+  if (absSpd > 0.5 && steerInput !== 0) {
     const maxSteer = THREE.MathUtils.lerp(0.52, 0.14, Math.min(absSpd / 15, 1));
-    const steerAngle = steering * maxSteer;
+    const steerAngle = steerInput * maxSteer;
     const targetYaw = -(currentSpeed * Math.tan(steerAngle)) / WHEELBASE;
-    const angvel = body.angvel();
     const newYaw = angvel.y + (targetYaw - angvel.y) * Math.min(8.0 * dt, 1);
     body.setAngvel({ x: 0, y: newYaw, z: 0 }, true);
+  } else if (absSpd > 0.3) {
+    // Hold a straight line: kill yaw and snap velocity to heading
+    const yawDamp = Math.max(0, 1 - YAW_CENTER_RATE * dt);
+    body.setAngvel({ x: 0, y: angvel.y * yawDamp, z: 0 }, true);
   } else {
     body.setAngvel({ x: 0, y: 0, z: 0 }, true);
   }

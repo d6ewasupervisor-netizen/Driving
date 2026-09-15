@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
   const apiTarget =
     env.VITE_API_TARGET ||
     process.env.VITE_API_TARGET ||
-    'http://localhost:3001'
+    'http://localhost:3002'
 
   return {
     plugins: [react()],

@@ -33,6 +33,7 @@ import { Collectibles } from './Collectibles';
 import { CollisionSystem } from './CollisionSystem';
 import { PostProcessing } from './PostProcessing';
 import { SkidMarks } from './SkidMarks';
+import { SceneEnvironment } from './SceneEnvironment';
 import { NpcState } from '@/systems/TrafficManager';
 
 // ─── Low-end detection (computed once) ───────────────────────────────────────
@@ -88,6 +89,7 @@ function Scene({ lowEnd }: { lowEnd: boolean }) {
       timeStep="vary"
     >
       <Lighting />
+      <SceneEnvironment lowEnd={lowEnd} />
       <Skybox />
       <RoadChunks lowEnd={lowEnd} />
       <Vehicle />

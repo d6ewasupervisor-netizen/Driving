@@ -109,12 +109,15 @@ export function Lighting() {
         castShadow
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
-        shadow-camera-far={200}
+        shadow-bias={-0.0002}
+        shadow-normalBias={0.02}
+        shadow-radius={2}
+        shadow-camera-far={120}
         shadow-camera-near={0.5}
-        shadow-camera-left={-60}
-        shadow-camera-right={60}
-        shadow-camera-top={60}
-        shadow-camera-bottom={-60}
+        shadow-camera-left={-45}
+        shadow-camera-right={45}
+        shadow-camera-top={45}
+        shadow-camera-bottom={-45}
       />
       <hemisphereLight ref={hemiRef} args={['#88aaff', '#224400', 0.3]} />
     </>

@@ -4,11 +4,12 @@
  * Uses drei's Sky (Preetham model) for physically-based sky rendering.
  * Adds procedural fog and rain particle effects.
  */
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useState } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Sky } from '@react-three/drei';
 import * as THREE from 'three';
 import { useGameStore, TimeOfDay } from '@/stores/gameStore';
+import { setRoadSurfaceWetness } from './proceduralKenneyTextures';
 
 // ─── Sun position presets ─────────────────────────────────────────────────────
 const SUN_POSITIONS: Record<TimeOfDay, [number, number, number]> = {
@@ -150,7 +151,8 @@ export function Skybox() {
   const sunRef = useRef(SUN_POSITIONS.day);
   const turbidityRef = useRef(SKY_TURBIDITY.day);
   const rayleighRef = useRef(SKY_RAYLEIGH.day);
-  const weatherRef = useRef<WeatherType>('clear');
+  const [weather, setWeather] = useState<WeatherType>('clear');
+  const wetnessRef = useRef(0);
   const skyRef = useRef<any>(null);
   const frameCount = useRef(0);
 
@@ -164,8 +166,12 @@ export function Skybox() {
 
     const state = useGameStore.getState();
     const tod = state.timeOfDay;
-    const weather = getWeather(state.mileage);
-    weatherRef.current = weather;
+    const currentWeather = getWeather(state.mileage);
+    setWeather((prev) => (prev === currentWeather ? prev : currentWeather));
+
+    const targetWetness = currentWeather === 'rain' ? 1 : currentWeather === 'overcast' ? 0.35 : 0;
+    wetnessRef.current = THREE.MathUtils.lerp(wetnessRef.current, targetWetness, 0.06);
+    setRoadSurfaceWetness(wetnessRef.current);
 
     // Update sun target
     const [sx, sy, sz] = SUN_POSITIONS[tod];
@@ -178,8 +184,8 @@ export function Skybox() {
     rayleighRef.current = THREE.MathUtils.lerp(rayleighRef.current, SKY_RAYLEIGH[tod], 0.05);
 
     // Update fog
-    const fogColor = FOG_COLORS[tod][weather];
-    const fogDensity = FOG_DENSITY[weather];
+    const fogColor = FOG_COLORS[tod][currentWeather];
+    const fogDensity = FOG_DENSITY[currentWeather];
     if (!scene.fog) {
       scene.fog = new THREE.FogExp2(fogColor, fogDensity);
     } else {
@@ -211,7 +217,7 @@ export function Skybox() {
         mieDirectionalG={0.8}
       />
       <Stars />
-      {weatherRef.current === 'rain' && <RainEffect />}
+      {weather === 'rain' && <RainEffect />}
     </>
   );
 }

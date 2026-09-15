@@ -1,0 +1,10 @@
+---
+description: Never bind this project to port 3001
+alwaysApply: true
+---
+
+Port **3001 is reserved** on this machine. Do not start the API, proxy, or any dev server for this workspace on 3001.
+
+- Default API port is **3002** (`scripts/dev.mjs`, `server/src/index.js`, `vite.config.ts`).
+- Do not repeatedly restart `npm run dev` unless the user explicitly asks.
+- If the user needs the dev environment, start it once and report the assigned ports.

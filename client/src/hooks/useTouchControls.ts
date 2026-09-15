@@ -144,7 +144,11 @@ export function useTouchControls() {
         }
         activeTouch.current.delete(touch.identifier);
       }
-      applyTouch();
+      if (activeTouch.current.size === 0 && keys.size === 0) {
+        applyIdleControls();
+      } else {
+        applyTouch();
+      }
     }
 
     const container = document.getElementById('game-touch-area');
@@ -158,6 +162,14 @@ export function useTouchControls() {
     // ── Gamepad ───────────────────────────────────────────────────────────────
     function applyDeadZone(value: number): number {
       return Math.abs(value) < GAMEPAD_DEAD_ZONE ? 0 : value;
+    }
+
+    function applyIdleControls() {
+      store().setControls({ steering: 0, throttle: 0, brake: 0 });
+    }
+
+    function hasActiveTouchInput() {
+      return activeTouch.current.size > 0;
     }
 
     function pollGamepad() {
@@ -175,7 +187,11 @@ export function useTouchControls() {
       if (!pad) {
         gamepadActive.current = false;
         startPressedRef.current = false;
-        if (keys.size > 0) applyKeyboard();
+        if (keys.size > 0) {
+          applyKeyboard();
+        } else if (!hasActiveTouchInput()) {
+          applyIdleControls();
+        }
         return;
       }
 
@@ -248,7 +264,11 @@ export function useTouchControls() {
         maybeEnterDriving(controls);
       } else {
         gamepadActive.current = false;
-        if (keys.size > 0) applyKeyboard();
+        if (keys.size > 0) {
+          applyKeyboard();
+        } else if (!hasActiveTouchInput()) {
+          applyIdleControls();
+        }
       }
 
       // Pause button (Start/Menu) — debounced

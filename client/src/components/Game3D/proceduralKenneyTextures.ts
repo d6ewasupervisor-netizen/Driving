@@ -142,6 +142,15 @@ export function getSharedRoadMaterial(templateScene: THREE.Object3D): THREE.Mesh
   return roadMaterialSingleton;
 }
 
+/** Adjust shared road PBR for dry vs wet surfaces (0 = dry, 1 = soaked). */
+export function setRoadSurfaceWetness(wetness: number) {
+  if (!roadMaterialSingleton) return;
+  const w = THREE.MathUtils.clamp(wetness, 0, 1);
+  roadMaterialSingleton.roughness = THREE.MathUtils.lerp(0.9, 0.22, w);
+  roadMaterialSingleton.metalness = THREE.MathUtils.lerp(0.05, 0.4, w);
+  roadMaterialSingleton.envMapIntensity = THREE.MathUtils.lerp(0.3, 1.4, w);
+}
+
 function buildingUVForModel(modelPath: string): UVRect {
   if (modelPath.includes('building-sample-tower-b')) return BUILDING_TOWER_B_UV;
   if (

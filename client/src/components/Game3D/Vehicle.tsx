@@ -15,7 +15,7 @@
  * Plow geometry sits in world-space forward (-Z), attached via a pivot group
  * that lets the plow angle between -5° (scraping) and +5° (lifted).
  */
-import { useRef, useEffect, useMemo } from 'react';
+import { useRef, useEffect, useMemo, useLayoutEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
@@ -23,6 +23,12 @@ import { RigidBody, CuboidCollider, RapierRigidBody, useRapier } from '@react-th
 import { tickVehicle, resetVehicleController } from '@/systems/VehicleController';
 import { useGameStore } from '@/stores/gameStore';
 import { VehicleParticles } from './VehicleParticles';
+import {
+  buildWheelRigs,
+  attachWheelHubsToAnchor,
+  updateWheelRigs,
+  type WheelRig,
+} from './wheelRig';
 
 // ─── Collider half-extents (scaled 0.75× for better road proportion) ─────────
 const VEHICLE_SCALE = 0.75;
@@ -43,14 +49,16 @@ const HEADLIGHT_COLOR   = new THREE.Color('#ffffff'); // bright white
 const PLOW_MIN_DEG  = -5;   // scraping
 const PLOW_MAX_DEG  =  5;   // lifted
 const PLOW_SPEED    = 60;   // degrees per second
-// Plow attachment: simple V-shape at front bumper
-// Raised 52" (~1.32m total) and moved back 12" (~0.3m) toward car
-// When car rests on ground, RigidBody center is at Y≈0.75
-const PLOW_FRONT_Z  = -1.9;  // moved back from -2.2 (12" closer to car)
-const PLOW_Y        = 0.62;  // raised to hood/upper bumper level (52" up from ground)
-const PLOW_WIDTH    = 1.61;  // total width (extended 8" each end = 16" total)
-const PLOW_HEIGHT   = 0.5;   // blade height (extended 8" downward)
-const PLOW_DEPTH    = 1.57;  // blade length - extended 12% to meet at center point
+// Cowcatcher-style V — narrow mount, short blades, sharp forward point (-Z)
+const PLOW_FRONT_Z  = -1.85;
+const PLOW_Y        = 0.58;
+const PLOW_MOUNT_HALF = 0.34;  // wings attach closer to center (less front overhang)
+const PLOW_HEIGHT   = 0.36;
+const PLOW_DEPTH    = 1.16;
+const PLOW_FORWARD_TIP_Z = -0.58 * 0.72;
+const PLOW_WING_ANGLE_DEG = 58;
+const PLOW_PITCH_DEG = 9;      // bottom edge leads top by 9° (scoops forward below)
+const PLOW_REAR_Z = 0.14;      // rear hinge on center axis (+Z from pivot)
 
 useGLTF.preload('/models/cars/vw_beetle.glb');
 
@@ -69,7 +77,7 @@ function applyToMaterial(
   });
 }
 
-// ─── Plow geometry — simple V-shape at front bumper ──────────────────────────
+// ─── Plow geometry — cowcatcher V; blades meet on center axis, no overlap ────
 function Plow({ angleDeg }: { angleDeg: number }) {
   const pivotRef = useRef<THREE.Group>(null);
 
@@ -79,38 +87,33 @@ function Plow({ angleDeg }: { angleDeg: number }) {
     }
   }, [angleDeg]);
 
-  // Simple V-plow: two angled panels forming /\ shape pointing FORWARD
-  // The blades angle INWARD to form a point in the -Z (forward) direction
-  // Adjusted to bring tips together at front
-  const leftAngle = (Math.PI * 50) / 180;  // 50° (45° + 5°)
-  const rightAngle = (Math.PI * 45) / 180; // 45° (40° + 5°)
-  const tiltAngle = (Math.PI * 5) / 180;   // 5° tilt - base further from car than top
+  const wingAngle = (Math.PI * PLOW_WING_ANGLE_DEG) / 180;
+  // Negative X rotation: bottom (-Y) leads top (+Y) forward (-Z)
+  const pitchAngle = -(Math.PI * PLOW_PITCH_DEG) / 180;
+  const tipOffset = PLOW_REAR_Z - PLOW_FORWARD_TIP_Z;
+  const meshCenterZ = -tipOffset + PLOW_DEPTH / 2;
 
   return (
     <group ref={pivotRef} position={[0, PLOW_Y, PLOW_FRONT_Z]}>
-      {/* Left blade - starts at front-left corner of car, rotates inward (-angle) to meet at front point */}
-      <mesh
-        position={[-PLOW_WIDTH / 2.2, 0.05, -0.15]}
-        rotation={[-tiltAngle, -leftAngle, 0]}
-        castShadow
-      >
-        <boxGeometry args={[0.04, PLOW_HEIGHT, PLOW_DEPTH]} />
-        <meshStandardMaterial color="#555555" metalness={0.8} roughness={0.4} />
-      </mesh>
+      {/* Left wing — hinged on center axis; inner face at x=0, spans outward -X */}
+      <group position={[0, 0.02, PLOW_REAR_Z]} rotation={[pitchAngle, -wingAngle, 0]}>
+        <mesh position={[-PLOW_MOUNT_HALF / 2, 0, meshCenterZ]} castShadow>
+          <boxGeometry args={[PLOW_MOUNT_HALF, PLOW_HEIGHT, PLOW_DEPTH]} />
+          <meshStandardMaterial color="#555555" metalness={0.8} roughness={0.4} />
+        </mesh>
+      </group>
 
-      {/* Right blade - starts at front-right corner of car, rotates inward (+angle) to meet at front point */}
-      <mesh
-        position={[PLOW_WIDTH / 2.2, 0.05, -0.15]}
-        rotation={[-tiltAngle, rightAngle, 0]}
-        castShadow
-      >
-        <boxGeometry args={[0.04, PLOW_HEIGHT, PLOW_DEPTH]} />
-        <meshStandardMaterial color="#555555" metalness={0.8} roughness={0.4} />
-      </mesh>
+      {/* Right wing — inner face at x=0, spans outward +X */}
+      <group position={[0, 0.02, PLOW_REAR_Z]} rotation={[pitchAngle, wingAngle, 0]}>
+        <mesh position={[PLOW_MOUNT_HALF / 2, 0, meshCenterZ]} castShadow>
+          <boxGeometry args={[PLOW_MOUNT_HALF, PLOW_HEIGHT, PLOW_DEPTH]} />
+          <meshStandardMaterial color="#555555" metalness={0.8} roughness={0.4} />
+        </mesh>
+      </group>
 
-      {/* Mounting bracket */}
-      <mesh position={[0, PLOW_HEIGHT / 2, 0]} castShadow>
-        <boxGeometry args={[PLOW_WIDTH * 0.8, 0.06, 0.06]} />
+      {/* Mount rail on rear trailing edge */}
+      <mesh position={[0, PLOW_HEIGHT * 0.42, PLOW_REAR_Z + 0.04]} castShadow>
+        <boxGeometry args={[PLOW_MOUNT_HALF * 2.2, 0.05, 0.05]} />
         <meshStandardMaterial color="#444444" metalness={0.9} roughness={0.3} />
       </mesh>
     </group>
@@ -123,7 +126,12 @@ function VWBeetleModel({ plowAngle }: { plowAngle: number }) {
   const brake = useGameStore((s) => s.brake);
   const throttle = useGameStore((s) => s.throttle);
   const steering = useGameStore((s) => s.steering);
+  const velocityMph = useGameStore((s) => s.velocityMph);
   const timeOfDay = useGameStore((s) => s.timeOfDay);
+  const bodyGroupRef = useRef<THREE.Group>(null);
+  const wheelsAnchorRef = useRef<THREE.Group>(null);
+  const bouncePhase = useRef(0);
+  const wheelRigsRef = useRef<WheelRig[]>([]);
 
   // Headlight refs
   const leftLightRef = useRef<THREE.SpotLight>(null);
@@ -137,9 +145,6 @@ function VWBeetleModel({ plowAngle }: { plowAngle: number }) {
   // ── Blinker state (flash at ~1.5 Hz when steering) ──────────────────────────
   const blinkerOn = useRef(false);
   const blinkerTimer = useRef(0);
-
-  // ── Front wheel refs for visual steering ─────────────────────────────────────
-  const frontWheelsRef = useRef<THREE.Object3D[]>([]);
 
   // ── Apply material overrides once on mount ───────────────────────────────────
   useEffect(() => {
@@ -178,35 +183,44 @@ function VWBeetleModel({ plowAngle }: { plowAngle: number }) {
     // Suspension lift: 8" = ~0.2m front, 6" = ~0.1492m rear (reduced 2" each)
     const FRONT_SUSPENSION_LIFT = 0.1992; // 8 inches (reduced 2" from 10")
     const REAR_SUSPENSION_LIFT = 0.1492;  // 6 inches (reduced 2" from 8")
-    const frontWheelGroups: THREE.Object3D[] = [];
     scene.traverse((obj) => {
       const name = obj.name.toLowerCase();
-      if (name.includes('wheel')) {
-        // Detect front vs rear by node name: WheelF_ = front, WheelR_ = rear
-        const isFront = name.startsWith('wheelf');
-        const suspensionLift = isFront ? FRONT_SUSPENSION_LIFT : REAR_SUSPENSION_LIFT;
-        obj.position.y -= suspensionLift;
-        if (isFront) {
-          obj.scale.set(1.31, 1.215, 1.35); // narrower but taller front tires
-          // Only store the parent group nodes (not __0 mesh children) for steering
-          // so rotation applies once via parent-child inheritance
-          if (!name.includes('__')) frontWheelGroups.push(obj);
-        } else {
-          obj.scale.set(2.0625, 1.395, 1.55); // wider rear tires
-        }
+      if (!name.includes('wheel') || name.includes('__')) return;
+      const isFront = name.startsWith('wheelf');
+      obj.position.y -= isFront ? FRONT_SUSPENSION_LIFT : REAR_SUSPENSION_LIFT;
+      if (isFront) {
+        obj.scale.set(1.31, 1.215, 1.35);
+      } else {
+        obj.scale.set(2.0625, 1.395, 1.55);
       }
     });
-    frontWheelsRef.current = frontWheelGroups;
+
+    const rigs = buildWheelRigs(scene);
+    wheelRigsRef.current = rigs;
+  }, [scene]);
+
+  useLayoutEffect(() => {
+    if (!wheelsAnchorRef.current || wheelRigsRef.current.length === 0) return;
+    attachWheelHubsToAnchor(wheelRigsRef.current, wheelsAnchorRef.current);
   }, [scene]);
 
   // ── Dynamic light / window overrides each frame ───────────────────────────────
   useFrame((_, delta) => {
-    // ── Front wheel visual steering (rotate around Y axis) ──────────────────
-    // Model is not rotated, so steering sign is negative (left steer = -Y rotation)
-    const maxVisualSteerAngle = 0.52; // ~30° max visual turn
+    // ── Wheel spin + steering (separate hub vs mesh to avoid Euler coupling) ──
+    const speedMs = velocityMph * 0.44704;
+    const wheelRadius = 0.34 * VEHICLE_SCALE;
+    const spinRate = wheelRadius > 0 ? speedMs / wheelRadius : 0;
+    const maxVisualSteerAngle = 0.52;
     const targetSteerY = -steering * maxVisualSteerAngle;
-    for (const wheel of frontWheelsRef.current) {
-      wheel.rotation.y = THREE.MathUtils.lerp(wheel.rotation.y, targetSteerY, 10 * delta);
+    updateWheelRigs(wheelRigsRef.current, spinRate, delta, targetSteerY, 10);
+
+    // ── Suspension bounce on body only (wheels stay on the road) ─────────────
+    if (bodyGroupRef.current) {
+      bouncePhase.current += delta * (2 + velocityMph * 0.08);
+      const bounceAmp = 0.012 + Math.min(velocityMph / 70, 1) * 0.025;
+      bodyGroupRef.current.position.y =
+        Math.sin(bouncePhase.current) * bounceAmp +
+        Math.sin(bouncePhase.current * 2.3) * bounceAmp * 0.35;
     }
 
     // ── Headlight intensity based on time of day ──────────────────────────────
@@ -291,18 +305,19 @@ function VWBeetleModel({ plowAngle }: { plowAngle: number }) {
 
   return (
     <group scale={VEHICLE_SCALE}>
-      {/* GLB model natively faces -Z which matches physics forward (-Z).
-          No rotation needed. */}
-      <group>
-        <primitive object={scene} castShadow receiveShadow />
-        {/* Opaque interior block to hide baked-in driver figure. */}
-        <mesh position={[0, 0.35, 0.15]}>
-          <boxGeometry args={[1.2, 0.7, 1.4]} />
-          <meshStandardMaterial color="#0a0a0a" />
-        </mesh>
+      <group ref={bodyGroupRef}>
+        <group>
+          <primitive object={scene} castShadow receiveShadow />
+          {/* Opaque interior block to hide baked-in driver figure. */}
+          <mesh position={[0, 0.35, 0.15]}>
+            <boxGeometry args={[1.2, 0.7, 1.4]} />
+            <meshStandardMaterial color="#0a0a0a" />
+          </mesh>
+        </group>
+        <Plow angleDeg={plowAngle} />
       </group>
-      {/* Plow in physics space — -Z is forward */}
-      <Plow angleDeg={plowAngle} />
+      {/* Wheels outside bounce group — roll on road, body bounces above */}
+      <group ref={wheelsAnchorRef} />
 
       {/* Headlight SpotLights — project forward from front of car */}
       <spotLight
@@ -394,14 +409,14 @@ export function Vehicle() {
       canSleep={false}
       enabledRotations={[false, true, false]}
       linearDamping={0}
-      angularDamping={0.5}
+      angularDamping={2.5}
       colliders={false}
       ccd
     >
-      {/* Main body collider – sits at body center so Rapier rests it on the road */}
+      {/* Collider biased toward rear (+Z) so the nose doesn't dive or wander */}
       <CuboidCollider
         args={[COLLIDER_HX, COLLIDER_HY, COLLIDER_HZ]}
-        position={[0, 0, 0]}
+        position={[0, -0.05, 0.38]}
         friction={0}
         restitution={0.2}
       />

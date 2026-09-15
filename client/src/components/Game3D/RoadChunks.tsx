@@ -161,7 +161,7 @@ function StreetLight({ position }: { position: [number, number, number] }) {
         castShadow
       />
       <CuboidCollider
-        args={[0.15, 4, 0.15]}
+        args={[0.08, 4, 0.08]}
         position={[position[0], 4, position[2]]}
         restitution={0.1}
       />
@@ -341,9 +341,9 @@ function Guardrail({ side, length }: { side: 'left' | 'right'; length: number })
   return (
     <group>
       <CuboidCollider
-        args={[0.1, 0.4, length / 2]}
+        args={[0.06, 0.35, length / 2]}
         position={[x, 0.3, 0]}
-        restitution={0.3}
+        restitution={0.15}
       />
       {/* Continuous rail */}
       <mesh position={[x, 0.45, 0]}>
@@ -667,33 +667,21 @@ export function RoadChunks({ lowEnd }: { lowEnd?: boolean }) {
           position={[0, 0, chunk.zPosition]}
           colliders={false}
         >
-          {/* Road surface collider - thick slab to prevent tunneling */}
+          {/* Road surface — low friction; vehicle uses programmatic drive */}
           <CuboidCollider
-            args={[6, 0.5, CHUNK_LENGTH / 2]}
+            args={[6, 0.5, CHUNK_LENGTH / 2 - 0.05]}
             position={[0, -0.5, 0]}
-            friction={0.9}
+            friction={0.15}
             restitution={0.0}
           />
-          {/* Terrain/ground plane - large area to catch off-road vehicles */}
+          {/* Terrain/ground plane — catch off-road falls only */}
           <CuboidCollider
-            args={[50, 0.5, CHUNK_LENGTH / 2]}
+            args={[50, 0.5, CHUNK_LENGTH / 2 - 0.05]}
             position={[0, -1, 0]}
-            friction={0.7}
+            friction={0.15}
             restitution={0.0}
           />
-          {/* Curb colliders - prevent flying off road */}
-          <CuboidCollider
-            args={[0.15, 0.08, CHUNK_LENGTH / 2]}
-            position={[-4.2, 0.04, 0]}
-            friction={0.8}
-            restitution={0.1}
-          />
-          <CuboidCollider
-            args={[0.15, 0.08, CHUNK_LENGTH / 2]}
-            position={[4.2, 0.04, 0]}
-            friction={0.8}
-            restitution={0.1}
-          />
+          {/* Curbs removed — invisible scrapes caused sudden stops when drifting slightly */}
           <ChunkGeom biome={chunk.biome} variation={chunk.variation} lowEnd={lowEnd} />
         </RigidBody>
       ))}

@@ -60,6 +60,9 @@ const _targetLook = new THREE.Vector3();
 const _rotatedOffset = new THREE.Vector3();
 const _shakeOffset = new THREE.Vector3();
 
+const BASE_FOV = 75;
+const MAX_FOV_BOOST = 9;
+
 export function GameCamera() {
   const { camera } = useThree();
   const lookRef = useRef(new THREE.Vector3());
@@ -81,6 +84,7 @@ export function GameCamera() {
     const heading = state.vehicleHeading;
     const mode = MODES[state.cameraMode];
     const dt = Math.min(delta, 0.05);
+    const speedNorm = Math.min(1, state.velocityMph / 70);
 
     if (mode.followHeading) {
       // Rotate offset and lookAt around Y by vehicle heading
@@ -125,6 +129,14 @@ export function GameCamera() {
     camera.position.lerp(_targetPos, posFactor);
     lookRef.current.lerp(_targetLook, rotFactor);
     camera.lookAt(lookRef.current);
+
+    // Speed-based FOV — subtle sense of velocity in chase mode
+    if (camera instanceof THREE.PerspectiveCamera) {
+      const fovBoost = state.cameraMode === 'chase' ? speedNorm * MAX_FOV_BOOST : speedNorm * 3;
+      const targetFov = BASE_FOV + fovBoost;
+      camera.fov = THREE.MathUtils.lerp(camera.fov, targetFov, 1 - Math.exp(-4 * dt));
+      camera.updateProjectionMatrix();
+    }
   });
 
   return null;

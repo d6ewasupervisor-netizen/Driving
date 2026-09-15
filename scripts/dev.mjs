@@ -1,7 +1,7 @@
 /**
- * Picks a free TCP port (default range 3001–3010), sets PORT + VITE_API_TARGET,
+ * Picks a free TCP port (default range 3002–3011), sets PORT + VITE_API_TARGET,
  * then runs the same concurrent server + client as `npm run dev:inner`.
- * Avoids EADDRINUSE when an old API server is still bound to 3001.
+ * Port 3001 is reserved — never used by this workspace.
  */
 import net from 'net';
 import { spawn } from 'child_process';
@@ -39,15 +39,18 @@ function canBindPort(port) {
   });
 }
 
+const BLOCKED_PORTS = new Set([3001]);
+
 async function pickPort(start, endInclusive) {
   for (let p = start; p <= endInclusive; p++) {
+    if (BLOCKED_PORTS.has(p)) continue;
     if (await localhostPortAccepts(p)) continue;
     if (await canBindPort(p)) return p;
   }
-  throw new Error(`No free TCP port between ${start} and ${endInclusive}`);
+  throw new Error(`No free TCP port between ${start} and ${endInclusive} (3001 blocked)`);
 }
 
-const start = Number(process.env.API_PORT_START || 3001);
+const start = Number(process.env.API_PORT_START || 3002);
 const span = Number(process.env.API_PORT_SPAN || 10);
 const port = await pickPort(start, start + span - 1);
 
