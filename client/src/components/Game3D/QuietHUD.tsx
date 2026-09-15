@@ -22,9 +22,13 @@ export function QuietHUD() {
   const toast = useQRStore((s) => s.toast);
   const tp = useQRStore((s) => s.vars.trade_points ?? 0);
   const setHorn = useQRStore((s) => s.setHorn);
+  const run = useQRStore((s) => s.run);
+  const setRun = useQRStore((s) => s.setRun);
 
   if (worldMode !== 'kent') return null;
   const driving = phase === 'driving';
+  const walking = phase === 'walking';
+  const active = driving || walking;
   const band = BAND[frame?.noiseBand ?? 0];
   const db = frame?.noiseDb ?? 20;
   const pct = Math.max(0, Math.min(1, (db - 20) / 80));
@@ -36,7 +40,7 @@ export function QuietHUD() {
   return (
     <div style={styles.root}>
       {/* Noise meter — top centre */}
-      {driving && (
+      {active && (
         <div style={styles.meterWrap}>
           <div style={styles.meterLabel}>
             <span style={{ color: band.color, fontWeight: 800 }}>{band.shape} {band.word}</span>
@@ -81,6 +85,17 @@ export function QuietHUD() {
           aria-label="Horn (H)"
         >
           HORN
+        </button>
+      )}
+
+      {walking && (
+        <button
+          data-ui
+          style={{ ...styles.horn, borderColor: run ? '#ffd93d' : '#888', background: run ? 'rgba(120,100,20,0.6)' : 'rgba(30,30,40,0.55)', color: run ? '#ffe680' : '#bbb' }}
+          onPointerDown={(e) => { e.preventDefault(); setRun(!run); }}
+          aria-label="Run (Shift)"
+        >
+          {run ? 'RUNNING' : 'WALK'}
         </button>
       )}
 

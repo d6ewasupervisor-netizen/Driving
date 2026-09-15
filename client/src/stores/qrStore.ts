@@ -37,6 +37,8 @@ interface Transient {
   toast: string;
   frame: SimFrame | null;
   horn: boolean;
+  run: boolean;
+  qteActive: boolean;
 }
 
 interface Actions {
@@ -55,6 +57,7 @@ interface Actions {
   setPlaceholder: (k: string, v: string) => void;
   setTransient: (partial: Partial<Transient>) => void;
   setHorn: (v: boolean) => void;
+  setRun: (v: boolean) => void;
   resetQuietRoads: () => void;
 }
 
@@ -67,7 +70,7 @@ const emptyPersisted: Persisted = {
 };
 
 const emptyTransient: Transient = {
-  line: null, direction: null, choices: null, objective: '', toast: '', frame: null, horn: false,
+  line: null, direction: null, choices: null, objective: '', toast: '', frame: null, horn: false, run: false, qteActive: false,
 };
 
 export const useQRStore = create<QRState>()(
@@ -92,6 +95,7 @@ export const useQRStore = create<QRState>()(
         setPlaceholder: (k, v) => set((s) => ({ placeholders: { ...s.placeholders, [k]: v } })),
         setTransient: (partial) => set(partial),
         setHorn: (v) => set({ horn: v }),
+        setRun: (v) => set({ run: v }),
         resetQuietRoads: () => set({ ...emptyPersisted, placeholders: get().placeholders, ...emptyTransient }),
       }),
       {

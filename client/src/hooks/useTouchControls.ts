@@ -44,7 +44,7 @@ export function useTouchControls() {
       const hasMovementIntent =
         Math.abs(controls.steering) > 0.05 || controls.throttle > 0.05 || controls.brake > 0.05;
       if ((phase === 'menu' || phase === 'paused') && hasMovementIntent) {
-        store().setPhase('driving');
+        store().setPhase(phase === 'paused' ? store().prePausePhase : 'driving');
       }
     };
 
@@ -73,11 +73,13 @@ export function useTouchControls() {
     const onKeyDown = (e: KeyboardEvent) => {
       keys.add(e.key);
       if (e.key === 'h' || e.key === 'H') useQRStore.getState().setHorn(true);
+      if (e.key === 'Shift') useQRStore.getState().setRun(true);
       applyKeyboard();
     };
     const onKeyUp = (e: KeyboardEvent) => {
       keys.delete(e.key);
       if (e.key === 'h' || e.key === 'H') useQRStore.getState().setHorn(false);
+      if (e.key === 'Shift') useQRStore.getState().setRun(false);
       applyKeyboard();
     };
 

@@ -24,8 +24,12 @@ export const REF_DISTANCE_M = 10;
 
 export type NoiseBand = 0 | 1 | 2; // green, yellow, red
 
+export type NoiseZone = "outdoor" | "dol_interior";
+
 export interface NoiseListener {
   pos: Vec2;
+  /** Listeners only hear sources in their own zone — walls are absolute here. */
+  zone: NoiseZone;
   /** heard = dB above the 30 dB floor at the listener's position */
   hear(heardAboveFloor: number, from: Vec2, db: number): void;
 }
@@ -44,11 +48,12 @@ export class NoiseSystem {
 
   setListeners(l: NoiseListener[]) { this.listeners = l; }
 
-  emitKind(kind: NoiseKind, pos: Vec2) { this.emit(NOISE[kind], pos); }
+  emitKind(kind: NoiseKind, pos: Vec2, zone: NoiseZone = "outdoor") { this.emit(NOISE[kind], pos, zone); }
 
-  emit(db: number, pos: Vec2) {
+  emit(db: number, pos: Vec2, zone: NoiseZone = "outdoor") {
     this.levelDb = Math.max(this.levelDb, db);
     for (const z of this.listeners) {
+      if (z.zone !== zone) continue;
       const heard = NoiseSystem.heardAt(db, dist(pos, z.pos));
       if (heard > HEAR_FLOOR_DB) z.hear(heard - HEAR_FLOOR_DB, pos, db);
     }

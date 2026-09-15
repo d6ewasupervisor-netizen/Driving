@@ -53,6 +53,9 @@ const MODES: Record<CameraMode, ModeConfig> = {
   },
 };
 const QUIET_LOOKAHEAD_PER_MPH = 0.16; // metres of extra aim per mph
+// On foot (Quiet Roads 1.3): fixed north-up, closer and steeper so the aisles read.
+const WALK_OFFSET = new THREE.Vector3(0, 6.0, 5.5);
+const WALK_LOOKAT = new THREE.Vector3(0, 0.4, -2.5);
 
 // ─── Screen shake (module-level for easy triggering) ──────────────────────────
 let _shakeIntensity = 0;
@@ -90,9 +93,12 @@ export function GameCamera() {
 
   useFrame((_, delta) => {
     const state = useGameStore.getState();
-    const [vx, vy, vz] = state.vehiclePosition;
-    const heading = state.vehicleHeading;
-    const mode = MODES[state.cameraMode];
+    const walking = state.phase === 'walking';
+    const [vx, vy, vz] = walking ? state.walkerPosition : state.vehiclePosition;
+    const heading = walking ? 0 : state.vehicleHeading;
+    const mode = walking
+      ? { offset: WALK_OFFSET, lookAt: WALK_LOOKAT, lerpPos: 8, lerpRot: 8, followHeading: true }
+      : MODES[state.cameraMode];
     const dt = Math.min(delta, 0.05);
     const speedNorm = Math.min(1, state.velocityMph / 70);
 

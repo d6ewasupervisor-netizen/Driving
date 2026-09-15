@@ -5,3 +5,4 @@ export * from "./zones";
 export * from "./vehicleObserver";
 export * from "./kentMap";
 export * from "./Simulation";
+export * from "./dol";

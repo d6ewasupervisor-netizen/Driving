@@ -77,7 +77,7 @@ export function TouchOverlay() {
   const brake = useGameStore((s) => s.brake);
   const phase = useGameStore((s) => s.phase);
 
-  if (phase !== 'driving') return null;
+  if (phase !== 'driving' && phase !== 'walking') return null;
 
   return (
     <div style={styles.container} aria-hidden>
@@ -88,12 +88,12 @@ export function TouchOverlay() {
 
       {/* Brake bar (bottom-left) */}
       <div style={styles.brakeArea}>
-        <PedalBar value={brake} color="#ff4444" label="BRAKE" />
+        <PedalBar value={brake} color="#ff4444" label={phase === 'walking' ? 'BACK' : 'BRAKE'} />
       </div>
 
       {/* Throttle bar (bottom-right) */}
       <div style={styles.throttleArea}>
-        <PedalBar value={throttle} color="#39ff14" label="GAS" />
+        <PedalBar value={throttle} color="#39ff14" label={phase === 'walking' ? 'WALK' : 'GAS'} />
       </div>
     </div>
   );

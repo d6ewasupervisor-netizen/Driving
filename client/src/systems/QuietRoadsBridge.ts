@@ -15,7 +15,7 @@
 import {
   DialogueRunner, Simulation, QuestionBank, newMastery, sm2Update, gradeQuality, tpForAnswer,
   type DialogueHost, type DialogueFile, type VehicleSample, type SimFrame, type MissionId,
-  type Question as CoreQuestion, type TimerHandle, VEHICLE,
+  type Question as CoreQuestion, type TimerHandle, VEHICLE, type WalkerInput,
 } from '@/quietroads';
 import act01 from '@/quietroads/data/dialogue_act0-1.json';
 import act2 from '@/quietroads/data/dialogue_act2.json';
@@ -80,14 +80,17 @@ class Bridge {
       giveItem: (id) => S().giveItem(id),
       unlock: (id) => S().unlock(id),
       emitNoise: (db, marker) => {
-        const pos = marker && this.sim.map.markers[marker] ? this.sim.map.markers[marker] : this.sample().pos;
-        this.sim.noise.emit(db, pos);
+        const pos = marker && this.sim.map.markers[marker] ? this.sim.map.markers[marker] : this.sim.playerPos;
+        this.sim.noise.emit(db, pos, this.sim.playerZone);
       },
       playSfx: () => {},                         // AudioManager hook-up is a later pass
       animCue: () => {},
       checkpoint: (label) => S().setCheckpoint(label, this.runner.scene?.id ?? null, this.runner.serialize()),
       ledger: (delta, reason) => S().addLedger(delta, reason),
-      logEvent: (name) => S().addTelemetry({ ts: Date.now(), event: name }),
+      logEvent: (name) => {
+        S().addTelemetry({ ts: Date.now(), event: name });
+        if (name === 'choice.dol:honk') this.sim.escapeForgiving = true;   // the script says she gets out
+      },
       logChoice: (scene, node, option) => S().addChoice({ ts: Date.now(), scene, node, option }),
       startGameplay: (id) => this.startGameplay(id),
       setTimer: (ms, fn) => { const h = window.setTimeout(() => { this.timers.delete(h); fn(); }, ms); this.timers.add(h); return h as TimerHandle; },
@@ -107,7 +110,9 @@ class Bridge {
     this.runner.on('scene_started', (id) => {
       const type = this.runner.data.scenes[id]?.type;
       useQRStore.setState({ sceneId: id });
-      if (type === 'gameplay') this.enterDriving(); else this.enterDialogue();
+      this.onSceneStarted(id);
+      if (type === 'gameplay') { if (this.sim.mode === 'walker') this.enterWalking(); else this.enterDriving(); }
+      else this.enterDialogue();
     });
     this.runner.on('scene_finished', (_id, next) => { if (next) this.runner.startScene(next); });
   }
@@ -131,9 +136,33 @@ class Bridge {
 
   private enterDialogue() { haltVehicle(); this.sim.freeze('dialogue'); useGameStore.getState().setPhase('dialogue'); }
   private enterDriving() { this.sim.unfreeze('dialogue'); useGameStore.getState().setPhase('driving'); }
+  private enterWalking() { haltVehicle(); this.sim.unfreeze('dialogue'); useGameStore.getState().setPhase('walking'); }
+
+  /** World setup that the dialogue file implies but doesn't spell out. */
+  private onSceneStarted(id: string) {
+    const g = useGameStore.getState();
+    switch (id) {
+      case '1.4':   // aftermath — Grandma's carport, night, engine off
+        teleportVehicle(this.sim.map.starts.carport.pos.x, this.sim.map.starts.carport.pos.y, this.sim.map.starts.carport.heading);
+        this.sim.enterVehicle();
+        useGameStore.setState({ timeOfDay: 'night' });
+        break;
+      case '1.4b':  // rumor board, next morning
+        useGameStore.setState({ timeOfDay: 'day' });
+        break;
+      case '2.1':
+        useGameStore.setState({ timeOfDay: 'day' });
+        break;
+      default:
+        if (g.timeOfDay !== 'day' && id.startsWith('0.')) useGameStore.setState({ timeOfDay: 'day' });
+    }
+  }
 
   private startGameplay(id: string) {
-    if (this.sim.startMission(id as MissionId)) { this.enterDriving(); return; }
+    if (this.sim.startMission(id as MissionId)) {
+      if (this.sim.mode === 'walker') this.enterWalking(); else this.enterDriving();
+      return;
+    }
     // Not built yet — say so on screen and hand control back so she can keep driving around Kent.
     this.toast(`"${id}" isn't built yet. Drive around — Kent is open.`);
     this.enterDriving();
@@ -146,6 +175,12 @@ class Bridge {
 
   private fire(event: string, data?: Record<string, unknown>) {
     useQRStore.getState().addTelemetry({ ts: Date.now(), event, data });
+    if (event === 'waypoint.reach:dol_lot_exit') this.sim.escapeForgiving = false;
+    if (event === 'waypoint.reach:beetle_driver_seat') {
+      // She's in. Doors slam (in the script). Back to the car; the dialogue takes it from here.
+      this.sim.enterVehicle();
+      useGameStore.getState().setPhase('driving');
+    }
     this.runner.onEvent(event);
     this.sim.onEvent(event);
   }
@@ -166,16 +201,27 @@ class Bridge {
   }
 
   private acc = 0;
+  private lastQte = false;
   tick(dt: number) {
     if (!this.started) return;
     const g = useGameStore.getState();
     this.clock += dt;
-    // Only simulate while driving; dialogue/quiz/pause freeze the world (sim.frozen handles dialogue).
-    if (g.phase !== 'driving') return;
+    // Only simulate while driving/walking; dialogue/quiz/pause freeze the world.
+    if (g.phase !== 'driving' && g.phase !== 'walking') return;
     this.acc += Math.min(dt, 0.1);
     let f: SimFrame | null = null;
-    const s = this.sample();
-    while (this.acc >= 1 / 60) { f = this.sim.step(1 / 60, s); this.acc -= 1 / 60; }
+    if (g.phase === 'walking' && this.sim.mode === 'walker') {
+      const qr = useQRStore.getState();
+      const input: WalkerInput = { x: g.steering, y: g.brake - g.throttle, run: qr.run };
+      while (this.acc >= 1 / 60) { f = this.sim.stepWalker(1 / 60, input); this.acc -= 1 / 60; }
+      const w = this.sim.interior;
+      useGameStore.setState({ walkerPosition: [w.pos.x, 0, w.pos.y] });
+      const qteNow = !!w.qte;
+      if (qteNow !== this.lastQte) { this.lastQte = qteNow; qr.setTransient({ qteActive: qteNow }); }
+    } else {
+      const s = this.sample();
+      while (this.acc >= 1 / 60) { f = this.sim.step(1 / 60, s); this.acc -= 1 / 60; }
+    }
     if (f) useQRStore.getState().setTransient({ frame: f });
     if (this.pendingQuiz && this.clock >= this.pendingQuiz.at) {
       const t = this.pendingQuiz; this.pendingQuiz = null;
@@ -244,6 +290,7 @@ class Bridge {
   onQuizClosed() { this.sim.unfreeze('quiz'); this.activeQuiz = null; }
 
   // ---------------------------------------------------------------- UI actions
+  shh() { this.sim.interior.answerQte(); }
   tap() { this.runner.advanceFromUi(); }
   choose(id: string) { this.runner.chooseById(id); }
   restartFromCheckpoint() {

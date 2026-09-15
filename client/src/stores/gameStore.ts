@@ -20,7 +20,8 @@ export type GamePhase =
   | 'outOfGas'
   | 'victory'
   | 'gameover'
-  | 'dialogue';
+  | 'dialogue'
+  | 'walking';
 
 export type WorldMode = 'highway' | 'kent';
 
@@ -62,6 +63,7 @@ interface ControlsSlice {
 }
 
 interface VehicleSlice {
+  walkerPosition: [number, number, number];   // Quiet Roads on-foot sections
   vehiclePosition: [number, number, number];
   vehicleHeading: number; // Y-axis rotation in radians
   velocityMph: number;
@@ -73,6 +75,7 @@ interface VehicleSlice {
 
 interface GameSlice {
   phase: GamePhase;
+  prePausePhase: GamePhase;
   worldMode: WorldMode;
   mileage: number;
   lastQuizMile: number;
@@ -146,6 +149,7 @@ type GameState = ControlsSlice &
 // ─── Default values ───────────────────────────────────────────────────────────
 const defaultGameState: GameSlice & QuizSlice & EconomySlice = {
   phase: 'menu',
+  prePausePhase: 'driving',
   worldMode: 'highway',
   mileage: 0,
   lastQuizMile: 0,
@@ -174,6 +178,7 @@ export const useGameStore = create<GameState>()(
       steering: 0,
       throttle: 0,
       brake: 0,
+      walkerPosition: [0, 0, 0],
       vehiclePosition: [0, 0.7, 0],
       vehicleHeading: 0,
       velocityMph: 0,
@@ -210,9 +215,9 @@ export const useGameStore = create<GameState>()(
       setWorldMode: (mode) => set({ worldMode: mode, cameraMode: mode === 'kent' ? 'quiet' : 'chase' }),
 
       togglePause: () => {
-        const { phase } = get();
-        if (phase === 'driving') set({ phase: 'paused' });
-        else if (phase === 'paused') set({ phase: 'driving' });
+        const { phase, prePausePhase } = get();
+        if (phase === 'driving' || phase === 'walking' || phase === 'dialogue') set({ phase: 'paused', prePausePhase: phase });
+        else if (phase === 'paused') set({ phase: prePausePhase });
       },
 
       cycleCameraMode: () => {

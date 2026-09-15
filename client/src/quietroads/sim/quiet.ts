@@ -1,5 +1,5 @@
 import { type Vec2, dist, sub, norm, angle, lerpAngle, len, mul, add, moveToward, fromAngle } from "./math";
-import type { NoiseListener } from "./noise";
+import type { NoiseListener, NoiseZone } from "./noise";
 
 /** They see you. They don't care unless they hear you. */
 export enum QuietState { DORMANT = 0, CURIOUS = 1, ALERT = 2, SWARM = 3 }
@@ -16,6 +16,7 @@ export const QUIET = {
 export class Quiet implements NoiseListener {
   pos: Vec2;
   home: Vec2;
+  zone: NoiseZone = "outdoor";
   awareness = 0;
   state = QuietState.DORMANT;
   facing: number;
@@ -92,31 +93,36 @@ export class QuietField {
   private time = 0;
   constructor(private ev: QuietFieldEvents, public forgiving: () => boolean = () => false) {}
 
-  spawn(pos: Vec2, random: () => number): Quiet {
+  spawn(pos: Vec2, random: () => number, zone: NoiseZone = "outdoor"): Quiet {
     const q = new Quiet(this.list.length, pos, random, this.forgiving);
+    q.zone = zone;
     this.list.push(q); return q;
   }
+  inZone(zone: NoiseZone): Quiet[] { return this.list.filter((q) => q.zone === zone); }
   reset() { for (const q of this.list) q.reset(); this.hot = false; }
 
-  step(dt: number, playerPos: Vec2, blocked: (p: Vec2) => boolean) {
+  step(dt: number, playerPos: Vec2, blocked: (p: Vec2) => boolean, playerZone: NoiseZone = "outdoor") {
     this.time += dt;
     for (const q of this.list) {
       const before = q.pos;
-      q.step(dt, playerPos, this.time);
+      // The player is only in one zone; Quiet elsewhere decay and drift home but never chase.
+      q.step(dt, q.zone === playerZone ? playerPos : q.home, this.time);
       if (blocked(q.pos)) q.pos = before;
     }
     // separation so they don't stack
     for (let i = 0; i < this.list.length; i++) for (let j = i + 1; j < this.list.length; j++) {
-      const a = this.list[i], b = this.list[j]; const d = dist(a.pos, b.pos); const min = QUIET.RADIUS_M * 2;
+      const a = this.list[i], b = this.list[j]; if (a.zone !== b.zone) continue;
+      const d = dist(a.pos, b.pos); const min = QUIET.RADIUS_M * 2;
       if (d < min && d > 1e-6) { const push = mul(norm(sub(b.pos, a.pos)), (min - d) / 2); a.pos = sub(a.pos, push); b.pos = add(b.pos, push); }
     }
     this.checkT += dt;
-    if (this.checkT >= 0.5) { this.checkT = 0; this.check(playerPos); }
+    if (this.checkT >= 0.5) { this.checkT = 0; this.check(playerPos, playerZone); }
   }
 
-  private check(playerPos: Vec2) {
+  private check(playerPos: Vec2, playerZone: NoiseZone = "outdoor") {
     let maxAw = 0, swarmNear = 0;
     for (const q of this.list) {
+      if (q.zone !== playerZone) continue;
       maxAw = Math.max(maxAw, q.awareness);
       if (q.state === QuietState.SWARM && dist(q.pos, playerPos) < 5) swarmNear++;
     }

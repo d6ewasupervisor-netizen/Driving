@@ -6,10 +6,12 @@
  * against them (the sim's blocked() is for the Quiet; Rapier handles the car).
  * Everything is drawn from data — nothing hand-placed.
  */
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { RigidBody, CuboidCollider } from '@react-three/rapier';
 import { QuietRoads } from '@/systems/QuietRoadsBridge';
+import { useGameStore } from '@/stores/gameStore';
 import type { Rect, SignDef } from '@/quietroads';
 
 const ROAD_Y = 0.01;
@@ -54,7 +56,8 @@ function Line({ a, b, color = '#ffffff', width = 0.3 }: { a: { x: number; y: num
 }
 
 function Building({ r, label }: { r: Rect; label?: string }) {
-  const h = label === 'KENT MIDDLE' ? 7 : label === 'DOL' ? 5 : 4 + ((r.x * 7 + r.y * 3) % 3);
+  if (label === 'DOL') return <DolBuilding r={r} />;
+  const h = label === 'KENT MIDDLE' ? 7 : 4 + ((r.x * 7 + r.y * 3) % 3);
   const color = label === 'DOL' ? '#8a8f96' : label === 'KENT MIDDLE' ? '#a8895e' : '#7c7368';
   return (
     <RigidBody type="fixed" colliders={false} position={[r.x + r.w / 2, h / 2, r.y + r.h / 2]}>
@@ -91,6 +94,169 @@ function Sign({ s }: { s: SignDef }) {
   );
 }
 
+// ─── The DOL: walls + floor always; roof only when she's outside ──────────────
+const DOL_H = 4.2;
+const WALL = 0.5;
+function DolBuilding({ r }: { r: Rect }) {
+  const dol = QuietRoads.sim.map.dol;
+  const roofRef = useRef<THREE.Mesh>(null);
+  useFrame(() => { if (roofRef.current) roofRef.current.visible = useGameStore.getState().phase !== 'walking'; });
+  const wallMat = <meshStandardMaterial color="#8a8f96" roughness={0.9} />;
+  const cx = r.x + r.w / 2, cz = r.y + r.h / 2;
+  const doorHalf = dol.doorWidth / 2;
+  // east wall is split around the door
+  const eastTop = { z0: r.y, z1: dol.door.y - doorHalf };
+  const eastBot = { z0: dol.door.y + doorHalf, z1: r.y + r.h };
+  return (
+    <group>
+      {/* car-facing collider: solid box (the Beetle never goes inside) */}
+      <RigidBody type="fixed" colliders={false} position={[cx, DOL_H / 2, cz]}>
+        <CuboidCollider args={[r.w / 2, DOL_H / 2, r.h / 2]} />
+      </RigidBody>
+      {/* floor */}
+      <mesh position={[cx, 0.015, cz]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+        <planeGeometry args={[r.w, r.h]} />
+        <meshStandardMaterial color="#b9b4a8" roughness={0.95} />
+      </mesh>
+      {/* walls: north, south, west, east (split) */}
+      <mesh position={[cx, DOL_H / 2, r.y + WALL / 2]} castShadow receiveShadow><boxGeometry args={[r.w, DOL_H, WALL]} />{wallMat}</mesh>
+      <mesh position={[cx, DOL_H / 2, r.y + r.h - WALL / 2]} castShadow receiveShadow><boxGeometry args={[r.w, DOL_H, WALL]} />{wallMat}</mesh>
+      <mesh position={[r.x + WALL / 2, DOL_H / 2, cz]} castShadow receiveShadow><boxGeometry args={[WALL, DOL_H, r.h]} />{wallMat}</mesh>
+      <mesh position={[r.x + r.w - WALL / 2, DOL_H / 2, (eastTop.z0 + eastTop.z1) / 2]} castShadow receiveShadow><boxGeometry args={[WALL, DOL_H, eastTop.z1 - eastTop.z0]} />{wallMat}</mesh>
+      <mesh position={[r.x + r.w - WALL / 2, DOL_H / 2, (eastBot.z0 + eastBot.z1) / 2]} castShadow receiveShadow><boxGeometry args={[WALL, DOL_H, eastBot.z1 - eastBot.z0]} />{wallMat}</mesh>
+      {/* door header + the glass doors, propped open */}
+      <mesh position={[r.x + r.w - WALL / 2, DOL_H - 0.4, dol.door.y]}><boxGeometry args={[WALL, 0.8, dol.doorWidth]} />{wallMat}</mesh>
+      <mesh position={[r.x + r.w + 0.4, 1.2, dol.door.y - doorHalf - 0.05]} rotation={[0, 0.5, 0]}><boxGeometry args={[0.04, 2.4, 1.1]} /><meshStandardMaterial color="#9fd3e6" transparent opacity={0.5} /></mesh>
+      {/* roof */}
+      <mesh ref={roofRef} position={[cx, DOL_H + 0.15, cz]}>
+        <boxGeometry args={[r.w + 0.6, 0.3, r.h + 0.6]} />
+        <meshStandardMaterial color="#3a352f" />
+      </mesh>
+      {/* sign over the door */}
+      <mesh position={[r.x + r.w + 0.02, 3.2, dol.door.y]}><boxGeometry args={[0.06, 0.7, 3.2]} /><meshStandardMaterial color="#1c4d7a" /></mesh>
+      <DolInterior />
+    </group>
+  );
+}
+
+function DolInterior() {
+  const dol = QuietRoads.sim.map.dol;
+  const carrierRef = useRef<THREE.Group>(null);
+  const screenRef = useRef<THREE.MeshStandardMaterial>(null);
+  useFrame((st) => {
+    const at = QuietRoads.sim.interior.myaCarrierAt;
+    if (carrierRef.current) { carrierRef.current.visible = !!at; if (at) carrierRef.current.position.set(at.x, 0.2, at.y); }
+    if (screenRef.current) screenRef.current.emissiveIntensity = 1.4 + Math.sin(st.clock.elapsedTime * 9) * 0.15; // emergency power flicker
+  });
+  return (
+    <group>
+      {dol.blocked.map((b, i) => (
+        <mesh key={i} position={[b.x + b.w / 2, 0.45, b.y + b.h / 2]} castShadow receiveShadow>
+          <boxGeometry args={[b.w, 0.9, b.h]} />
+          <meshStandardMaterial color={i === 0 ? '#6e5a44' : i >= 5 ? '#5a5f66' : '#4c5a6e'} roughness={0.9} />
+        </mesh>
+      ))}
+      {/* number board */}
+      <mesh position={[dol.labels[0].pos.x + 1.2, 2.4, dol.floor.y + 0.35]}>
+        <boxGeometry args={[2.2, 0.6, 0.08]} />
+        <meshStandardMaterial color="#111" emissive="#ff3b1f" emissiveIntensity={0.9} />
+      </mesh>
+      {/* the terminal: a desk-top screen still lit */}
+      <group position={[dol.terminal.x, 0, dol.terminal.y]}>
+        <mesh position={[0, 1.15, 0]} rotation={[-0.35, 0, 0]}>
+          <boxGeometry args={[0.7, 0.5, 0.05]} />
+          <meshStandardMaterial ref={screenRef} color="#0c1a24" emissive="#5fd3ff" emissiveIntensity={1.4} />
+        </mesh>
+        <pointLight position={[0, 1.4, 0.3]} intensity={2.5} distance={5} color="#5fd3ff" />
+      </group>
+      {/* Mya's carrier, left by the terminal */}
+      <group ref={carrierRef} visible={false}>
+        <mesh castShadow><boxGeometry args={[0.55, 0.4, 0.38]} /><meshStandardMaterial color="#5a4a3a" /></mesh>
+        <mesh position={[0, 0.02, 0.2]}><boxGeometry args={[0.5, 0.32, 0.02]} /><meshStandardMaterial color="#222" wireframe /></mesh>
+      </group>
+    </group>
+  );
+}
+
+// ─── Ali on foot: a pink jacket, two carriers, a loose orange cat when it goes wrong ──
+function Walker() {
+  const root = useRef<THREE.Group>(null);
+  const myaRef = useRef<THREE.Mesh>(null);
+  const gracieCarrierRef = useRef<THREE.Mesh>(null);
+  const gracieLooseRef = useRef<THREE.Mesh>(null);
+  const legsRef = useRef<THREE.Group>(null);
+  useFrame((st) => {
+    const g = root.current; if (!g) return;
+    const w = QuietRoads.sim.interior;
+    const walking = useGameStore.getState().phase === 'walking';
+    g.visible = walking;
+    if (!walking) return;
+    g.position.set(w.pos.x, 0, w.pos.y);
+    g.rotation.y = -w.facing - Math.PI / 2; // core facing 0 = +X; model forward is -Z
+    if (myaRef.current) myaRef.current.visible = w.carriers.mya;
+    if (gracieCarrierRef.current) gracieCarrierRef.current.visible = w.carriers.gracie;
+    if (legsRef.current) legsRef.current.rotation.x = Math.sin(st.clock.elapsedTime * (w.speed > 1.8 ? 14 : 9)) * Math.min(w.speed, 1) * 0.35;
+  });
+  useFrame(() => {
+    const gl = gracieLooseRef.current; if (!gl) return;
+    const w = QuietRoads.sim.interior;
+    gl.visible = w.gracie.loose && useGameStore.getState().phase === 'walking';
+    if (gl.visible) gl.position.set(w.gracie.pos.x, 0.18, w.gracie.pos.y);
+  });
+  return (
+    <>
+    <GracieLoose refObj={gracieLooseRef} />
+    <group ref={root} visible={false}>
+      <group ref={legsRef} position={[0, 0.45, 0]}>
+        <mesh position={[-0.11, 0, 0]}><boxGeometry args={[0.16, 0.9, 0.2]} /><meshStandardMaterial color="#2b3440" /></mesh>
+        <mesh position={[0.11, 0, 0]}><boxGeometry args={[0.16, 0.9, 0.2]} /><meshStandardMaterial color="#2b3440" /></mesh>
+      </group>
+      <mesh position={[0, 1.2, 0]} castShadow><boxGeometry args={[0.46, 0.62, 0.28]} /><meshStandardMaterial color="#F28DB2" roughness={0.9} /></mesh>
+      <mesh position={[0, 1.7, 0]} castShadow><sphereGeometry args={[0.17, 10, 8]} /><meshStandardMaterial color="#d9a98e" /></mesh>
+      <mesh position={[0, 1.78, -0.02]}><sphereGeometry args={[0.19, 10, 8]} /><meshStandardMaterial color="#3b2418" /></mesh>
+      {/* carriers, one each side */}
+      <mesh ref={myaRef} position={[-0.45, 0.55, 0.05]} castShadow><boxGeometry args={[0.36, 0.34, 0.5]} /><meshStandardMaterial color="#5a4a3a" /></mesh>
+      <mesh ref={gracieCarrierRef} position={[0.45, 0.55, 0.05]} castShadow><boxGeometry args={[0.36, 0.34, 0.5]} /><meshStandardMaterial color="#7a5f45" /></mesh>
+    </group>
+    </>
+  );
+}
+
+function GracieLoose({ refObj }: { refObj: React.RefObject<THREE.Mesh> }) {
+  return <mesh ref={refObj} visible={false}><boxGeometry args={[0.22, 0.2, 0.42]} /><meshStandardMaterial color="#F2A63B" /></mesh>;
+}
+
+// ─── Parking stalls with the target lit up ───────────────────────────────────
+function ParkingStalls() {
+  const lot = QuietRoads.sim.map.parking;
+  const glow = useRef<THREE.MeshBasicMaterial>(null);
+  useFrame((st) => {
+    if (!glow.current) return;
+    const active = QuietRoads.sim.missionId === 'minigame_park_dol';
+    glow.current.opacity = active ? 0.22 + Math.sin(st.clock.elapsedTime * 3) * 0.1 : 0.0;
+  });
+  const t = lot.stalls[lot.target];
+  return (
+    <group>
+      {lot.stalls.map((s, i) => (
+        <group key={i}>
+          <Line a={{ x: s.x, y: s.y }} b={{ x: s.x, y: s.y + s.h }} width={0.12} />
+          <Line a={{ x: s.x + s.w, y: s.y }} b={{ x: s.x + s.w, y: s.y + s.h }} width={0.12} />
+        </group>
+      ))}
+      {/* head curb along the south edge of the stalls */}
+      <mesh position={[lot.stalls[0].x + (lot.stalls.length * 2.9) / 2 - 0.15, 0.08, t.y + t.h + 0.12]}>
+        <boxGeometry args={[lot.stalls.length * 2.9, 0.16, 0.25]} />
+        <meshStandardMaterial color="#c9c3b8" />
+      </mesh>
+      <mesh position={[t.x + t.w / 2, 0.03, t.y + t.h / 2]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[t.w, t.h]} />
+        <meshBasicMaterial ref={glow} color="#F28DB2" transparent opacity={0} depthWrite={false} />
+      </mesh>
+    </group>
+  );
+}
+
 export function KentWorld() {
   const map = QuietRoads.sim.map;
   return (
@@ -121,6 +287,8 @@ export function KentWorld() {
 
       {map.buildings.map((b, i) => <Building key={i} r={b.rect} label={b.label} />)}
       {map.signs.map((s, i) => <Sign key={i} s={s} />)}
+      <ParkingStalls />
+      <Walker />
 
       {/* Grandma's carport */}
       <mesh position={[13.5, 1.4, -13.5]}><boxGeometry args={[7, 0.15, 5]} /><meshStandardMaterial color="#555a60" /></mesh>
