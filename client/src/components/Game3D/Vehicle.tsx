@@ -60,8 +60,8 @@ const PLOW_THICK    = 0.09;
 const ARMOR_COLOR   = '#6d7278'; // filing-cabinet gray (Tuna's scrap)
 
 // ─── Door armor (model units) — doors sit between the wheels ─────────────────
-const DOOR_Z_FROM = -1.02, DOOR_Z_TO = 0.88;
-const DOOR_Y_FROM = 0.42,  DOOR_Y_TO = 1.12;
+const DOOR_Z_FROM = -0.72, DOOR_Z_TO = 0.56;   // door length only (was 1.9 → 1.28)
+const DOOR_Y_FROM = 0.20,  DOOR_Y_TO = 0.90;   // dropped ~8" to sit on the door panel, not the glass
 const DOOR_X      = 0.80;
 
 useGLTF.preload('/models/cars/vw_beetle.glb');
@@ -103,12 +103,12 @@ function Plow({ angleDeg }: { angleDeg: number }) {
   return (
     <group ref={pivotRef} position={[0, 0, PLOW_MOUNT_Z]}>
       {/* Left wing (−X) — runs from the tip back to the left mount */}
-      <mesh position={[-wingCenterX, midY, wingCenterZ]} rotation={[0, wingYaw, 0]} castShadow>
+      <mesh position={[-wingCenterX, midY, wingCenterZ]} rotation={[0, -wingYaw, 0]} castShadow>
         <boxGeometry args={[PLOW_THICK, PLOW_HEIGHT, wingLen]} />
         {steel}
       </mesh>
       {/* Right wing (+X) */}
-      <mesh position={[wingCenterX, midY, wingCenterZ]} rotation={[0, -wingYaw, 0]} castShadow>
+      <mesh position={[wingCenterX, midY, wingCenterZ]} rotation={[0, wingYaw, 0]} castShadow>
         <boxGeometry args={[PLOW_THICK, PLOW_HEIGHT, wingLen]} />
         {steel}
       </mesh>
@@ -118,11 +118,11 @@ function Plow({ angleDeg }: { angleDeg: number }) {
         <meshStandardMaterial color="#4a4f55" metalness={0.6} roughness={0.5} />
       </mesh>
       {/* Scraper edge — darker, worn, along the bottom of both wings */}
-      <mesh position={[-wingCenterX, PLOW_Y_BOTTOM + 0.03, wingCenterZ]} rotation={[0, wingYaw, 0]}>
+      <mesh position={[-wingCenterX, PLOW_Y_BOTTOM + 0.03, wingCenterZ]} rotation={[0, -wingYaw, 0]}>
         <boxGeometry args={[PLOW_THICK + 0.05, 0.06, wingLen]} />
         <meshStandardMaterial color="#2c2f33" metalness={0.8} roughness={0.35} />
       </mesh>
-      <mesh position={[wingCenterX, PLOW_Y_BOTTOM + 0.03, wingCenterZ]} rotation={[0, -wingYaw, 0]}>
+      <mesh position={[wingCenterX, PLOW_Y_BOTTOM + 0.03, wingCenterZ]} rotation={[0, wingYaw, 0]}>
         <boxGeometry args={[PLOW_THICK + 0.05, 0.06, wingLen]} />
         <meshStandardMaterial color="#2c2f33" metalness={0.8} roughness={0.35} />
       </mesh>
