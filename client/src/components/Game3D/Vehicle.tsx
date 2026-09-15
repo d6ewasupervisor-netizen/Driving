@@ -47,16 +47,17 @@ const HEADLIGHT_COLOR   = new THREE.Color('#ffffff'); // bright white
 
 
 // ─── Plow constants (model units; group is scaled 0.75×) ─────────────────────
-// GLB bounds: front bumper ends at z = -2.23, body x = ±0.78, hood line ≈ y 0.8.
+// GLB: front wheels at z ≈ -1.425, bumper ends ≈ -2.23, body x = ±0.78.
 const PLOW_MIN_DEG  = -5;   // scraping
 const PLOW_MAX_DEG  =  5;   // lifted
 const PLOW_SPEED    = 60;   // degrees per second
-const PLOW_MOUNT_Z  = -2.30; // just ahead of the bumper (hinge)
-const PLOW_TIP_Z    = -3.35; // forward point of the V
+const PLOW_MOUNT_Z  = -1.43; // flat base of the V — on the front-axle line
+const PLOW_TIP_Z    = -2.55; // tip just ahead of the bumper
 const PLOW_HALF_W   = 1.02;  // wings reach a little wider than the body
 const PLOW_Y_BOTTOM = 0.10;  // scraper edge just above the road
 const PLOW_HEIGHT   = 0.62;
 const PLOW_THICK    = 0.09;
+const PLOW_BUMPER_Z = -2.23; // for bracing struts back to the bumper
 const ARMOR_COLOR   = '#6d7278'; // filing-cabinet gray (Tuna's scrap)
 
 // ─── Door armor (model units) — doors sit between the wheels ─────────────────
@@ -126,18 +127,23 @@ function Plow({ angleDeg }: { angleDeg: number }) {
         <boxGeometry args={[PLOW_THICK + 0.05, 0.06, wingLen]} />
         <meshStandardMaterial color="#2c2f33" metalness={0.8} roughness={0.35} />
       </mesh>
-      {/* Top rail across the wings' rear edge */}
+      {/* Top rail across the wings' rear edge (the flat of the triangle / axle line) */}
       <mesh position={[0, PLOW_Y_BOTTOM + PLOW_HEIGHT + 0.02, -0.02]}>
         <boxGeometry args={[PLOW_HALF_W * 2 + 0.1, 0.05, 0.08]} />
         <meshStandardMaterial color="#444" metalness={0.9} roughness={0.3} />
       </mesh>
-      {/* Bracing struts back to the bumper */}
-      {[-0.55, 0.55].map((x) => (
-        <mesh key={x} position={[x, midY + 0.05, 0.18]} rotation={[0, 0, 0]}>
-          <boxGeometry args={[0.06, 0.06, 0.4]} />
-          <meshStandardMaterial color="#444" metalness={0.9} roughness={0.3} />
-        </mesh>
-      ))}
+      {/* Bracing struts from the axle-line mount forward to the bumper */}
+      {([-0.55, 0.55] as const).map((x) => {
+        const bumperLocalZ = PLOW_BUMPER_Z - PLOW_MOUNT_Z; // negative: toward front
+        const braceLen = Math.abs(bumperLocalZ);
+        const braceZ = bumperLocalZ / 2;
+        return (
+          <mesh key={x} position={[x, midY + 0.05, braceZ]}>
+            <boxGeometry args={[0.06, 0.06, braceLen]} />
+            <meshStandardMaterial color="#444" metalness={0.9} roughness={0.3} />
+          </mesh>
+        );
+      })}
     </group>
   );
 }
