@@ -29,6 +29,7 @@ import {
   updateWheelRigs,
   type WheelRig,
 } from './wheelRig';
+import { getBeetlePaintTexture, getBeetleRoughnessTexture } from './proceduralBeetlePaint';
 
 // ─── Collider half-extents (scaled 0.75× for better road proportion) ─────────
 const VEHICLE_SCALE = 0.75;
@@ -37,7 +38,7 @@ const COLLIDER_HY = 0.38;
 const COLLIDER_HZ = 1.54;
 
 // ─── Material colours ─────────────────────────────────────────────────────────
-const BODY_COLOR        = new THREE.Color('#c47a6a'); // rusty pink
+const BODY_COLOR        = new THREE.Color('#ffffff'); // paint comes from the texture (faded pink + rust)
 const WINDOW_COLOR      = new THREE.Color('#111111'); // reflective black
 const CHROME_COLOR      = new THREE.Color('#d4d4d4'); // chrome wipers
 const TAILLIGHT_COLOR   = new THREE.Color('#ff1111'); // red
@@ -45,20 +46,23 @@ const REVERSE_COLOR     = new THREE.Color('#ffffff'); // white reverse
 const HEADLIGHT_COLOR   = new THREE.Color('#ffffff'); // bright white
 
 
-// ─── Plow constants ───────────────────────────────────────────────────────────
+// ─── Plow constants (model units; group is scaled 0.75×) ─────────────────────
+// GLB bounds: front bumper ends at z = -2.23, body x = ±0.78, hood line ≈ y 0.8.
 const PLOW_MIN_DEG  = -5;   // scraping
 const PLOW_MAX_DEG  =  5;   // lifted
 const PLOW_SPEED    = 60;   // degrees per second
-// Cowcatcher-style V — narrow mount, short blades, sharp forward point (-Z)
-const PLOW_FRONT_Z  = -1.85;
-const PLOW_Y        = 0.58;
-const PLOW_MOUNT_HALF = 0.34;  // wings attach closer to center (less front overhang)
-const PLOW_HEIGHT   = 0.36;
-const PLOW_DEPTH    = 1.16;
-const PLOW_FORWARD_TIP_Z = -0.58 * 0.72;
-const PLOW_WING_ANGLE_DEG = 58;
-const PLOW_PITCH_DEG = 9;      // bottom edge leads top by 9° (scoops forward below)
-const PLOW_REAR_Z = 0.14;      // rear hinge on center axis (+Z from pivot)
+const PLOW_MOUNT_Z  = -2.30; // just ahead of the bumper (hinge)
+const PLOW_TIP_Z    = -3.35; // forward point of the V
+const PLOW_HALF_W   = 1.02;  // wings reach a little wider than the body
+const PLOW_Y_BOTTOM = 0.10;  // scraper edge just above the road
+const PLOW_HEIGHT   = 0.62;
+const PLOW_THICK    = 0.09;
+const ARMOR_COLOR   = '#6d7278'; // filing-cabinet gray (Tuna's scrap)
+
+// ─── Door armor (model units) — doors sit between the wheels ─────────────────
+const DOOR_Z_FROM = -1.02, DOOR_Z_TO = 0.88;
+const DOOR_Y_FROM = 0.42,  DOOR_Y_TO = 1.12;
+const DOOR_X      = 0.80;
 
 useGLTF.preload('/models/cars/vw_beetle.glb');
 
@@ -77,47 +81,95 @@ function applyToMaterial(
   });
 }
 
-// ─── Plow geometry — cowcatcher V; blades meet on center axis, no overlap ────
+// ─── Plow — a proper V-wedge in front of the bumper ───────────────────────────
+// Two steel wings meet at a forward tip, braced back to the bumper, with a
+// hardened scraper edge along the bottom. Pivots ±5° at the mount for Q/E.
 function Plow({ angleDeg }: { angleDeg: number }) {
   const pivotRef = useRef<THREE.Group>(null);
 
   useEffect(() => {
-    if (pivotRef.current) {
-      pivotRef.current.rotation.x = (angleDeg * Math.PI) / 180;
-    }
+    if (pivotRef.current) pivotRef.current.rotation.x = (angleDeg * Math.PI) / 180;
   }, [angleDeg]);
 
-  const wingAngle = (Math.PI * PLOW_WING_ANGLE_DEG) / 180;
-  // Negative X rotation: bottom (-Y) leads top (+Y) forward (-Z)
-  const pitchAngle = -(Math.PI * PLOW_PITCH_DEG) / 180;
-  const tipOffset = PLOW_REAR_Z - PLOW_FORWARD_TIP_Z;
-  const meshCenterZ = -tipOffset + PLOW_DEPTH / 2;
+  const wingLen = Math.hypot(PLOW_HALF_W, PLOW_MOUNT_Z - PLOW_TIP_Z);
+  const wingYaw = Math.atan2(PLOW_HALF_W, PLOW_MOUNT_Z - PLOW_TIP_Z); // angle from car axis
+  const midY = PLOW_Y_BOTTOM + PLOW_HEIGHT / 2;
+  const tipLocalZ = PLOW_TIP_Z - PLOW_MOUNT_Z; // negative: forward of the hinge
+  const wingCenterZ = tipLocalZ / 2;
+  const wingCenterX = PLOW_HALF_W / 2;
+
+  const steel = <meshStandardMaterial color={ARMOR_COLOR} metalness={0.55} roughness={0.62} />;
 
   return (
-    <group ref={pivotRef} position={[0, PLOW_Y, PLOW_FRONT_Z]}>
-      {/* Left wing — hinged on center axis; inner face at x=0, spans outward -X */}
-      <group position={[0, 0.02, PLOW_REAR_Z]} rotation={[pitchAngle, -wingAngle, 0]}>
-        <mesh position={[-PLOW_MOUNT_HALF / 2, 0, meshCenterZ]} castShadow>
-          <boxGeometry args={[PLOW_MOUNT_HALF, PLOW_HEIGHT, PLOW_DEPTH]} />
-          <meshStandardMaterial color="#555555" metalness={0.8} roughness={0.4} />
-        </mesh>
-      </group>
-
-      {/* Right wing — inner face at x=0, spans outward +X */}
-      <group position={[0, 0.02, PLOW_REAR_Z]} rotation={[pitchAngle, wingAngle, 0]}>
-        <mesh position={[PLOW_MOUNT_HALF / 2, 0, meshCenterZ]} castShadow>
-          <boxGeometry args={[PLOW_MOUNT_HALF, PLOW_HEIGHT, PLOW_DEPTH]} />
-          <meshStandardMaterial color="#555555" metalness={0.8} roughness={0.4} />
-        </mesh>
-      </group>
-
-      {/* Mount rail on rear trailing edge */}
-      <mesh position={[0, PLOW_HEIGHT * 0.42, PLOW_REAR_Z + 0.04]} castShadow>
-        <boxGeometry args={[PLOW_MOUNT_HALF * 2.2, 0.05, 0.05]} />
-        <meshStandardMaterial color="#444444" metalness={0.9} roughness={0.3} />
+    <group ref={pivotRef} position={[0, 0, PLOW_MOUNT_Z]}>
+      {/* Left wing (−X) — runs from the tip back to the left mount */}
+      <mesh position={[-wingCenterX, midY, wingCenterZ]} rotation={[0, wingYaw, 0]} castShadow>
+        <boxGeometry args={[PLOW_THICK, PLOW_HEIGHT, wingLen]} />
+        {steel}
       </mesh>
+      {/* Right wing (+X) */}
+      <mesh position={[wingCenterX, midY, wingCenterZ]} rotation={[0, -wingYaw, 0]} castShadow>
+        <boxGeometry args={[PLOW_THICK, PLOW_HEIGHT, wingLen]} />
+        {steel}
+      </mesh>
+      {/* Tip post */}
+      <mesh position={[0, midY, tipLocalZ + 0.03]} castShadow>
+        <boxGeometry args={[0.16, PLOW_HEIGHT + 0.06, 0.16]} />
+        <meshStandardMaterial color="#4a4f55" metalness={0.6} roughness={0.5} />
+      </mesh>
+      {/* Scraper edge — darker, worn, along the bottom of both wings */}
+      <mesh position={[-wingCenterX, PLOW_Y_BOTTOM + 0.03, wingCenterZ]} rotation={[0, wingYaw, 0]}>
+        <boxGeometry args={[PLOW_THICK + 0.05, 0.06, wingLen]} />
+        <meshStandardMaterial color="#2c2f33" metalness={0.8} roughness={0.35} />
+      </mesh>
+      <mesh position={[wingCenterX, PLOW_Y_BOTTOM + 0.03, wingCenterZ]} rotation={[0, -wingYaw, 0]}>
+        <boxGeometry args={[PLOW_THICK + 0.05, 0.06, wingLen]} />
+        <meshStandardMaterial color="#2c2f33" metalness={0.8} roughness={0.35} />
+      </mesh>
+      {/* Top rail across the wings' rear edge */}
+      <mesh position={[0, PLOW_Y_BOTTOM + PLOW_HEIGHT + 0.02, -0.02]}>
+        <boxGeometry args={[PLOW_HALF_W * 2 + 0.1, 0.05, 0.08]} />
+        <meshStandardMaterial color="#444" metalness={0.9} roughness={0.3} />
+      </mesh>
+      {/* Bracing struts back to the bumper */}
+      {[-0.55, 0.55].map((x) => (
+        <mesh key={x} position={[x, midY + 0.05, 0.18]} rotation={[0, 0, 0]}>
+          <boxGeometry args={[0.06, 0.06, 0.4]} />
+          <meshStandardMaterial color="#444" metalness={0.9} roughness={0.3} />
+        </mesh>
+      ))}
     </group>
   );
+}
+
+// ─── Door armor — filing-cabinet plates bolted over both doors ────────────────
+function DoorArmor() {
+  const len = DOOR_Z_TO - DOOR_Z_FROM;
+  const hgt = DOOR_Y_TO - DOOR_Y_FROM;
+  const cz = (DOOR_Z_FROM + DOOR_Z_TO) / 2;
+  const cy = (DOOR_Y_FROM + DOOR_Y_TO) / 2;
+  const bolts: [number, number][] = [];
+  for (let i = 0; i < 6; i++) { const z = DOOR_Z_FROM + 0.12 + (i / 5) * (len - 0.24); bolts.push([z, DOOR_Y_FROM + 0.08]); bolts.push([z, DOOR_Y_TO - 0.08]); }
+  const side = (sign: 1 | -1) => (
+    <group key={sign}>
+      <mesh position={[sign * DOOR_X, cy, cz]} castShadow>
+        <boxGeometry args={[0.05, hgt, len]} />
+        <meshStandardMaterial color={ARMOR_COLOR} metalness={0.45} roughness={0.7} />
+      </mesh>
+      {/* a second, slightly offset plate so it reads as overlapping scrap */}
+      <mesh position={[sign * (DOOR_X + 0.03), cy - 0.12, cz + 0.15]}>
+        <boxGeometry args={[0.03, hgt * 0.55, len * 0.6]} />
+        <meshStandardMaterial color="#7a7f86" metalness={0.45} roughness={0.75} />
+      </mesh>
+      {bolts.map(([z, y], i) => (
+        <mesh key={i} position={[sign * (DOOR_X + 0.035), y, z]} rotation={[0, 0, Math.PI / 2]}>
+          <cylinderGeometry args={[0.022, 0.022, 0.02, 6]} />
+          <meshStandardMaterial color="#2f3236" metalness={0.8} roughness={0.4} />
+        </mesh>
+      ))}
+    </group>
+  );
+  return <group>{side(1)}{side(-1)}</group>;
 }
 
 // ─── VW Beetle model with material overrides ──────────────────────────────────
@@ -161,12 +213,14 @@ function VWBeetleModel({ plowAngle }: { plowAngle: number }) {
       }
     });
 
-    // Body — rusty pink, slightly rough like oxidized paint
+    // Body — faded pink with rust, matte (Grandma's 1976 paint, forty years of Kent weather)
     applyToMaterial(scene, 'Chassi', (m) => {
       m.color.copy(BODY_COLOR);
-      m.map = null;        // discard original texture; use flat colour
-      m.roughness = 0.65;
-      m.metalness = 0.1;
+      m.map = getBeetlePaintTexture();
+      m.roughnessMap = getBeetleRoughnessTexture();
+      m.roughness = 1.0;      // scaled by roughnessMap (0.72 paint / 0.95 rust)
+      m.metalness = 0.0;
+      m.envMapIntensity = 0.25;
       m.needsUpdate = true;
     });
 
@@ -315,6 +369,7 @@ function VWBeetleModel({ plowAngle }: { plowAngle: number }) {
           </mesh>
         </group>
         <Plow angleDeg={plowAngle} />
+        <DoorArmor />
       </group>
       {/* Wheels outside bounce group — roll on road, body bounces above */}
       <group ref={wheelsAnchorRef} />
