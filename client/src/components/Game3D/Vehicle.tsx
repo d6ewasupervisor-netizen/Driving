@@ -20,7 +20,7 @@ import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { RigidBody, CuboidCollider, RapierRigidBody, useRapier } from '@react-three/rapier';
-import { tickVehicle, resetVehicleController } from '@/systems/VehicleController';
+import { tickVehicle, resetVehicleController, registerVehicleBody } from '@/systems/VehicleController';
 import { useGameStore } from '@/stores/gameStore';
 import { VehicleParticles } from './VehicleParticles';
 import {
@@ -385,6 +385,11 @@ export function Vehicle() {
   const resetCounter = useGameStore((s) => s.resetCounter);
 
   const { world, rapier } = useRapier();
+
+  useEffect(() => {
+    registerVehicleBody(bodyRef.current);
+    return () => registerVehicleBody(null);
+  }, []);
 
   useEffect(() => {
     if (!bodyRef.current) return;

@@ -1,0 +1,1563 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "game": "Quiet Roads",
+    "acts": [
+      0,
+      1
+    ],
+    "locale": "en-US",
+    "placeholders": {
+      "MOM": "Mom",
+      "RAY": "Ray",
+      "GRANDMA": "Grandma",
+      "GRANDMA_INITIALS": "G.J.",
+      "PLAYER": "Ali",
+      "PLAYER_FULL": "Alison"
+    }
+  },
+  "variables": {
+    "respect": {
+      "type": "int",
+      "default": 0,
+      "min": 0,
+      "max": 100,
+      "hidden": true
+    },
+    "calm": {
+      "type": "int",
+      "default": 50,
+      "min": 0,
+      "max": 100
+    },
+    "trade_points": {
+      "type": "int",
+      "default": 0,
+      "min": 0
+    }
+  },
+  "flags": {
+    "tutorial_done": false,
+    "mya_lost": false,
+    "dol_honked": false,
+    "dol_lot_lost": false,
+    "met_deac": false,
+    "has_gracie_toy": false,
+    "has_chains": false,
+    "mya_passive": false,
+    "saw_rumor_board": false,
+    "rolled_stop_act1": false
+  },
+  "characters": {
+    "ALI": {
+      "name": "Ali",
+      "color": "#F28DB2",
+      "portrait_dir": "res://portraits/ali",
+      "default_volume": "whisper"
+    },
+    "MYA": {
+      "name": "Mya",
+      "color": "#8B6B4A",
+      "portrait_dir": "res://portraits/mya",
+      "speaks": false
+    },
+    "GRACIE": {
+      "name": "Gracie",
+      "color": "#F2A63B",
+      "portrait_dir": "res://portraits/gracie",
+      "speaks": false
+    },
+    "MOM": {
+      "name": "{MOM}",
+      "color": "#7FB3D5",
+      "portrait_dir": "res://portraits/mom",
+      "voice_bed": "radio_static",
+      "default_volume": "low"
+    },
+    "RAY": {
+      "name": "{RAY}",
+      "color": "#6C8E7F",
+      "portrait_dir": "res://portraits/ray",
+      "voice_bed": "radio_static",
+      "default_volume": "low"
+    },
+    "DEAC": {
+      "name": "Deac",
+      "color": "#B0B0B0",
+      "portrait_dir": "res://portraits/deac",
+      "default_volume": "low"
+    },
+    "TUNA": {
+      "name": "Tuna",
+      "color": "#D9A066",
+      "portrait_dir": "res://portraits/tuna",
+      "default_volume": "low"
+    },
+    "BEA": {
+      "name": "Auntie Bea",
+      "color": "#C39BD3",
+      "portrait_dir": "res://portraits/bea",
+      "default_volume": "low"
+    },
+    "PRIYA": {
+      "name": "Priya",
+      "color": "#F7DC6F",
+      "portrait_dir": "res://portraits/priya",
+      "default_volume": "low"
+    },
+    "JONAH": {
+      "name": "Jonah",
+      "color": "#5DADE2",
+      "portrait_dir": "res://portraits/jonah",
+      "voice_bed": "cb_radio",
+      "default_volume": "normal"
+    },
+    "BOARD": {
+      "name": "Rumor Board",
+      "color": "#EEEEEE",
+      "speaks": false
+    }
+  },
+  "scenes": {
+    "0.1": {
+      "id": "0.1",
+      "act": 0,
+      "title": "Cold Open",
+      "type": "video",
+      "location": "kent_side_street_dawn",
+      "video": "res://cutscenes/act0_cold_open.ogv",
+      "music": "res://audio/music/dawn_quiet.ogg",
+      "entry": "0.1.1",
+      "nodes": {
+        "0.1.1": {
+          "type": "line",
+          "speaker": "ALI",
+          "text": "Gracie. We have talked about this.",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "delivery": "V",
+          "next": "0.1.2"
+        },
+        "0.1.2": {
+          "type": "line",
+          "speaker": "ALI",
+          "text": "Multiple times.",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "delivery": "V",
+          "next": "0.1.3"
+        },
+        "0.1.3": {
+          "type": "line",
+          "speaker": "ALI",
+          "text": "Mya, back me up.",
+          "emotion": "wry",
+          "volume": "whisper",
+          "delivery": "V",
+          "next": "0.1.4"
+        },
+        "0.1.4": {
+          "type": "direction",
+          "text": "Mya, on the couch, does not open her eyes.",
+          "anim": "mya.sleep_twitch",
+          "auto_ms": 1600,
+          "next": "0.1.5"
+        },
+        "0.1.5": {
+          "type": "line",
+          "speaker": "ALI",
+          "text": "Thank you. Very helpful.",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "delivery": "V",
+          "next": "0.1.end"
+        },
+        "0.1.end": {
+          "type": "end",
+          "effects": {
+            "checkpoint": "act0_start",
+            "log": "scene.complete:0.1"
+          },
+          "next_scene": "0.2"
+        }
+      }
+    },
+    "0.2": {
+      "id": "0.2",
+      "act": 0,
+      "title": "The Carport",
+      "type": "gameplay",
+      "location": "grandma_carport",
+      "background": "res://backgrounds/carport_tarp.png",
+      "ambience": "res://audio/amb/suburb_silent.ogg",
+      "guide_refs": [
+        "Ch.1 Licensing",
+        "Ch.2 Instruction Permit Rules"
+      ],
+      "entry": "0.2.1",
+      "nodes": {
+        "0.2.1": {
+          "type": "line",
+          "speaker": "ALI",
+          "emotion": "reading",
+          "volume": "whisper",
+          "delivery": "S",
+          "text": "\"Ali-bug — She's yours now. She's heavier than she looks, so she takes longer to stop. Remember that. Tuna at the Valley warehouse can help. Come home slow. — {GRANDMA_INITIALS}\"",
+          "next": "0.2.2"
+        },
+        "0.2.2": {
+          "type": "line",
+          "speaker": "ALI",
+          "text": "\"Come home slow.\" Okay, {GRANDMA}.",
+          "emotion": "sad",
+          "volume": "whisper",
+          "delivery": "S",
+          "next": "0.2.3"
+        },
+        "0.2.3": {
+          "type": "line",
+          "speaker": "ALI",
+          "text": "You're a 1976 Volkswagen with a snowplow and a filing cabinet for doors. We're going to get along fine.",
+          "emotion": "wry",
+          "volume": "whisper",
+          "delivery": "S",
+          "next": "0.2.permit_popup"
+        },
+        "0.2.permit_popup": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Washington rule: instruction permit at 15 with driver-ed, 15½ without. Licensed adult in the passenger seat, always. Out here that adult is going to have to be someone I earn.",
+          "next": "0.2.go"
+        },
+        "0.2.go": {
+          "type": "end",
+          "effects": {
+            "start_gameplay": "tutorial_carport",
+            "log": "tutorial.begin"
+          }
+        },
+        "0.2.4": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "volume": "whisper",
+          "emotion": "tense",
+          "text": "Okay. Gas is the right pedal. Ease onto it. {GRANDMA} said if you stomp it, it barks. Barking is bad now."
+        },
+        "0.2.5": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "volume": "whisper",
+          "emotion": "neutral",
+          "text": "That gray shape ahead of the car — that's where I'd stop if I hit the brakes right now. It gets longer when I go faster. Don't let it touch anything I don't want to hit."
+        },
+        "0.2.6": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "volume": "whisper",
+          "emotion": "neutral",
+          "text": "That meter is how loud I am. Green, they don't care. Yellow, some of them look. Red… we're not doing red."
+        },
+        "0.2.7": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "volume": "whisper",
+          "emotion": "neutral",
+          "text": "Brake the same way. Squeeze. Don't slam. Slamming squeals. Squealing is basically a dinner bell."
+        },
+        "0.2.8": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "volume": "whisper",
+          "emotion": "wry",
+          "text": "End of the block and back. Without waking up Mr. Halvorsen. Even though Mr. Halvorsen is… not really Mr. Halvorsen anymore."
+        },
+        "0.2.9": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "relieved",
+          "volume": "raised",
+          "noise_db": 45,
+          "text": "Nobody moved. Nobody moved! (catches herself, whispers) Nobody moved.",
+          "next": "0.2.10"
+        },
+        "0.2.10": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "Okay. We can do this. Probably. Sixty percent.",
+          "next": "0.2.done"
+        },
+        "0.2.done": {
+          "type": "end",
+          "effects": {
+            "tp": 25,
+            "set_flags": {
+              "tutorial_done": true
+            },
+            "checkpoint": "tutorial_done",
+            "log": "tutorial.complete"
+          },
+          "next_scene": "0.3"
+        },
+        "0.2.11": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "— too much, too much, ease off —",
+          "auto_ms": 1800,
+          "next": "0.2.12"
+        },
+        "0.2.12": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "They're looking. Just… hold still. Let it fade.",
+          "auto_ms": 2400
+        },
+        "0.2.13": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "text": "Okay. That's the thing we don't do.",
+          "auto_ms": 1800,
+          "next": "0.2.14"
+        },
+        "0.2.14": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Small sounds fade. Big sounds don't. Got it. Got it.",
+          "auto_ms": 2400
+        }
+      },
+      "triggers": [
+        {
+          "event": "tutorial.step.throttle",
+          "node": "0.2.4",
+          "once": true
+        },
+        {
+          "event": "tutorial.step.stopping_shadow",
+          "node": "0.2.5",
+          "once": true
+        },
+        {
+          "event": "tutorial.step.noise_meter",
+          "node": "0.2.6",
+          "once": true
+        },
+        {
+          "event": "tutorial.step.brake",
+          "node": "0.2.7",
+          "once": true
+        },
+        {
+          "event": "tutorial.step.objective",
+          "node": "0.2.8",
+          "once": true
+        },
+        {
+          "event": "tutorial.complete",
+          "node": "0.2.9",
+          "once": true,
+          "priority": 10,
+          "interrupt": true
+        },
+        {
+          "event": "noise.yellow",
+          "node": "0.2.11",
+          "cooldown_ms": 8000
+        },
+        {
+          "event": "noise.red",
+          "node": "0.2.13",
+          "cooldown_ms": 12000,
+          "priority": 5,
+          "interrupt": true
+        }
+      ]
+    },
+    "0.3": {
+      "id": "0.3",
+      "act": 0,
+      "title": "Radio: Spokane Relay",
+      "type": "radio",
+      "location": "grandma_kitchen_night",
+      "background": "res://backgrounds/kitchen_radio.png",
+      "ambience": "res://audio/amb/radio_static_bed.ogg",
+      "entry": "0.3.1",
+      "nodes": {
+        "0.3.1": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "low",
+          "text": "Relay to Kent. Ali, if you're on this — the Authority says permits still count. They're rationing fuel by license. Don't drive the pass without one. Don't drive the pass without chains.",
+          "next": "0.3.2"
+        },
+        "0.3.2": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "{RAY} says hi. {RAY} says please don't do anything dumb.",
+          "next": "0.3.3"
+        },
+        "0.3.3": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "I say I love you. Same time tomorrow.",
+          "next": "0.3.4"
+        },
+        "0.3.4": {
+          "type": "direction",
+          "text": "Click. Static.",
+          "sfx": [
+            "radio_click",
+            "static_swell"
+          ],
+          "auto_ms": 1800,
+          "next": "0.3.5"
+        },
+        "0.3.5": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "She says don't do anything dumb.",
+          "next": "0.3.6"
+        },
+        "0.3.6": {
+          "type": "direction",
+          "text": "Mya does not respond.",
+          "anim": "mya.sleep_still",
+          "auto_ms": 1400,
+          "next": "0.3.7"
+        },
+        "0.3.7": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tired",
+          "volume": "whisper",
+          "text": "Yeah. I know.",
+          "next": "0.3.8"
+        },
+        "0.3.8": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Kent DOL. Tomorrow. Take the test, get the paper, get the gas, go home. Simple.",
+          "next": "0.3.9"
+        },
+        "0.3.9": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "text": "Gracie, stop looking at me like that. It's simple.",
+          "anim": "gracie.stare",
+          "next": "0.3.end"
+        },
+        "0.3.end": {
+          "type": "end",
+          "effects": {
+            "checkpoint": "act0_complete",
+            "log": "act.complete:0"
+          },
+          "next_scene": "1.1"
+        }
+      }
+    },
+    "1.1": {
+      "id": "1.1",
+      "act": 1,
+      "title": "The Drive",
+      "type": "gameplay",
+      "location": "kent_residential_to_central",
+      "guide_refs": [
+        "Signs, Signals & Pavement Markings",
+        "School Zones",
+        "Railroad Crossings"
+      ],
+      "entry": "1.1.start",
+      "nodes": {
+        "1.1.start": {
+          "type": "end",
+          "effects": {
+            "start_gameplay": "mission_dol_drive",
+            "log": "mission.begin:dol_drive"
+          }
+        },
+        "1.1.6": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Full stop. Count it. Nobody's coming, do it anyway.",
+          "auto_ms": 2200,
+          "effects": {
+            "respect": 1
+          }
+        },
+        "1.1.7": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "…That wasn't a stop. That was a suggestion. Don't tell {GRANDMA}.",
+          "auto_ms": 2400,
+          "effects": {
+            "respect": -1,
+            "log": "stop.rolled",
+            "set_flags": {
+              "rolled_stop_act1": true
+            }
+          }
+        },
+        "1.1.8": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Twenty. The lights are still going.",
+          "auto_ms": 1800,
+          "next": "1.1.9"
+        },
+        "1.1.9": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "sad",
+          "volume": "whisper",
+          "text": "There's a bike still chained to the rack. Twenty. I don't care if nobody's here.",
+          "auto_ms": 2600
+        },
+        "1.1.10": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "No train's come through in two years. Look both ways anyway. Trains don't care about your assumptions.",
+          "auto_ms": 2800
+        },
+        "1.1.11": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "Okay. Department of Licensing. Just going to walk in, take a test, get a permit. Like a normal person on a normal Tuesday.",
+          "next": "1.1.12"
+        },
+        "1.1.12": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "text": "Mya, you stay in your carrier. Gracie, you stay in your carrier and think about what you've done.",
+          "next": "1.1.end"
+        },
+        "1.1.end": {
+          "type": "end",
+          "effects": {
+            "checkpoint": "dol_arrival",
+            "log": "mission.complete:dol_drive"
+          },
+          "next_scene": "1.2"
+        }
+      },
+      "triggers": [
+        {
+          "event": "sign.prompt.correct",
+          "node": "pool:ali_sign_correct",
+          "cooldown_ms": 4000
+        },
+        {
+          "event": "sign.prompt.wrong",
+          "node": "pool:ali_sign_wrong",
+          "cooldown_ms": 4000
+        },
+        {
+          "event": "stop.full",
+          "node": "1.1.6",
+          "cooldown_ms": 6000
+        },
+        {
+          "event": "stop.rolled",
+          "node": "1.1.7",
+          "cooldown_ms": 6000,
+          "priority": 2
+        },
+        {
+          "event": "zone.school.enter",
+          "node": "1.1.8",
+          "once": true
+        },
+        {
+          "event": "zone.rail.enter",
+          "node": "1.1.10",
+          "once": true
+        },
+        {
+          "event": "waypoint.reach:dol_approach",
+          "node": "1.1.11",
+          "once": true,
+          "priority": 10,
+          "interrupt": true
+        }
+      ]
+    },
+    "1.2": {
+      "id": "1.2",
+      "act": 1,
+      "title": "The Parking Lot",
+      "type": "gameplay",
+      "location": "kent_dol_lot",
+      "guide_refs": [
+        "Parking: angle and perpendicular spaces"
+      ],
+      "entry": "1.2.1",
+      "nodes": {
+        "1.2.1": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "scared",
+          "volume": "whisper",
+          "text": "They're… in line.",
+          "next": "1.2.2"
+        },
+        "1.2.2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "scared",
+          "volume": "whisper",
+          "text": "They're still in line. Two years.",
+          "next": "1.2.3"
+        },
+        "1.2.3": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "text": "That's the most Department of Licensing thing I've ever seen.",
+          "next": "1.2.4"
+        },
+        "1.2.4": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Pull in straight. Slow. Don't touch the curb — the curb makes a noise, and there are forty people standing right there who are very interested in noises.",
+          "next": "1.2.go"
+        },
+        "1.2.go": {
+          "type": "end",
+          "effects": {
+            "start_gameplay": "minigame_park_dol"
+          }
+        },
+        "1.2.5": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "proud",
+          "volume": "whisper",
+          "text": "Nailed it. First try. Nobody saw. Cats saw. Cats count.",
+          "effects": {
+            "respect": 2,
+            "tp": 15
+          },
+          "next": "1.2.end"
+        },
+        "1.2.6": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "panicked",
+          "volume": "whisper",
+          "text": "— ow — okay, okay, wait, wait —",
+          "auto_ms": 2000,
+          "next": "1.2.7"
+        },
+        "1.2.7": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "relieved",
+          "volume": "whisper",
+          "text": "(exhale) Fading. It's fading. Note to self: curbs are loud.",
+          "effects": {
+            "tp": 5,
+            "log": "park.curb"
+          },
+          "next": "1.2.end"
+        },
+        "1.2.end": {
+          "type": "end",
+          "effects": {
+            "checkpoint": "dol_parked"
+          },
+          "next_scene": "1.3"
+        }
+      },
+      "triggers": [
+        {
+          "event": "park.clean",
+          "node": "1.2.5",
+          "once": true,
+          "priority": 10
+        },
+        {
+          "event": "park.curb",
+          "node": "1.2.6",
+          "once": true,
+          "priority": 10
+        }
+      ]
+    },
+    "1.3": {
+      "id": "1.3",
+      "act": 1,
+      "title": "Inside",
+      "type": "gameplay",
+      "location": "kent_dol_interior",
+      "ambience": "res://audio/amb/emergency_light_hum.ogg",
+      "entry": "1.3.1",
+      "nodes": {
+        "1.3.1": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "Forty-seven. I've got forty-eight. Story of my life.",
+          "next": "1.3.2"
+        },
+        "1.3.2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "Okay. Carriers up. Walk soft. Don't touch anything. Don't — Gracie, don't —",
+          "anim": "gracie.carrier_rattle",
+          "next": "1.3.go"
+        },
+        "1.3.go": {
+          "type": "end",
+          "effects": {
+            "start_gameplay": "stealth_dol_interior",
+            "log": "mission.begin:dol_interior"
+          }
+        },
+        "1.3.3": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "warm",
+          "volume": "whisper",
+          "text": "Shh. Shh shh shh. Good girl. You are a good girl who is very bad.",
+          "auto_ms": 2400,
+          "effects": {
+            "calm": 5
+          }
+        },
+        "1.3.4": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "scared",
+          "volume": "whisper",
+          "text": "Don't move. Don't move. Don't move. …okay.",
+          "auto_ms": 3200,
+          "effects": {
+            "calm": -5
+          }
+        },
+        "1.3.5": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "relieved",
+          "volume": "whisper",
+          "text": "There. It's still on. It's still on. Emergency power. Okay. Okay okay okay.",
+          "next": "1.3.6"
+        },
+        "1.3.6": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "Setting you two down. Two minutes. Forty questions. Then we go home and I never come back here.",
+          "anim": "ali.set_carriers",
+          "next": "1.3.latch"
+        },
+        "1.3.latch": {
+          "type": "direction",
+          "text": "She reaches for the screen. Gracie's latch pops.",
+          "anim": "gracie.latch_pop",
+          "sfx": [
+            "carrier_latch"
+          ],
+          "auto_ms": 1200,
+          "next": "1.3.7"
+        },
+        "1.3.7": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "panicked",
+          "volume": "shout",
+          "noise_db": 75,
+          "text": "— GRACIE —",
+          "auto_ms": 800,
+          "next": "1.3.rack"
+        },
+        "1.3.rack": {
+          "type": "direction",
+          "text": "Ali lunges. Hits the pamphlet rack. It goes over. The sound is enormous. Every head turns.",
+          "anim": "rack.collapse",
+          "sfx": [
+            "rack_crash"
+          ],
+          "effects": {
+            "noise_db": 92,
+            "log": "dol.rack_crash"
+          },
+          "auto_ms": 2200,
+          "next": "1.3.8"
+        },
+        "1.3.8": {
+          "type": "direction",
+          "text": "Ali — no words. Just breath.",
+          "anim": "ali.frozen_breath",
+          "auto_ms": 1600,
+          "next": "1.3.chase"
+        },
+        "1.3.chase": {
+          "type": "end",
+          "effects": {
+            "start_gameplay": "chase_dol_gracie",
+            "calm": -20
+          }
+        },
+        "1.3.9": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "panicked",
+          "volume": "low",
+          "text": "Come here come here come here —",
+          "auto_ms": 1500
+        },
+        "1.3.10": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "panicked",
+          "volume": "raised",
+          "noise_db": 55,
+          "text": "Got you. GOT you. Go go go —",
+          "auto_ms": 1500
+        },
+        "1.3.11": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "Mya. Mya, where's —",
+          "anim": "ali.reach_back_seat",
+          "next": "1.3.12"
+        },
+        "1.3.12": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "scared",
+          "volume": "whisper",
+          "text": "No. No no no.",
+          "next": "1.3.13"
+        },
+        "1.3.13": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "scared",
+          "volume": "whisper",
+          "text": "She's by the terminal. She's still —",
+          "next": "1.3.doorway"
+        },
+        "1.3.doorway": {
+          "type": "direction",
+          "text": "The doorway fills.",
+          "anim": "quiet.fill_doorway",
+          "auto_ms": 2000,
+          "next": "1.3.14"
+        },
+        "1.3.14": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "If I honk they'll all come. If I wait… they might not.",
+          "next": "1.3.15"
+        },
+        "1.3.15": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "Ten seconds. Just give me ten seconds.",
+          "next": "1.3.C"
+        },
+        "1.3.C": {
+          "type": "choice",
+          "timeout_ms": 10000,
+          "default_option": "wait",
+          "choices": [
+            {
+              "id": "wait",
+              "text": "Hold still and wait.",
+              "next": "1.3.16",
+              "tracked": true,
+              "effects": {
+                "respect": 3,
+                "log": "choice.dol:wait"
+              }
+            },
+            {
+              "id": "honk",
+              "text": "Honk and go.",
+              "next": "1.3.20",
+              "tracked": true,
+              "effects": {
+                "respect": -3,
+                "log": "choice.dol:honk"
+              }
+            }
+          ]
+        },
+        "1.3.16": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "scared",
+          "volume": "whisper",
+          "text": "one… two… three…",
+          "auto_ms": 3200,
+          "next": "1.3.17"
+        },
+        "1.3.17": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "…they're stopping. They're stopping. Don't move, Gracie. Don't you dare.",
+          "anim": "quiet.settle",
+          "next": "1.3.18"
+        },
+        "1.3.18": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tired",
+          "volume": "whisper",
+          "text": "Okay. Okay. Back out. Slow. We're leaving.",
+          "next": "1.3.19"
+        },
+        "1.3.19": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "sad",
+          "volume": "whisper",
+          "text": "We're leaving without her.",
+          "next": "1.3.end_wait"
+        },
+        "1.3.end_wait": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "mya_lost": true,
+              "dol_honked": false
+            },
+            "checkpoint": "mya_lost",
+            "log": "mission.complete:dol_interior.wait"
+          },
+          "next_scene": "1.4"
+        },
+        "1.3.20": {
+          "type": "direction",
+          "text": "HORN. Everything turns. From every direction.",
+          "sfx": [
+            "beetle_horn"
+          ],
+          "effects": {
+            "noise_db": 95
+          },
+          "auto_ms": 1800,
+          "next": "1.3.21"
+        },
+        "1.3.21": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "panicked",
+          "volume": "shout",
+          "noise_db": 70,
+          "text": "— okay that was a mistake, that was a big — GO GO GO —",
+          "auto_ms": 2200,
+          "next": "1.3.escape"
+        },
+        "1.3.escape": {
+          "type": "wait",
+          "wait_for": "waypoint.reach:dol_lot_exit",
+          "next": "1.3.22"
+        },
+        "1.3.22": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "scared",
+          "volume": "whisper",
+          "text": "They're all — the whole lot. The whole lot's gone. I can't go back in there.",
+          "next": "1.3.23"
+        },
+        "1.3.23": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "sad",
+          "volume": "whisper",
+          "text": "I can't go back.",
+          "next": "1.3.end_honk"
+        },
+        "1.3.end_honk": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "mya_lost": true,
+              "dol_honked": true,
+              "dol_lot_lost": true
+            },
+            "checkpoint": "mya_lost",
+            "log": "mission.complete:dol_interior.honk"
+          },
+          "next_scene": "1.4"
+        }
+      },
+      "triggers": [
+        {
+          "event": "qte.gracie.success",
+          "node": "1.3.3",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.fail",
+          "node": "1.3.4",
+          "cooldown_ms": 3000,
+          "priority": 3
+        },
+        {
+          "event": "waypoint.reach:terminal",
+          "node": "1.3.5",
+          "once": true,
+          "priority": 10,
+          "interrupt": true
+        },
+        {
+          "event": "chase.start",
+          "node": "1.3.9",
+          "once": true
+        },
+        {
+          "event": "chase.gracie_caught",
+          "node": "1.3.10",
+          "once": true,
+          "priority": 5
+        },
+        {
+          "event": "waypoint.reach:beetle_driver_seat",
+          "node": "1.3.11",
+          "once": true,
+          "priority": 10,
+          "interrupt": true
+        }
+      ]
+    },
+    "1.4": {
+      "id": "1.4",
+      "act": 1,
+      "title": "Aftermath",
+      "type": "still",
+      "location": "grandma_carport_night",
+      "background": "res://backgrounds/carport_night_engine_off.png",
+      "music": "res://audio/music/aftermath_low.ogg",
+      "entry": "1.4.1",
+      "nodes": {
+        "1.4.1": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "sad",
+          "volume": "whisper",
+          "text": "You didn't mean it.",
+          "next": "1.4.2"
+        },
+        "1.4.2": {
+          "type": "direction",
+          "text": "Gracie purrs.",
+          "anim": "gracie.purr_lap",
+          "sfx": [
+            "cat_purr_soft"
+          ],
+          "auto_ms": 1600,
+          "next": "1.4.3"
+        },
+        "1.4.3": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "sad",
+          "volume": "whisper",
+          "text": "I know you didn't mean it.",
+          "next": "1.4.4"
+        },
+        "1.4.4": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "She's fine. She's — she sleeps through fireworks. She slept through the actual end of the world. She's asleep in that carrier right now, I promise you.",
+          "next": "1.4.5"
+        },
+        "1.4.5": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "I'm going back for her. Tomorrow. With a plan. A real one.",
+          "next": "1.4.radio"
+        },
+        "1.4.radio": {
+          "type": "direction",
+          "text": "Radio crackles.",
+          "sfx": [
+            "radio_click",
+            "static_swell"
+          ],
+          "auto_ms": 1400,
+          "next": "1.4.6"
+        },
+        "1.4.6": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "— Ali? You there?",
+          "next": "1.4.7"
+        },
+        "1.4.7": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "low",
+          "text": "…Bad night?",
+          "next": "1.4.8"
+        },
+        "1.4.8": {
+          "type": "direction",
+          "text": "Ali looks at the radio. Doesn't pick up.",
+          "anim": "ali.look_radio_no",
+          "auto_ms": 2400,
+          "next": "1.4.9"
+        },
+        "1.4.9": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "sad",
+          "volume": "low",
+          "text": "Okay. Same time tomorrow.",
+          "sfx": [
+            "radio_click"
+          ],
+          "next": "1.4.10"
+        },
+        "1.4.10": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "sad",
+          "volume": "whisper",
+          "text": "Same time tomorrow.",
+          "next": "1.4.end"
+        },
+        "1.4.end": {
+          "type": "end",
+          "effects": {
+            "checkpoint": "aftermath",
+            "log": "scene.complete:1.4"
+          },
+          "next_scene": "1.4b"
+        }
+      }
+    },
+    "1.4b": {
+      "id": "1.4b",
+      "act": 1,
+      "title": "Rumor Board",
+      "type": "still",
+      "location": "pharmacy_safehouse",
+      "background": "res://backgrounds/pharmacy_board.png",
+      "entry": "1.4.11",
+      "nodes": {
+        "1.4.11": {
+          "type": "line",
+          "speaker": "BOARD",
+          "delivery": "S",
+          "emotion": "reading",
+          "volume": "whisper",
+          "text": "\"Anyone seen a girl in a pink Bug with a plow? Couriers at the Valley warehouse asking. Not in trouble. Probably.\"",
+          "next": "1.4.12"
+        },
+        "1.4.12": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "text": "\"Probably.\"",
+          "next": "1.4.13"
+        },
+        "1.4.13": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "…Valley warehouse. Tuna. {GRANDMA}'s note said Tuna.",
+          "next": "1.4.14"
+        },
+        "1.4.14": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tired",
+          "volume": "whisper",
+          "text": "Fine. Plan B.",
+          "next": "1.4b.end"
+        },
+        "1.4b.end": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "saw_rumor_board": true
+            },
+            "unlock": [
+              "region.kent_valley"
+            ],
+            "checkpoint": "act1_complete",
+            "log": "act.complete:1"
+          },
+          "next_scene": "2.1"
+        }
+      }
+    }
+  },
+  "pools": {
+    "ali_sign_correct": {
+      "pick": "random",
+      "no_repeat": true,
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "proud",
+          "volume": "whisper",
+          "auto_ms": 2600,
+          "text": "Right. {GRANDMA} quizzed me on these every Sunday. Turns out that wasn't just a way to keep me off my phone."
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "proud",
+          "volume": "whisper",
+          "auto_ms": 1200,
+          "text": "Knew it."
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1400,
+          "text": "Okay, I know that one."
+        }
+      ]
+    },
+    "ali_sign_wrong": {
+      "pick": "random",
+      "no_repeat": true,
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "wry",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "…Huh. Okay. I'll remember that."
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "Noted. Painfully noted."
+        }
+      ]
+    },
+    "gracie_qte_start": {
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "panicked",
+          "volume": "whisper",
+          "auto_ms": 1400,
+          "text": "Gracie — Gracie no —"
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "What do you have. What is in your mouth."
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tired",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "She's on the dash. She's on the dash again."
+        }
+      ]
+    },
+    "gracie_qte_success": {
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "wry",
+          "volume": "whisper",
+          "auto_ms": 2400,
+          "text": "Got you. Sit. Sit. You don't know what sit means. Fine."
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "relieved",
+          "volume": "whisper",
+          "auto_ms": 2000,
+          "text": "Crisis averted. Crisis was small and orange."
+        }
+      ]
+    },
+    "gracie_qte_fail": {
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "auto_ms": 2400,
+          "text": "— and that's why the book says no loose animals in the car."
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 2200,
+          "text": "Hold still. Everybody hold still. That means you."
+        }
+      ]
+    },
+    "mya_wake": {
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 1200,
+          "text": "Mya's up."
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "Fat girl's awake. Something's coming."
+        }
+      ]
+    },
+    "noise_yellow": {
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 1000,
+          "text": "Ease off."
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 1400,
+          "text": "Too much. Let it fade."
+        }
+      ]
+    },
+    "noise_red": {
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "auto_ms": 1600,
+          "text": "That's the thing we don't do."
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "Okay. Okay. Run or wait. Decide."
+        }
+      ]
+    },
+    "plow_used": {
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "Sorry. Sorry. Last resort. Tuna said last resort."
+        }
+      ]
+    },
+    "mission_complete_quiet": {
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "low",
+          "auto_ms": 1200,
+          "text": "Clean."
+        },
+        {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 2000,
+          "text": "Nobody heard you. That's the whole job."
+        }
+      ]
+    },
+    "mission_complete_loud": {
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "low",
+          "auto_ms": 2200,
+          "text": "Cargo's here. So's everyone else. Do better."
+        }
+      ]
+    }
+  }
+}

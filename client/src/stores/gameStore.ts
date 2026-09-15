@@ -19,7 +19,10 @@ export type GamePhase =
   | 'gasStation'
   | 'outOfGas'
   | 'victory'
-  | 'gameover';
+  | 'gameover'
+  | 'dialogue';
+
+export type WorldMode = 'highway' | 'kent';
 
 export type Biome = 'city' | 'highway' | 'rural';
 
@@ -39,7 +42,7 @@ function getBiome(mileage: number): Biome {
 
 // ─── Day/Night cycle ─────────────────────────────────────────────────────────
 export type TimeOfDay = 'day' | 'sunset' | 'night';
-export type CameraMode = 'chase' | 'birdseye' | 'profile';
+export type CameraMode = 'chase' | 'birdseye' | 'profile' | 'quiet';
 
 function getTimeOfDay(mileage: number): TimeOfDay {
   const phase = (mileage % 400) / 400; // 0–1 repeating
@@ -70,6 +73,7 @@ interface VehicleSlice {
 
 interface GameSlice {
   phase: GamePhase;
+  worldMode: WorldMode;
   mileage: number;
   lastQuizMile: number;
   lastFuelStopMile: number;
@@ -119,6 +123,7 @@ type GameState = ControlsSlice &
     setEngineSpeed: (speed: number) => void;
     setABSActive: (active: boolean) => void;
     setPhase: (phase: GamePhase) => void;
+    setWorldMode: (mode: WorldMode) => void;
     addMileage: (delta: number) => void;
     setFuel: (n: number) => void;
     consumeFuel: (delta: number) => void;
@@ -141,6 +146,7 @@ type GameState = ControlsSlice &
 // ─── Default values ───────────────────────────────────────────────────────────
 const defaultGameState: GameSlice & QuizSlice & EconomySlice = {
   phase: 'menu',
+  worldMode: 'highway',
   mileage: 0,
   lastQuizMile: 0,
   lastFuelStopMile: 0,
@@ -201,6 +207,7 @@ export const useGameStore = create<GameState>()(
 
       // ── Phase ───────────────────────────────────────────────────────────────
       setPhase: (phase) => set({ phase }),
+      setWorldMode: (mode) => set({ worldMode: mode, cameraMode: mode === 'kent' ? 'quiet' : 'chase' }),
 
       togglePause: () => {
         const { phase } = get();
@@ -209,7 +216,7 @@ export const useGameStore = create<GameState>()(
       },
 
       cycleCameraMode: () => {
-        const modes: CameraMode[] = ['chase', 'birdseye', 'profile'];
+        const modes: CameraMode[] = ['chase', 'birdseye', 'profile', 'quiet'];
         const idx = modes.indexOf(get().cameraMode);
         set({ cameraMode: modes[(idx + 1) % modes.length] });
       },
@@ -316,8 +323,9 @@ export const useGameStore = create<GameState>()(
           answeredIds: resetIds ? newAnsweredIds : newAnsweredIds,
           lastQuizMile: s.mileage,
           quizActive: false,
-          hp: correct ? s.hp : Math.max(0, s.hp - 10),
-          phase: s.hp - 10 <= 0 && !correct ? 'gameover' : 'quiz',
+          // Kent (Quiet Roads) in-world prompts never cost HP — the design says wrong answers are free.
+          hp: correct || s.worldMode === 'kent' ? s.hp : Math.max(0, s.hp - 10),
+          phase: s.hp - 10 <= 0 && !correct && s.worldMode !== 'kent' ? 'gameover' : 'quiz',
         });
 
         return { correct, coinsEarned };
@@ -363,7 +371,8 @@ export const useGameStore = create<GameState>()(
       name: 'aigoo-game-save',
       partialize: (state) => ({
         // Exclude runtime-only state
-        phase: state.phase === 'driving' ? 'menu' : state.phase,
+        phase: state.phase === 'driving' || state.phase === 'dialogue' ? 'menu' : state.phase,
+        worldMode: state.worldMode,
         mileage: state.mileage,
         lastQuizMile: state.lastQuizMile,
         lastFuelStopMile: state.lastFuelStopMile,

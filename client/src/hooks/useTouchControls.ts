@@ -17,6 +17,7 @@
  */
 import { useEffect, useRef } from 'react';
 import { useGameStore } from '@/stores/gameStore';
+import { useQRStore } from '@/stores/qrStore';
 
 const DEAD_ZONE_PX = 5;
 const STEER_DRAG_SCALE = 0.004; // px → steering value
@@ -71,10 +72,12 @@ export function useTouchControls() {
 
     const onKeyDown = (e: KeyboardEvent) => {
       keys.add(e.key);
+      if (e.key === 'h' || e.key === 'H') useQRStore.getState().setHorn(true);
       applyKeyboard();
     };
     const onKeyUp = (e: KeyboardEvent) => {
       keys.delete(e.key);
+      if (e.key === 'h' || e.key === 'H') useQRStore.getState().setHorn(false);
       applyKeyboard();
     };
 
@@ -108,6 +111,10 @@ export function useTouchControls() {
     }
 
     function onTouchStart(e: TouchEvent) {
+      // Taps on UI (quiz answers, dialogue box, horn, menus) are not driving input.
+      // preventDefault here would also kill their click events, so leave them alone.
+      const target = e.target as HTMLElement | null;
+      if (target && target.closest('button, a, input, select, textarea, [data-ui]')) return;
       e.preventDefault();
       const el = e.currentTarget as HTMLElement;
       for (const touch of Array.from(e.changedTouches)) {

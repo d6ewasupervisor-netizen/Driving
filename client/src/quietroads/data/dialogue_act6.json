@@ -1,0 +1,1773 @@
+{
+  "meta": {
+    "schema_version": "1.2.0",
+    "game": "Quiet Roads",
+    "acts": [
+      6
+    ],
+    "locale": "en-US",
+    "placeholders": {
+      "MOM": "Mom",
+      "RAY": "Ray",
+      "GRANDMA": "Grandma",
+      "GRANDMA_NAME": "June",
+      "PLAYER": "Ali",
+      "PLAYER_FULL": "Alison"
+    }
+  },
+  "variables": {
+    "respect": {
+      "type": "int",
+      "default": 0,
+      "min": 0,
+      "max": 100,
+      "hidden": true
+    },
+    "calm": {
+      "type": "int",
+      "default": 50,
+      "min": 0,
+      "max": 100
+    },
+    "trade_points": {
+      "type": "int",
+      "default": 0,
+      "min": 0
+    },
+    "fatigue_stage": {
+      "type": "int",
+      "default": 0,
+      "min": 0,
+      "max": 2
+    },
+    "bridge_wait_restarts": {
+      "type": "int",
+      "default": 0,
+      "min": 0
+    }
+  },
+  "flags": {
+    "deac_gone": false,
+    "has_sori_card": false,
+    "has_fieldnotes": false,
+    "heard_hush_pitch": false,
+    "has_gracie_toy": false,
+    "mya_passive": false,
+    "straight_retry": false,
+    "pushed_through": false,
+    "rested": false,
+    "tire_checked": false,
+    "bridge_retry": false,
+    "bridge_nonevent": false,
+    "act6_complete": false
+  },
+  "characters": {
+    "ALI": {
+      "name": "Ali",
+      "color": "#F28DB2",
+      "portrait_dir": "res://portraits/ali",
+      "default_volume": "whisper"
+    },
+    "MYA": {
+      "name": "Mya",
+      "color": "#8B6B4A",
+      "portrait_dir": "res://portraits/mya",
+      "speaks": false
+    },
+    "GRACIE": {
+      "name": "Gracie",
+      "color": "#F2A63B",
+      "portrait_dir": "res://portraits/gracie",
+      "speaks": false
+    },
+    "DEAC": {
+      "name": "Deac",
+      "color": "#B0B0B0",
+      "portrait_dir": "res://portraits/deac",
+      "default_volume": "low"
+    },
+    "JONAH": {
+      "name": "Jonah",
+      "color": "#5DADE2",
+      "portrait_dir": "res://portraits/jonah",
+      "speaks": false
+    },
+    "MOM": {
+      "name": "{MOM}",
+      "color": "#7FB3D5",
+      "portrait_dir": "res://portraits/mom",
+      "voice_bed": "radio_static",
+      "default_volume": "low"
+    },
+    "RAY": {
+      "name": "{RAY}",
+      "color": "#6C8E7F",
+      "portrait_dir": "res://portraits/ray",
+      "voice_bed": "radio_static",
+      "default_volume": "low"
+    },
+    "LUMI": {
+      "name": "Lumi (HUSH)",
+      "color": "#A9DFBF",
+      "portrait_dir": "res://portraits/hush_lumi",
+      "voice_bed": "radio_static",
+      "default_volume": "whisper"
+    },
+    "SORI": {
+      "name": "Sori (HUSH)",
+      "color": "#F5B7B1",
+      "portrait_dir": "res://portraits/hush_sori",
+      "voice_bed": "radio_static",
+      "default_volume": "whisper"
+    }
+  },
+  "scenes": {
+    "6.1": {
+      "id": "6.1",
+      "act": 6,
+      "title": "Goodbye, Deac",
+      "type": "still",
+      "location": "ellensburg_fuel_depot",
+      "background": "res://backgrounds/ellensburg_depot_dusk.png",
+      "music": "res://audio/music/deac_theme_low.ogg",
+      "ambience": "res://audio/amb/depot_pump_tick.ogg",
+      "guide_refs": [
+        "Instruction Permit: Supervising Driver Requirement",
+        "Fatigue and Drowsy Driving"
+      ],
+      "entry": "6.1.0",
+      "nodes": {
+        "6.1.0": {
+          "type": "direction",
+          "text": "Ellensburg fuel depot. Dusk. Deac tops off the Beetle herself. Jonah's truck idles by the gate. The pump clicks off.",
+          "anim": "deac.pump_handle",
+          "sfx": [
+            "pump_click_off"
+          ],
+          "auto_ms": 3400,
+          "effects": {
+            "log": "depot.fueled"
+          },
+          "next": "6.1.hand"
+        },
+        "6.1.hand": {
+          "type": "direction",
+          "text": "She reaches into the truck. A battered spiral notebook, corners soft. A photocard tucked in the cover.",
+          "anim": "deac.hand_notebook",
+          "auto_ms": 2800,
+          "next": "6.1.1"
+        },
+        "6.1.1": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Field notes. Everything I ever told anyone who listened. Some of it's about driving.",
+          "effects": {
+            "give_items": [
+              "fieldnotes"
+            ],
+            "set_flags": {
+              "has_fieldnotes": true
+            },
+            "unlock": [
+              "codex.fieldnotes",
+              "swag.fieldnotes"
+            ],
+            "log": "item.given:fieldnotes"
+          },
+          "next": "6.1.2"
+        },
+        "6.1.2": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "anim": "deac.tap_card",
+          "text": "And that.",
+          "next": "6.1.sori_branch"
+        },
+        "6.1.sori_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "has_sori_card",
+                "is": true
+              },
+              "next": "6.1.3b"
+            },
+            {
+              "next": "6.1.3"
+            }
+          ]
+        },
+        "6.1.3": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "amused",
+          "volume": "whisper",
+          "text": "Is that — Sori?",
+          "next": "6.1.4"
+        },
+        "6.1.4": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Priya says that's the rare one. Don't tell Jonah.",
+          "effects": {
+            "give_items": [
+              "photocard_sori"
+            ],
+            "set_flags": {
+              "has_sori_card": true
+            },
+            "log": "item.given:photocard_sori"
+          },
+          "next": "6.1.5"
+        },
+        "6.1.3b": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "amused",
+          "volume": "whisper",
+          "text": "I already have Sori.",
+          "next": "6.1.4b"
+        },
+        "6.1.4b": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Now you've got two. Priya says that's never happened. Don't tell Jonah.",
+          "effects": {
+            "give_items": [
+              "photocard_sori"
+            ],
+            "tp": 25,
+            "log": "item.given:photocard_sori.duplicate"
+          },
+          "next": "6.1.5"
+        },
+        "6.1.5": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "You're really not coming.",
+          "next": "6.1.6"
+        },
+        "6.1.6": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "I've got a crew. You've got a mom. Go.",
+          "next": "6.1.7"
+        },
+        "6.1.7": {
+          "type": "direction",
+          "text": "Beat.",
+          "auto_ms": 1400,
+          "next": "6.1.8"
+        },
+        "6.1.8": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "You'll want to go fast now. Long straight road, nobody around, feels safe. It isn't. Fatigue is quiet, too. It'll get you before they do.",
+          "next": "6.1.9"
+        },
+        "6.1.9": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Deac.",
+          "next": "6.1.10"
+        },
+        "6.1.10": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "What.",
+          "next": "6.1.11"
+        },
+        "6.1.11": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "whisper",
+          "text": "Thank you for the cat.",
+          "next": "6.1.12"
+        },
+        "6.1.12": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "sad",
+          "volume": "low",
+          "anim": "deac.look_away",
+          "text": "…She was never the point.",
+          "next": "6.1.13"
+        },
+        "6.1.13": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Seatbelt.",
+          "next": "6.1.14"
+        },
+        "6.1.14": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "I know.",
+          "next": "6.1.15"
+        },
+        "6.1.15": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "I know you know.",
+          "next": "6.1.jonah"
+        },
+        "6.1.jonah": {
+          "type": "direction",
+          "text": "Jonah, at the gate, reaches for the horn — and doesn't. He flashes his headlights twice.",
+          "anim": "jonah.flash_twice",
+          "sfx": [
+            "headlight_relay_click"
+          ],
+          "auto_ms": 3000,
+          "effects": {
+            "log": "jonah.flash"
+          },
+          "next": "6.1.flashback"
+        },
+        "6.1.flashback": {
+          "type": "direction",
+          "text": "Ali flashes back. That's the goodbye.",
+          "anim": "beetle.flash_twice",
+          "sfx": [
+            "headlight_relay_click"
+          ],
+          "auto_ms": 2600,
+          "next": "6.1.end"
+        },
+        "6.1.end": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "deac_gone": true
+            },
+            "respect": 3,
+            "checkpoint": "deac_gone",
+            "log": "scene.complete:6.1"
+          },
+          "next_scene": "6.2"
+        }
+      }
+    },
+    "6.2": {
+      "id": "6.2",
+      "act": 6,
+      "title": "The Straight",
+      "type": "gameplay",
+      "location": "i90_ellensburg_to_vantage",
+      "background": "res://backgrounds/i90_straight_dusk.png",
+      "ambience": "res://audio/amb/highway_empty_night.ogg",
+      "music": "res://audio/music/wide_open.ogg",
+      "guide_refs": [
+        "Night Driving: Headlight Range and Speed",
+        "High Beams on Empty Roads",
+        "Fatigue and Drowsy Driving",
+        "Rest Stops"
+      ],
+      "entry": "6.2.entry",
+      "nodes": {
+        "6.2.entry": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "straight_retry",
+                "is": true
+              },
+              "next": "6.2.retry"
+            },
+            {
+              "next": "6.2.0"
+            }
+          ]
+        },
+        "6.2.0": {
+          "type": "direction",
+          "text": "The depot shrinks in the mirror. Ahead: I-90, straight to the horizon, and the horizon going orange.",
+          "anim": "beetle.depart_depot",
+          "auto_ms": 3000,
+          "next": "6.2.pre"
+        },
+        "6.2.pre": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Okay. Just us. Mya, you're navigating. Gracie, you're… present.",
+          "next": "6.2.go"
+        },
+        "6.2.retry": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tired",
+          "volume": "whisper",
+          "text": "Back at the depot. Deac's truck is gone. Nobody to say it, so I'll say it. Do better.",
+          "next": "6.2.go"
+        },
+        "6.2.go": {
+          "type": "effects",
+          "effects": {
+            "set_vars": {
+              "fatigue_stage": 0
+            },
+            "set_flags": {
+              "straight_retry": false,
+              "pushed_through": false
+            },
+            "start_gameplay": "straight_night_drive",
+            "checkpoint": "straight_begin",
+            "log": "mission.begin:straight"
+          }
+        },
+        "6.2.night": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 2400,
+          "anim": "beetle.lights_on",
+          "text": "Dark. Lights on. Nobody out here for fifty miles — high beams. The book says five hundred feet."
+        },
+        "6.2.hb": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 2000,
+          "text": "Better. Now I can see what I'm about to not hit.",
+          "effects": {
+            "tp": 5,
+            "log": "headlight.highbeam.on"
+          }
+        },
+        "6.2.exceeds": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "has_item": "led_lights"
+              },
+              "next": "6.2.1b"
+            },
+            {
+              "next": "6.2.1"
+            }
+          ]
+        },
+        "6.2.1": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 3400,
+          "text": "Seventy. Look at the lights. Look at the shadow. The shadow's past the lights. I'd hit whatever's out there before I ever saw it.",
+          "effects": {
+            "log": "shadow.exceeds_lights"
+          },
+          "next": "6.2.2"
+        },
+        "6.2.1b": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 3400,
+          "text": "Even with Tuna's lights. The shadow's past the edge. He said it: see farther doesn't mean go faster.",
+          "effects": {
+            "log": "shadow.exceeds_lights.led"
+          },
+          "next": "6.2.2"
+        },
+        "6.2.2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 3000,
+          "text": "Back off until the shadow's inside the light. That's the rule. Don't outdrive your headlights."
+        },
+        "6.2.inside": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "There. Shadow's in the light. Stay there.",
+          "effects": {
+            "tp": 8,
+            "respect": 1,
+            "log": "shadow.inside_lights"
+          }
+        },
+        "6.2.fy_fx": {
+          "type": "effects",
+          "effects": {
+            "set_vars": {
+              "fatigue_stage": 1
+            },
+            "log": "fatigue.yellow"
+          },
+          "next": "6.2.3"
+        },
+        "6.2.3": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tired",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "anim": "ali.blink_slow",
+          "text": "I'm fine. I'm fine."
+        },
+        "6.2.fr_fx": {
+          "type": "effects",
+          "effects": {
+            "set_vars": {
+              "fatigue_stage": 2
+            },
+            "calm": -5,
+            "log": "fatigue.red"
+          },
+          "next": "6.2.4"
+        },
+        "6.2.4": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "scared",
+          "volume": "whisper",
+          "auto_ms": 2200,
+          "anim": "ali.head_snap",
+          "text": "…Was that the line? Did I just cross the —",
+          "next": "6.2.5"
+        },
+        "6.2.5": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tired",
+          "volume": "whisper",
+          "auto_ms": 4200,
+          "text": "Okay. Rest area. Twenty minutes. Deac said fatigue is quiet. Deac says a lot of things and she's been right about every single one of them and it's infuriating."
+        },
+        "6.2.hush": {
+          "type": "line",
+          "speaker": "LUMI",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "whisper",
+          "auto_ms": 3400,
+          "anim": "radio.dial_glow",
+          "text": "Somebody in Kent requested this one for a girl in a pink car. We don't know who she is. We hope she gets where she's going.",
+          "next": "6.2.hush2"
+        },
+        "6.2.hush2": {
+          "type": "line",
+          "speaker": "SORI",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "whisper",
+          "auto_ms": 2600,
+          "text": "Hold still. Stay soft. Here's \"Hold Still.\"",
+          "next": "6.2.hush3"
+        },
+        "6.2.hush3": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "warm",
+          "volume": "whisper",
+          "auto_ms": 2600,
+          "anim": "ali.small_smile",
+          "text": "…Priya. That was Priya. Or Deac. It was definitely not Jonah.",
+          "effects": {
+            "calm": 10,
+            "log": "hush.request_played"
+          }
+        },
+        "6.2.rest_prompt": {
+          "type": "direction",
+          "text": "REST AREA — 1 MILE. The sign slides past in the high beams. The exit is a dark ramp off a dark road.",
+          "anim": "sign.rest_area",
+          "auto_ms": 2600,
+          "next": "6.2.rest_C"
+        },
+        "6.2.rest_C": {
+          "type": "choice",
+          "timeout_ms": 8000,
+          "default_option": "drive",
+          "choices": [
+            {
+              "id": "stop",
+              "text": "Pull in. Twenty minutes.",
+              "next": "6.2.pullin",
+              "tracked": true,
+              "effects": {
+                "respect": 4,
+                "tp": 20,
+                "log": "choice.rest:stop"
+              }
+            },
+            {
+              "id": "drive",
+              "text": "Keep driving. I'm fine.",
+              "next": "6.2.drive_on",
+              "tracked": true,
+              "effects": {
+                "respect": -3,
+                "set_flags": {
+                  "pushed_through": true
+                },
+                "log": "choice.rest:drive"
+              }
+            }
+          ]
+        },
+        "6.2.pullin": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tired",
+          "volume": "whisper",
+          "text": "Twenty minutes. That's what the book says. Twenty minutes and you're a person again.",
+          "next": "6.2.pullin_fx"
+        },
+        "6.2.pullin_fx": {
+          "type": "effects",
+          "effects": {
+            "start_gameplay": "rest_area_pullin",
+            "log": "rest.pullin"
+          },
+          "next": "6.2.wait_parked"
+        },
+        "6.2.wait_parked": {
+          "type": "wait",
+          "wait_for": "park.clean",
+          "next": "6.2.9"
+        },
+        "6.2.drive_on": {
+          "type": "direction",
+          "text": "The ramp goes by. The road keeps going. The dashboard is the only light in the world.",
+          "anim": "beetle.pass_exit",
+          "auto_ms": 3200,
+          "next": "6.2.wait_drift"
+        },
+        "6.2.wait_drift": {
+          "type": "wait",
+          "wait_for": "microsleep.drift",
+          "next": "6.2.drift"
+        },
+        "6.2.drift": {
+          "type": "direction",
+          "text": "Ali's eyes close. The Beetle drifts right.",
+          "anim": "ali.microsleep",
+          "auto_ms": 1800,
+          "next": "6.2.wait_rumble"
+        },
+        "6.2.wait_rumble": {
+          "type": "wait",
+          "wait_for": "rumble.strip",
+          "next": "6.2.6"
+        },
+        "6.2.6": {
+          "type": "direction",
+          "text": "BRRRRRRRT.",
+          "sfx": [
+            "rumble_strip"
+          ],
+          "anim": "beetle.rumble_shake",
+          "effects": {
+            "noise_db": 70,
+            "calm": -15,
+            "log": "rumble.strip"
+          },
+          "auto_ms": 1200,
+          "next": "6.2.7"
+        },
+        "6.2.7": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "panicked",
+          "volume": "raised",
+          "noise_db": 40,
+          "auto_ms": 1600,
+          "text": "— awake, I'm awake, I'm —",
+          "next": "6.2.8"
+        },
+        "6.2.8": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "scared",
+          "volume": "whisper",
+          "auto_ms": 2200,
+          "text": "Okay. Stopping. Stopping now.",
+          "next": "6.2.forced"
+        },
+        "6.2.forced": {
+          "type": "effects",
+          "effects": {
+            "start_gameplay": "rest_area_forced",
+            "log": "rest.forced"
+          },
+          "next": "6.2.wait_parked2"
+        },
+        "6.2.wait_parked2": {
+          "type": "wait",
+          "wait_for": "park.clean",
+          "next": "6.2.8b"
+        },
+        "6.2.8b": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tired",
+          "volume": "whisper",
+          "text": "The book said twenty minutes. Deac said it. The sign said it. The road had to say it.",
+          "next": "6.2.9"
+        },
+        "6.2.9": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tired",
+          "volume": "whisper",
+          "anim": "ali.settle_seat",
+          "text": "Wake me up if anything happens. Mya, I'm talking to you. You're the alarm.",
+          "next": "6.2.10"
+        },
+        "6.2.10": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "…Gracie, you're also the alarm, but for different reasons.",
+          "next": "6.2.radio"
+        },
+        "6.2.radio": {
+          "type": "direction",
+          "text": "The radio, low.",
+          "sfx": [
+            "radio_click",
+            "static_swell"
+          ],
+          "auto_ms": 1400,
+          "next": "6.2.11"
+        },
+        "6.2.11": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "low",
+          "text": "Where are you sleeping?",
+          "next": "6.2.12"
+        },
+        "6.2.12": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "tired",
+          "volume": "whisper",
+          "text": "Rest area past Ellensburg. Doors locked.",
+          "next": "6.2.13"
+        },
+        "6.2.13": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "relieved",
+          "volume": "low",
+          "text": "Good. That's — good. That's the right thing.",
+          "next": "6.2.14"
+        },
+        "6.2.14": {
+          "type": "line",
+          "speaker": "RAY",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Check your tire pressure in the morning. Cold drops it.",
+          "next": "6.2.15"
+        },
+        "6.2.15": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "tired",
+          "volume": "whisper",
+          "text": "Okay, {RAY}.",
+          "next": "6.2.16"
+        },
+        "6.2.16": {
+          "type": "line",
+          "speaker": "RAY",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "And the —",
+          "next": "6.2.17"
+        },
+        "6.2.17": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "{RAY}.",
+          "next": "6.2.18"
+        },
+        "6.2.18": {
+          "type": "line",
+          "speaker": "RAY",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "low",
+          "text": "I just want her to check the —",
+          "next": "6.2.19"
+        },
+        "6.2.19": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "whisper",
+          "text": "I'll check it. Goodnight.",
+          "sfx": [
+            "radio_click"
+          ],
+          "next": "6.2.sleep"
+        },
+        "6.2.sleep": {
+          "type": "direction",
+          "text": "Night. Two cats, one girl, one pink car, engine off. Nothing moves. Nothing has to.",
+          "anim": "beetle.night_still",
+          "music": "res://audio/music/night_bunk.ogg",
+          "auto_ms": 4200,
+          "effects": {
+            "set_flags": {
+              "rested": true
+            },
+            "set_vars": {
+              "fatigue_stage": 0
+            },
+            "calm": 25,
+            "checkpoint": "rested",
+            "log": "rest.complete"
+          },
+          "next": "6.2.morning"
+        },
+        "6.2.morning": {
+          "type": "direction",
+          "text": "Five a.m. Still dark. Frost on the windshield. Ali, awake before the cats, looking at the tires.",
+          "anim": "ali.morning_frost",
+          "background": "res://backgrounds/rest_area_predawn.png",
+          "auto_ms": 3000,
+          "next": "6.2.tire_C"
+        },
+        "6.2.tire_C": {
+          "type": "choice",
+          "choices": [
+            {
+              "id": "check",
+              "text": "Check the tires. {RAY} said.",
+              "next": "6.2.tire_yes",
+              "tracked": true,
+              "effects": {
+                "tp": 15,
+                "set_flags": {
+                  "tire_checked": true
+                },
+                "log": "tire.checked"
+              }
+            },
+            {
+              "id": "skip",
+              "text": "They look fine. Go.",
+              "next": "6.2.tire_no",
+              "tracked": true,
+              "effects": {
+                "log": "tire.skipped"
+              }
+            }
+          ]
+        },
+        "6.2.tire_yes": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "whisper",
+          "anim": "ali.kneel_tire",
+          "text": "Low. All four. Cold drops it. He's going to be so smug. He's going to be right, and smug.",
+          "next": "6.2.end"
+        },
+        "6.2.tire_no": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tired",
+          "volume": "whisper",
+          "text": "They look fine. …I'm going to hear about this.",
+          "next": "6.2.end"
+        },
+        "6.2.end": {
+          "type": "end",
+          "effects": {
+            "checkpoint": "vantage_approach",
+            "log": "scene.complete:6.2"
+          },
+          "next_scene": "6.3"
+        },
+        "6.2.swarm": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "scared",
+          "volume": "whisper",
+          "text": "They're up. Okay. Okay. Cats — got both. Got both.",
+          "next": "6.2.swarm2"
+        },
+        "6.2.swarm2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tired",
+          "volume": "whisper",
+          "text": "Back to the depot. Nobody's on the radio to say it. Warehouse. Try again. …Depot. Try again.",
+          "next": "6.2.swarm_end"
+        },
+        "6.2.swarm_end": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "straight_retry": true
+            },
+            "respect": -2,
+            "log": "mission.fail:straight"
+          },
+          "next_scene": "6.2"
+        }
+      },
+      "triggers": [
+        {
+          "event": "night.fall",
+          "node": "6.2.night",
+          "once": true,
+          "priority": 5
+        },
+        {
+          "event": "headlight.highbeam.on",
+          "node": "6.2.hb",
+          "once": true,
+          "priority": 2
+        },
+        {
+          "event": "shadow.exceeds_lights",
+          "node": "6.2.exceeds",
+          "once": true,
+          "priority": 6,
+          "interrupt": true
+        },
+        {
+          "event": "shadow.exceeds_lights",
+          "node": "pool:ali_outdriving",
+          "cooldown_ms": 15000,
+          "priority": 2
+        },
+        {
+          "event": "shadow.inside_lights",
+          "node": "6.2.inside",
+          "once": true,
+          "priority": 2
+        },
+        {
+          "event": "fatigue.yellow",
+          "node": "6.2.fy_fx",
+          "once": true,
+          "priority": 5
+        },
+        {
+          "event": "fatigue.red",
+          "node": "6.2.fr_fx",
+          "once": true,
+          "priority": 8,
+          "interrupt": true
+        },
+        {
+          "event": "fatigue.red",
+          "node": "pool:ali_drowsy",
+          "cooldown_ms": 20000,
+          "priority": 3
+        },
+        {
+          "event": "cruise.idle.night",
+          "node": "6.2.hush",
+          "once": true,
+          "priority": 1,
+          "condition": {
+            "flag": "heard_hush_pitch",
+            "is": true
+          }
+        },
+        {
+          "event": "waypoint.reach:rest_area",
+          "node": "6.2.rest_prompt",
+          "once": true,
+          "priority": 20,
+          "interrupt": true,
+          "condition": {
+            "var": "fatigue_stage",
+            "gte": 1
+          }
+        },
+        {
+          "event": "qte.gracie.start",
+          "node": "pool:gracie_qte_start",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.success",
+          "node": "pool:gracie_qte_success",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.fail",
+          "node": "pool:gracie_qte_fail",
+          "cooldown_ms": 3000,
+          "priority": 3
+        },
+        {
+          "event": "mya.wake",
+          "node": "pool:mya_wake",
+          "cooldown_ms": 20000,
+          "priority": 4,
+          "condition": {
+            "flag": "mya_passive",
+            "is": true
+          }
+        },
+        {
+          "event": "noise.yellow",
+          "node": "pool:noise_yellow",
+          "cooldown_ms": 8000
+        },
+        {
+          "event": "noise.red",
+          "node": "pool:noise_red",
+          "cooldown_ms": 12000,
+          "priority": 5,
+          "interrupt": true
+        },
+        {
+          "event": "mission.fail.swarm",
+          "node": "6.2.swarm",
+          "priority": 20,
+          "interrupt": true
+        }
+      ]
+    },
+    "6.3": {
+      "id": "6.3",
+      "act": 6,
+      "title": "Vantage Bridge",
+      "type": "gameplay",
+      "location": "vantage_bridge_columbia",
+      "background": "res://backgrounds/vantage_bridge_predawn_wind.png",
+      "ambience": "res://audio/amb/gorge_wind_gusts.ogg",
+      "music": "res://audio/music/bridge_tension.ogg",
+      "guide_refs": [
+        "Adverse Conditions: Strong Crosswinds",
+        "Bridges and Wind",
+        "Passenger Distraction",
+        "Stopping in Traffic Lanes: Emergencies Only"
+      ],
+      "entry": "6.3.entry",
+      "nodes": {
+        "6.3.entry": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "bridge_retry",
+                "is": true
+              },
+              "next": "6.3.retry"
+            },
+            {
+              "next": "6.3.0"
+            }
+          ]
+        },
+        "6.3.0": {
+          "type": "direction",
+          "text": "The road drops toward the Columbia. The bridge, long and gray, and the water black under it. The wind arrives before the bridge does.",
+          "anim": "beetle.descend_gorge",
+          "auto_ms": 3400,
+          "next": "6.3.1"
+        },
+        "6.3.1": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "Okay. Bridge. Wind. {GRANDMA} said this bridge is where the wind lives.",
+          "next": "6.3.2"
+        },
+        "6.3.2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Two hands. Slow down. When it pushes, steer into it — small. Don't fight it big.",
+          "next": "6.3.go"
+        },
+        "6.3.retry": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tired",
+          "volume": "whisper",
+          "text": "Same bridge. Same wind. Gracie, same rules. Especially you.",
+          "next": "6.3.go"
+        },
+        "6.3.go": {
+          "type": "effects",
+          "effects": {
+            "set_flags": {
+              "bridge_retry": false
+            },
+            "set_vars": {
+              "bridge_wait_restarts": 0
+            },
+            "start_gameplay": "vantage_bridge_crossing",
+            "checkpoint": "bridge_begin",
+            "log": "mission.begin:bridge"
+          }
+        },
+        "6.3.into": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1600,
+          "text": "Into it. Small. Okay.",
+          "effects": {
+            "tp": 5,
+            "log": "steer.into_wind"
+          }
+        },
+        "6.3.over": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 2000,
+          "text": "— too much, too much, that's fighting it —",
+          "effects": {
+            "respect": -1,
+            "log": "steer.overcorrect"
+          }
+        },
+        "6.3.fast": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 2200,
+          "text": "Slower. Wind hits harder the faster you give it something to hit.",
+          "effects": {
+            "log": "speed.over45.bridge"
+          }
+        },
+        "6.3.sign": {
+          "type": "direction",
+          "text": "Halfway across. A gust rips a loose sign off its post and slams it against the railing. The sound is enormous. It isn't hers.",
+          "anim": "sign.slam_rail",
+          "sfx": [
+            "sheet_metal_slam"
+          ],
+          "effects": {
+            "noise_db": 88,
+            "noise_marker": "vantage_sign",
+            "calm": -10,
+            "log": "bridge.sign_slam"
+          },
+          "auto_ms": 2600,
+          "next": "6.3.4"
+        },
+        "6.3.4": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "panicked",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "That wasn't me. That wasn't me —",
+          "next": "6.3.5"
+        },
+        "6.3.5": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 3000,
+          "anim": "quiet.far_side_turn_to_sign",
+          "text": "They're looking at it. They're looking at the sign. Not us. Not us. Just keep —",
+          "next": "6.3.gracie_branch"
+        },
+        "6.3.gracie_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "has_gracie_toy",
+                "is": true
+              },
+              "next": "6.3.toy_go"
+            },
+            {
+              "next": "6.3.moth_go"
+            }
+          ]
+        },
+        "6.3.toy_go": {
+          "type": "effects",
+          "effects": {
+            "start_gameplay": "bridge_after_sign_toy",
+            "log": "bridge.branch:toy"
+          },
+          "next": "6.3.wait_toy"
+        },
+        "6.3.wait_toy": {
+          "type": "wait",
+          "wait_for": "gracie.toy",
+          "next": "6.3.toy"
+        },
+        "6.3.toy": {
+          "type": "direction",
+          "text": "A moth hits the passenger window. Gracie's head snaps to it — and then to the felt mouse in the footwell. She takes the mouse. Silently.",
+          "anim": "gracie.choose_toy",
+          "auto_ms": 3400,
+          "next": "6.3.toy2"
+        },
+        "6.3.toy2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "relieved",
+          "volume": "whisper",
+          "auto_ms": 3000,
+          "text": "Good girl. Good girl. Bea, I owe you my life.",
+          "effects": {
+            "tp": 40,
+            "respect": 2,
+            "set_flags": {
+              "bridge_nonevent": true
+            },
+            "log": "bridge.nonevent"
+          },
+          "next": "6.3.wait_settle_toy"
+        },
+        "6.3.wait_settle_toy": {
+          "type": "wait",
+          "wait_for": "quiet.settle",
+          "next": "6.3.toy3"
+        },
+        "6.3.toy3": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 2400,
+          "text": "They forgot the sign. They never saw us. Keep rolling. Small.",
+          "next": "6.3.wait_end"
+        },
+        "6.3.moth_go": {
+          "type": "effects",
+          "effects": {
+            "start_gameplay": "bridge_after_sign_moth",
+            "log": "bridge.branch:moth"
+          },
+          "next": "6.3.wait_moth"
+        },
+        "6.3.wait_moth": {
+          "type": "wait",
+          "wait_for": "gracie.moth",
+          "next": "6.3.thump"
+        },
+        "6.3.thump": {
+          "type": "direction",
+          "text": "A moth. Gracie launches at the passenger window. THUMP. Small. Close.",
+          "anim": "gracie.window_thump",
+          "sfx": [
+            "cat_window_thump"
+          ],
+          "effects": {
+            "noise_db": 58,
+            "calm": -10,
+            "log": "gracie.moth"
+          },
+          "auto_ms": 1600,
+          "next": "6.3.6"
+        },
+        "6.3.6": {
+          "type": "direction",
+          "text": "Every head on the far side swings from the sign to the car.",
+          "anim": "quiet.far_side_turn_to_car",
+          "auto_ms": 2400,
+          "next": "6.3.7"
+        },
+        "6.3.7": {
+          "type": "direction",
+          "text": "Ali — nothing. Just her hands on the wheel.",
+          "anim": "ali.frozen_wheel",
+          "auto_ms": 1800,
+          "next": "6.3.8"
+        },
+        "6.3.8": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "Engine off.",
+          "next": "6.3.9"
+        },
+        "6.3.9": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "Engine off. Hands off. Don't breathe loud. Sixty seconds. Let the meter drain. They're very good at forgetting.",
+          "next": "6.3.wait_go"
+        },
+        "6.3.wait_go": {
+          "type": "effects",
+          "effects": {
+            "start_gameplay": "bridge_engine_off_wait",
+            "checkpoint": "bridge_wait",
+            "log": "bridge.wait.begin"
+          },
+          "next": "6.3.wait15"
+        },
+        "6.3.wait15": {
+          "type": "wait",
+          "wait_for": "bridge.wait:15",
+          "next": "6.3.10"
+        },
+        "6.3.10": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "auto_ms": 3200,
+          "text": "Gracie. When we get home. We are going to have a conversation.",
+          "next": "6.3.wait30"
+        },
+        "6.3.wait30": {
+          "type": "wait",
+          "wait_for": "bridge.wait:30",
+          "next": "6.3.11"
+        },
+        "6.3.11": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "anim": "quiet.heads_drift",
+          "text": "…It's fading.",
+          "next": "6.3.wait45"
+        },
+        "6.3.wait45": {
+          "type": "wait",
+          "wait_for": "bridge.wait:45",
+          "next": "6.3.12"
+        },
+        "6.3.12": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 3000,
+          "anim": "mya.asleep_passenger",
+          "text": "Mya's asleep. Mya's asleep. If Mya's asleep we're okay. Bea's rule.",
+          "next": "6.3.wait60"
+        },
+        "6.3.wait60": {
+          "type": "wait",
+          "wait_for": "bridge.wait:60",
+          "next": "6.3.clear"
+        },
+        "6.3.clear": {
+          "type": "direction",
+          "text": "The last head turns back toward the sign. Then toward nothing.",
+          "anim": "quiet.settle",
+          "auto_ms": 2400,
+          "effects": {
+            "tp": 50,
+            "respect": 4,
+            "calm": 10,
+            "log": "bridge.wait.complete"
+          },
+          "next": "6.3.13"
+        },
+        "6.3.13": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "relieved",
+          "volume": "whisper",
+          "text": "Okay. Key. Gentle. Go.",
+          "next": "6.3.wait_end"
+        },
+        "6.3.restart": {
+          "type": "direction",
+          "text": "The starter turns. On the far side, three heads come back.",
+          "sfx": [
+            "beetle_starter"
+          ],
+          "anim": "quiet.three_heads_back",
+          "effects": {
+            "noise_db": 52,
+            "respect": -1,
+            "add_vars": {
+              "bridge_wait_restarts": 1
+            },
+            "log": "engine.start_early"
+          },
+          "auto_ms": 2000,
+          "next": "6.3.restart2"
+        },
+        "6.3.restart2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 2400,
+          "text": "No. No. Off. Sixty. From the top.",
+          "next": "6.3.restart_fx"
+        },
+        "6.3.restart_fx": {
+          "type": "effects",
+          "effects": {
+            "start_gameplay": "bridge_engine_off_wait"
+          },
+          "next": "6.3.wait15"
+        },
+        "6.3.wait_end": {
+          "type": "wait",
+          "wait_for": "waypoint.reach:bridge_end",
+          "next": "6.3.14"
+        },
+        "6.3.14": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "wry",
+          "volume": "whisper",
+          "anim": "gracie.groom_innocent",
+          "text": "You know what, Gracie? That moth was probably very scary. I'm sure it was a threat.",
+          "next": "6.3.end"
+        },
+        "6.3.end": {
+          "type": "end",
+          "effects": {
+            "tp": 80,
+            "respect": 3,
+            "set_flags": {
+              "act6_complete": true
+            },
+            "unlock": [
+              "region.moses_lake",
+              "fieldnotes.8",
+              "swag.bridge"
+            ],
+            "checkpoint": "bridge_crossed",
+            "log": "act.complete:6"
+          },
+          "next_scene": "7.1"
+        },
+        "6.3.swarm": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "scared",
+          "volume": "whisper",
+          "text": "They're coming across. Okay. Reverse. Slow. Back to the rest area. Cats — both. Both.",
+          "next": "6.3.swarm2"
+        },
+        "6.3.swarm2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tired",
+          "volume": "whisper",
+          "text": "Tomorrow. Same bridge. It's not going anywhere. Neither are they.",
+          "next": "6.3.swarm_end"
+        },
+        "6.3.swarm_end": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "bridge_retry": true
+            },
+            "respect": -2,
+            "log": "mission.fail:bridge"
+          },
+          "next_scene": "6.3"
+        }
+      },
+      "triggers": [
+        {
+          "event": "wind.gust",
+          "node": "pool:ali_gust",
+          "cooldown_ms": 6000,
+          "priority": 2
+        },
+        {
+          "event": "steer.into_wind",
+          "node": "6.3.into",
+          "once": true,
+          "priority": 2
+        },
+        {
+          "event": "steer.overcorrect",
+          "node": "6.3.over",
+          "cooldown_ms": 8000,
+          "priority": 3
+        },
+        {
+          "event": "speed.over:45",
+          "node": "6.3.fast",
+          "cooldown_ms": 12000,
+          "priority": 2
+        },
+        {
+          "event": "waypoint.reach:bridge_mid",
+          "node": "6.3.sign",
+          "once": true,
+          "priority": 20,
+          "interrupt": true
+        },
+        {
+          "event": "engine.start_early",
+          "node": "6.3.restart",
+          "cooldown_ms": 3000,
+          "priority": 15,
+          "interrupt": true
+        },
+        {
+          "event": "mya.wake",
+          "node": "pool:mya_wake",
+          "cooldown_ms": 20000,
+          "priority": 4,
+          "condition": {
+            "flag": "mya_passive",
+            "is": true
+          }
+        },
+        {
+          "event": "noise.yellow",
+          "node": "pool:noise_yellow",
+          "cooldown_ms": 8000,
+          "priority": 1
+        },
+        {
+          "event": "mission.fail.swarm",
+          "node": "6.3.swarm",
+          "priority": 25,
+          "interrupt": true
+        }
+      ]
+    }
+  },
+  "pools": {
+    "ali_outdriving": {
+      "pick": "random",
+      "no_repeat": true,
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "Shadow's past the light again. Off it.",
+          "effects": {
+            "respect": -1,
+            "log": "shadow.exceeds_lights.repeat"
+          }
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "auto_ms": 2200,
+          "text": "Deac said I'd want to go fast. Deac was right. Deac is always right. Slowing down.",
+          "effects": {
+            "respect": -1,
+            "log": "shadow.exceeds_lights.repeat"
+          }
+        }
+      ]
+    },
+    "ali_drowsy": {
+      "pick": "random",
+      "no_repeat": true,
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tired",
+          "volume": "whisper",
+          "auto_ms": 2000,
+          "anim": "ali.rub_eyes",
+          "text": "Windows down. Windows down helps. …It doesn't help."
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tired",
+          "volume": "whisper",
+          "auto_ms": 2400,
+          "text": "Fatigue is quiet. Fatigue is quiet. If I say it enough it stops being true, probably."
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tired",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "Mya's asleep. Mya's always asleep. That's not data."
+        }
+      ]
+    },
+    "ali_gust": {
+      "pick": "random",
+      "no_repeat": true,
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 1400,
+          "text": "— whoa — okay — okay —"
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 1200,
+          "text": "Gust. Hold it."
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1600,
+          "text": "Two hands. Two hands. Small."
+        }
+      ]
+    },
+    "ali_fail_swarm_alone": {
+      "pick": "sequential",
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "scared",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "Okay. Cats. Got both."
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tired",
+          "volume": "whisper",
+          "auto_ms": 2600,
+          "text": "Then I didn't lose anything that matters. …Deac would say it better. Try again."
+        }
+      ]
+    }
+  }
+}

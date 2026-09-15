@@ -1,0 +1,1564 @@
+{
+  "meta": {
+    "schema_version": "1.1.0",
+    "game": "Quiet Roads",
+    "acts": [
+      4
+    ],
+    "locale": "en-US",
+    "placeholders": {
+      "MOM": "Mom",
+      "RAY": "Ray",
+      "GRANDMA": "Grandma",
+      "GRANDMA_NAME": "June",
+      "PLAYER": "Ali",
+      "PLAYER_FULL": "Alison"
+    }
+  },
+  "variables": {
+    "respect": {
+      "type": "int",
+      "default": 0,
+      "min": 0,
+      "max": 100,
+      "hidden": true
+    },
+    "calm": {
+      "type": "int",
+      "default": 50,
+      "min": 0,
+      "max": 100
+    },
+    "trade_points": {
+      "type": "int",
+      "default": 0,
+      "min": 0
+    },
+    "exam_score": {
+      "type": "int",
+      "default": 0,
+      "min": 0,
+      "max": 40
+    },
+    "exam_missed": {
+      "type": "int",
+      "default": 40,
+      "min": 0,
+      "max": 40
+    },
+    "exam_short": {
+      "type": "int",
+      "default": 32,
+      "min": 0,
+      "max": 32
+    },
+    "exam_weak_chapter": {
+      "type": "int",
+      "default": 0,
+      "min": 0,
+      "max": 8
+    },
+    "exam_attempts": {
+      "type": "int",
+      "default": 0,
+      "min": 0
+    },
+    "study_sets_tonight": {
+      "type": "int",
+      "default": 0,
+      "min": 0
+    }
+  },
+  "flags": {
+    "studied_tonight": false,
+    "exam_passed": false,
+    "exam_failed_once": false,
+    "permit_held": false,
+    "mya_deferred": false,
+    "mya_lost": false,
+    "mya_passive": false,
+    "act4_complete": false
+  },
+  "characters": {
+    "ALI": {
+      "name": "Ali",
+      "color": "#F28DB2",
+      "portrait_dir": "res://portraits/ali",
+      "default_volume": "whisper"
+    },
+    "MYA": {
+      "name": "Mya",
+      "color": "#8B6B4A",
+      "portrait_dir": "res://portraits/mya",
+      "speaks": false
+    },
+    "GRACIE": {
+      "name": "Gracie",
+      "color": "#F2A63B",
+      "portrait_dir": "res://portraits/gracie",
+      "speaks": false
+    },
+    "DEAC": {
+      "name": "Deac",
+      "color": "#B0B0B0",
+      "portrait_dir": "res://portraits/deac",
+      "default_volume": "low"
+    },
+    "TUNA": {
+      "name": "Tuna",
+      "color": "#D9A066",
+      "portrait_dir": "res://portraits/tuna",
+      "default_volume": "low"
+    },
+    "JONAH": {
+      "name": "Jonah",
+      "color": "#5DADE2",
+      "portrait_dir": "res://portraits/jonah",
+      "default_volume": "low"
+    },
+    "NOTES": {
+      "name": "Deac's Field Notes",
+      "color": "#E8DCC4",
+      "speaks": false
+    }
+  },
+  "scenes": {
+    "4.1": {
+      "id": "4.1",
+      "act": 4,
+      "title": "The Night Before",
+      "type": "still",
+      "location": "issaquah_safehouse_terminal",
+      "background": "res://backgrounds/study_terminal_duffel.png",
+      "music": "res://audio/music/study_low.ogg",
+      "ambience": "res://audio/amb/terminal_hum.ogg",
+      "guide_refs": [
+        "All chapters: Knowledge Test Preparation"
+      ],
+      "entry": "4.1.reset",
+      "nodes": {
+        "4.1.reset": {
+          "type": "effects",
+          "effects": {
+            "set_vars": {
+              "study_sets_tonight": 0
+            },
+            "log": "scene.enter:4.1"
+          },
+          "next": "4.1.entry"
+        },
+        "4.1.entry": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "var": "exam_attempts",
+                "gt": 0
+              },
+              "next": "4.1.r1"
+            },
+            {
+              "next": "4.1.0"
+            }
+          ]
+        },
+        "4.1.0": {
+          "type": "direction",
+          "text": "Deac drops the duffel on the table. Blank permit forms. The state seal stamp.",
+          "anim": "deac.duffel_drop",
+          "sfx": [
+            "duffel_thud_soft"
+          ],
+          "auto_ms": 2600,
+          "next": "4.1.1"
+        },
+        "4.1.1": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Forty questions. Thirty-two right. Same as always. I don't grade on a curve and I don't grade on cats.",
+          "next": "4.1.2"
+        },
+        "4.1.2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "What if I fail?",
+          "next": "4.1.3"
+        },
+        "4.1.3": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Then you drive local for another week and try again. Nobody dies from a written test. People die from thinking they know things they don't.",
+          "next": "4.1.4"
+        },
+        "4.1.4": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Did you ever fail anyone you liked?",
+          "next": "4.1.5"
+        },
+        "4.1.5": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "I failed everyone I liked. That's why they're alive.",
+          "next": "4.1.6"
+        },
+        "4.1.6": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Study. Sleep. Don't cram. Cramming's for people who've got a curve.",
+          "next": "4.1.C"
+        },
+        "4.1.r1": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "anim": "deac.duffel_drop",
+          "text": "Same forty. Different order. Same thirty-two.",
+          "next": "4.1.r2"
+        },
+        "4.1.r2": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Chapter {var_words:exam_weak_chapter}. Did you read it?",
+          "next": "4.1.rC"
+        },
+        "4.1.rC": {
+          "type": "choice",
+          "choices": [
+            {
+              "id": "read",
+              "text": "Out loud. To the cat.",
+              "next": "4.1.r3",
+              "tracked": true,
+              "effects": {
+                "respect": 1,
+                "log": "retest.claimed_read"
+              }
+            },
+            {
+              "id": "mostly",
+              "text": "…Mostly.",
+              "next": "4.1.r4",
+              "tracked": true,
+              "effects": {
+                "respect": -1,
+                "log": "retest.claimed_mostly"
+              }
+            }
+          ]
+        },
+        "4.1.r3": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Then you'll be fine. Terminal's there if you want it. Don't overdo it.",
+          "next": "4.1.C"
+        },
+        "4.1.r4": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Mostly's how you got {var_words:exam_score}. Terminal. Then sleep.",
+          "next": "4.1.C"
+        },
+        "4.1.C": {
+          "type": "choice",
+          "choices": [
+            {
+              "id": "study",
+              "text": "Sit down at the terminal.",
+              "next": "4.1.study_go",
+              "condition": {
+                "var": "study_sets_tonight",
+                "lt": 3
+              }
+            },
+            {
+              "id": "sleep",
+              "text": "Sleep. Take it in the morning.",
+              "next": "4.1.sleep"
+            }
+          ]
+        },
+        "4.1.study_go": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "studied_tonight": true
+            },
+            "start_gameplay": "study_terminal",
+            "log": "study.open"
+          }
+        },
+        "4.1.due": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 2600,
+          "text": "Terminal says you've got a pile due. Start with the pile. The pile's the stuff you think you know."
+        },
+        "4.1.7": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "low",
+          "auto_ms": 1200,
+          "text": "Fine."
+        },
+        "4.1.8": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 1400,
+          "text": "Keep going.",
+          "effects": {
+            "tp": 10,
+            "log": "study.streak10"
+          }
+        },
+        "4.1.9": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 2600,
+          "text": "Read the explanation. Don't just click through it."
+        },
+        "4.1.10": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "low",
+          "auto_ms": 2400,
+          "text": "That one again. Out loud. To the cat.",
+          "effects": {
+            "log": "study.wrong_repeat"
+          }
+        },
+        "4.1.11": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 3000,
+          "text": "That's a set. Go do something else for an hour. It sticks better.",
+          "effects": {
+            "add_vars": {
+              "study_sets_tonight": 1
+            },
+            "tp": 15,
+            "log": "study.set_complete"
+          }
+        },
+        "4.1.after": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "var": "study_sets_tonight",
+                "gte": 3
+              },
+              "next": "4.1.cram"
+            },
+            {
+              "next": "4.1.C"
+            }
+          ]
+        },
+        "4.1.cram": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "That's three. You're not learning anymore, you're just clicking. Sleep.",
+          "next": "4.1.C"
+        },
+        "4.1.sleep": {
+          "type": "direction",
+          "text": "Night. Ali on the bunk. Gracie asleep on her feet. The duffel on the table, the stamp on top of it, catching the emergency light.",
+          "anim": "ali.bunk_sleep",
+          "music": "res://audio/music/night_bunk.ogg",
+          "auto_ms": 4200,
+          "next": "4.1.end"
+        },
+        "4.1.end": {
+          "type": "end",
+          "effects": {
+            "checkpoint": "exam_eve",
+            "log": "scene.complete:4.1"
+          },
+          "next_scene": "4.2"
+        }
+      },
+      "triggers": [
+        {
+          "event": "study.due_pile",
+          "node": "4.1.due",
+          "once": true
+        },
+        {
+          "event": "study.streak:5",
+          "node": "4.1.7",
+          "cooldown_ms": 20000
+        },
+        {
+          "event": "study.streak:10",
+          "node": "4.1.8",
+          "cooldown_ms": 30000,
+          "priority": 2
+        },
+        {
+          "event": "study.wrong",
+          "node": "4.1.9",
+          "cooldown_ms": 25000
+        },
+        {
+          "event": "study.wrong_repeat",
+          "node": "4.1.10",
+          "cooldown_ms": 15000,
+          "priority": 3
+        },
+        {
+          "event": "study.set_complete",
+          "node": "4.1.11",
+          "priority": 5,
+          "interrupt": true
+        },
+        {
+          "event": "study.close",
+          "node": "4.1.after",
+          "priority": 20,
+          "interrupt": true
+        }
+      ]
+    },
+    "4.2": {
+      "id": "4.2",
+      "act": 4,
+      "title": "Forty Questions",
+      "type": "exam",
+      "location": "issaquah_safehouse_terminal_morning",
+      "background": "res://backgrounds/exam_terminal_morning.png",
+      "ambience": "res://audio/amb/terminal_hum.ogg",
+      "guide_refs": [
+        "Knowledge Test: 40 questions, 32 to pass"
+      ],
+      "entry": "4.2.0",
+      "nodes": {
+        "4.2.0": {
+          "type": "direction",
+          "text": "Morning. The terminal. Deac across the table, arms folded, the stamp by her hand.",
+          "anim": "deac.arms_folded",
+          "auto_ms": 2800,
+          "next": "4.2.1"
+        },
+        "4.2.1": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Phone off. Cats out. Forty questions.",
+          "next": "4.2.cats"
+        },
+        "4.2.cats": {
+          "type": "direction",
+          "text": "Gracie is carried out under one arm, protesting in complete silence.",
+          "anim": "gracie.carried_out_silent",
+          "auto_ms": 2400,
+          "next": "4.2.2"
+        },
+        "4.2.2": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Begin.",
+          "next": "4.2.go"
+        },
+        "4.2.go": {
+          "type": "end",
+          "effects": {
+            "checkpoint": "exam_begin",
+            "start_gameplay": "exam_40",
+            "log": "exam.begin"
+          }
+        },
+        "4.2.abandon": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "anim": "deac.hand_flat_on_table",
+          "text": "Sit down.",
+          "next": "4.2.ab2"
+        },
+        "4.2.ab2": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Walking out is a fail. Sitting down is a question you haven't answered yet. Those are different.",
+          "next": "4.2.abC"
+        },
+        "4.2.abC": {
+          "type": "choice",
+          "choices": [
+            {
+              "id": "resume",
+              "text": "Sit back down.",
+              "next": "4.2.ab_resume",
+              "tracked": true,
+              "effects": {
+                "respect": 1,
+                "log": "exam.abandon.resumed"
+              }
+            },
+            {
+              "id": "quit",
+              "text": "I can't do this right now.",
+              "next": "4.2.ab_quit",
+              "tracked": true,
+              "effects": {
+                "respect": -2,
+                "log": "exam.abandon.confirmed"
+              }
+            }
+          ]
+        },
+        "4.2.ab_resume": {
+          "type": "end",
+          "effects": {
+            "start_gameplay": "exam_40_resume"
+          }
+        },
+        "4.2.ab_quit": {
+          "type": "end",
+          "effects": {
+            "start_gameplay": "exam_40_finalize"
+          }
+        },
+        "4.2.pass": {
+          "type": "effects",
+          "effects": {
+            "set_flags": {
+              "exam_passed": true,
+              "permit_held": true
+            },
+            "log": "exam.pass"
+          },
+          "next": "4.2.3"
+        },
+        "4.2.3": {
+          "type": "direction",
+          "text": "Deac takes the form. Stamps it. Signs it. And — once, only here — smiles.",
+          "anim": "deac.stamp_sign_smile",
+          "sfx": [
+            "stamp_thunk_soft",
+            "pen_scratch"
+          ],
+          "music": "res://audio/music/permit.ogg",
+          "auto_ms": 4200,
+          "next": "4.2.4"
+        },
+        "4.2.4": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "proud",
+          "volume": "low",
+          "text": "{PLAYER_FULL}. Instruction permit. Valid with a licensed adult in the passenger seat.",
+          "next": "4.2.mya_branch"
+        },
+        "4.2.mya_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "mya_deferred",
+                "is": true
+              },
+              "next": "4.2.mya1"
+            },
+            {
+              "next": "4.2.5"
+            }
+          ]
+        },
+        "4.2.mya1": {
+          "type": "direction",
+          "text": "Deac reaches under the table. Sets the carrier on top of the signed form.",
+          "anim": "deac.carrier_on_form",
+          "auto_ms": 2600,
+          "next": "4.2.mya2"
+        },
+        "4.2.mya2": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Two things you earned tonight. One of them's asleep.",
+          "next": "4.2.mya3"
+        },
+        "4.2.mya3": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Next time somebody's dead on the shoulder, you'll know what the window's actually for.",
+          "effects": {
+            "calm": 30,
+            "set_flags": {
+              "mya_lost": false,
+              "mya_passive": true,
+              "mya_deferred": false
+            },
+            "unlock": [
+              "passive.mya"
+            ],
+            "log": "mya.returned_deferred"
+          },
+          "next": "4.2.mya4"
+        },
+        "4.2.mya4": {
+          "type": "direction",
+          "text": "Mya opens one eye. Looks at Ali. This time she keeps it open.",
+          "anim": "mya.one_eye_stays",
+          "auto_ms": 2600,
+          "next": "4.2.5"
+        },
+        "4.2.5": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "You're the licensed adult.",
+          "next": "4.2.6"
+        },
+        "4.2.6": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "To Ellensburg. Then you're on your own. That's not me being cold. That's the job.",
+          "next": "4.2.7"
+        },
+        "4.2.7": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "whisper",
+          "text": "Thank you.",
+          "next": "4.2.8"
+        },
+        "4.2.8": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Don't thank me. I didn't answer them.",
+          "next": "4.2.score_branch"
+        },
+        "4.2.score_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "var": "exam_score",
+                "eq": 40
+              },
+              "next": "4.2.9c"
+            },
+            {
+              "condition": {
+                "var": "exam_score",
+                "gte": 36
+              },
+              "next": "4.2.9"
+            },
+            {
+              "next": "4.2.9b"
+            }
+          ]
+        },
+        "4.2.9": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "low",
+          "anim": "deac.turn_away",
+          "text": "…{Var_words:exam_score}. {GRANDMA_NAME} would've argued about the other {var_words:exam_missed}.",
+          "effects": {
+            "tp": 150,
+            "respect": 5,
+            "log": "exam.tier:strong"
+          },
+          "next": "4.2.tuna"
+        },
+        "4.2.9b": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "anim": "deac.turn_away",
+          "text": "…{Var_words:exam_score}. A pass is a pass. Read chapter {var_words:exam_weak_chapter} again anyway. The road's going to ask.",
+          "effects": {
+            "tp": 100,
+            "respect": 3,
+            "log": "exam.tier:pass"
+          },
+          "next": "4.2.tuna"
+        },
+        "4.2.9c": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "low",
+          "anim": "deac.turn_away",
+          "text": "…Forty. Don't tell anyone. They'll think I went soft.",
+          "effects": {
+            "tp": 200,
+            "respect": 8,
+            "unlock": [
+              "photocard.deac_proctor"
+            ],
+            "log": "exam.tier:perfect"
+          },
+          "next": "4.2.tuna"
+        },
+        "4.2.tuna": {
+          "type": "direction",
+          "text": "The bay. Tuna, wiping his hands, already grinning.",
+          "anim": "tuna.bay_grin",
+          "background": "res://backgrounds/tuna_bay_beetle_lift.png",
+          "auto_ms": 2000,
+          "next": "4.2.10"
+        },
+        "4.2.10": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "proud",
+          "volume": "normal",
+          "noise_db": 35,
+          "text": "There she is! Permit holder! I heard the stamp from the bay!",
+          "next": "4.2.chains_branch"
+        },
+        "4.2.chains_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "has_item": "chains"
+              },
+              "next": "4.2.11a"
+            },
+            {
+              "next": "4.2.11b"
+            }
+          ]
+        },
+        "4.2.11a": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "Fuel's on the Authority now. Bring her over — I'll finish the plow and mount the chains. You bought chains. You're my favorite person this year.",
+          "effects": {
+            "log": "tuna.chains_mounted"
+          },
+          "next": "4.2.pass_end"
+        },
+        "4.2.11b": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Fuel's on the Authority now. Bring her over — I'll finish the plow. And get the chains. I'm not kidding about the chains. The mountain isn't either.",
+          "effects": {
+            "log": "tuna.chains_reminder"
+          },
+          "next": "4.2.pass_end"
+        },
+        "4.2.pass_end": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "act4_complete": true
+            },
+            "unlock": [
+              "fuel.ration",
+              "region.snoqualmie",
+              "upgrade.plow_tune",
+              "swag.permit"
+            ],
+            "checkpoint": "permit_earned",
+            "log": "act.complete:4"
+          },
+          "next_scene": "5.1"
+        },
+        "4.2.fail": {
+          "type": "effects",
+          "effects": {
+            "set_flags": {
+              "exam_failed_once": true
+            },
+            "log": "exam.fail"
+          },
+          "next": "4.2.fail_tier"
+        },
+        "4.2.fail_tier": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "var": "exam_score",
+                "gte": 29
+              },
+              "next": "4.2.12"
+            },
+            {
+              "condition": {
+                "var": "exam_score",
+                "gte": 20
+              },
+              "next": "4.2.12b"
+            },
+            {
+              "next": "4.2.12c"
+            }
+          ]
+        },
+        "4.2.12": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "{Var_words:exam_score}.",
+          "next": "4.2.13"
+        },
+        "4.2.13": {
+          "type": "direction",
+          "text": "Ali says nothing.",
+          "anim": "ali.look_down",
+          "auto_ms": 2000,
+          "next": "4.2.14"
+        },
+        "4.2.14": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "That's {var_words:exam_short} questions. That's one bad chapter. That's not you. That's that.",
+          "effects": {
+            "log": "exam.tier:near_miss"
+          },
+          "next": "4.2.tap"
+        },
+        "4.2.12b": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "{Var_words:exam_score}.",
+          "next": "4.2.13b"
+        },
+        "4.2.13b": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "That's not one chapter. That's a couple. We start with the worst one.",
+          "effects": {
+            "log": "exam.tier:fail"
+          },
+          "next": "4.2.tap"
+        },
+        "4.2.12c": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "{Var_words:exam_score}.",
+          "next": "4.2.13c"
+        },
+        "4.2.13c": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "You guessed. I could tell from the clock. Don't guess at me. Guessing's what people do right before they find out.",
+          "effects": {
+            "respect": -2,
+            "log": "exam.tier:guessed"
+          },
+          "next": "4.2.tap"
+        },
+        "4.2.tap": {
+          "type": "direction",
+          "text": "Deac slides the Field Notes across the table. Open. She taps the page.",
+          "anim": "deac.slide_notes_tap",
+          "sfx": [
+            "paper_slide",
+            "finger_tap"
+          ],
+          "auto_ms": 2800,
+          "next": "4.2.chapter_branch"
+        },
+        "4.2.chapter_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "var": "exam_weak_chapter",
+                "eq": 1
+              },
+              "next": "4.2.tap.1"
+            },
+            {
+              "condition": {
+                "var": "exam_weak_chapter",
+                "eq": 2
+              },
+              "next": "4.2.tap.2"
+            },
+            {
+              "condition": {
+                "var": "exam_weak_chapter",
+                "eq": 3
+              },
+              "next": "4.2.tap.3"
+            },
+            {
+              "condition": {
+                "var": "exam_weak_chapter",
+                "eq": 4
+              },
+              "next": "4.2.tap.4"
+            },
+            {
+              "condition": {
+                "var": "exam_weak_chapter",
+                "eq": 5
+              },
+              "next": "4.2.tap.5"
+            },
+            {
+              "condition": {
+                "var": "exam_weak_chapter",
+                "eq": 6
+              },
+              "next": "4.2.tap.6"
+            },
+            {
+              "condition": {
+                "var": "exam_weak_chapter",
+                "eq": 7
+              },
+              "next": "4.2.tap.7"
+            },
+            {
+              "condition": {
+                "var": "exam_weak_chapter",
+                "eq": 8
+              },
+              "next": "4.2.tap.8"
+            },
+            {
+              "next": "4.2.tap.0"
+            }
+          ]
+        },
+        "4.2.tap.1": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Licensing. You missed questions about the piece of paper you're trying to get. Sit with that.",
+          "next": "4.2.15"
+        },
+        "4.2.tap.2": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Signs. Every one of them was put there by somebody who saw somebody get hurt. Read them like that.",
+          "next": "4.2.15"
+        },
+        "4.2.tap.3": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Right-of-way. You did this in the car. You did it right. You froze on paper. Paper's easier than the car. Act like it.",
+          "next": "4.2.15"
+        },
+        "4.2.tap.4": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Lanes. Signal, mirror, shoulder, move. You do it on Central every day. Now do it on a test.",
+          "next": "4.2.15"
+        },
+        "4.2.tap.5": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Stopping. You don't stop where you brake. You stop where you brake plus where you were when you decided to. The numbers are in there. Learn the numbers.",
+          "next": "4.2.15"
+        },
+        "4.2.tap.6": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Weather. You haven't seen the pass yet. Read this one twice. Then read it again when you're up there.",
+          "next": "4.2.15"
+        },
+        "4.2.tap.7": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Sharing the road. If you can't see the truck's mirrors, the truck can't see you. That's the whole chapter. The rest is footnotes.",
+          "next": "4.2.15"
+        },
+        "4.2.tap.8": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Passengers. A distraction doesn't have to be loud. It just has to be interesting. Yes. The cat counts.",
+          "next": "4.2.15"
+        },
+        "4.2.tap.0": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "That one.",
+          "next": "4.2.15"
+        },
+        "4.2.15": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Read that one again. Out loud. To the cat.",
+          "next": "4.2.16"
+        },
+        "4.2.16": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "anim": "deac.exit",
+          "text": "Deliveries at six. Retest in a week.",
+          "next": "4.2.alone"
+        },
+        "4.2.alone": {
+          "type": "direction",
+          "text": "The door. The hum of the terminal. Ali pulls the notebook toward her.",
+          "anim": "ali.pull_notes",
+          "music": "res://audio/music/aftermath_low.ogg",
+          "auto_ms": 3000,
+          "next": "4.2.mya_present"
+        },
+        "4.2.mya_present": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "mya_deferred",
+                "is": true
+              },
+              "next": "4.2.17b"
+            },
+            {
+              "next": "4.2.17"
+            }
+          ]
+        },
+        "4.2.17": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tired",
+          "volume": "whisper",
+          "anim": "mya.carrier_asleep",
+          "text": "Okay. Chapter {var_words:exam_weak_chapter}. You're not going to listen but I'm going to read it anyway.",
+          "next": "4.2.notes_branch"
+        },
+        "4.2.17b": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tired",
+          "volume": "whisper",
+          "anim": "gracie.on_table",
+          "text": "Okay. Chapter {var_words:exam_weak_chapter}. Gracie, you're the cat tonight. Don't eat the page.",
+          "next": "4.2.notes_branch"
+        },
+        "4.2.notes_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "var": "exam_weak_chapter",
+                "eq": 1
+              },
+              "next": "4.2.notes.1"
+            },
+            {
+              "condition": {
+                "var": "exam_weak_chapter",
+                "eq": 2
+              },
+              "next": "4.2.notes.2"
+            },
+            {
+              "condition": {
+                "var": "exam_weak_chapter",
+                "eq": 3
+              },
+              "next": "4.2.notes.3"
+            },
+            {
+              "condition": {
+                "var": "exam_weak_chapter",
+                "eq": 4
+              },
+              "next": "4.2.notes.4"
+            },
+            {
+              "condition": {
+                "var": "exam_weak_chapter",
+                "eq": 5
+              },
+              "next": "4.2.notes.5"
+            },
+            {
+              "condition": {
+                "var": "exam_weak_chapter",
+                "eq": 6
+              },
+              "next": "4.2.notes.6"
+            },
+            {
+              "condition": {
+                "var": "exam_weak_chapter",
+                "eq": 7
+              },
+              "next": "4.2.notes.7"
+            },
+            {
+              "condition": {
+                "var": "exam_weak_chapter",
+                "eq": 8
+              },
+              "next": "4.2.notes.8"
+            },
+            {
+              "next": "4.2.fail_end"
+            }
+          ]
+        },
+        "4.2.notes.1": {
+          "type": "line",
+          "speaker": "NOTES",
+          "delivery": "S",
+          "emotion": "reading",
+          "volume": "whisper",
+          "text": "WHO'S ALLOWED. Fifteen with driver's ed. Fifteen and a half without. Somebody licensed in the seat next to you, always. The paper doesn't make you a driver. It means somebody agreed to watch.",
+          "effects": {
+            "unlock": [
+              "fieldnotes.1"
+            ],
+            "log": "fieldnotes.read:1"
+          },
+          "next": "4.2.fail_end"
+        },
+        "4.2.notes.2": {
+          "type": "line",
+          "speaker": "NOTES",
+          "delivery": "S",
+          "emotion": "reading",
+          "volume": "whisper",
+          "text": "ON SIGNS. Red means stop. Yellow means somebody's worried. Orange means somebody's working, or was. Pennant on the left: don't pass. Nobody's maintaining them now. They're still right.",
+          "effects": {
+            "unlock": [
+              "fieldnotes.2"
+            ],
+            "log": "fieldnotes.read:2"
+          },
+          "next": "4.2.fail_end"
+        },
+        "4.2.notes.3": {
+          "type": "line",
+          "speaker": "NOTES",
+          "delivery": "S",
+          "emotion": "reading",
+          "volume": "whisper",
+          "text": "ON GOING FIRST. Whoever stopped first. Same time, the one on the right. Turning left, everybody's ahead of you. Pedestrian, always. Nobody's coming. Do it anyway.",
+          "effects": {
+            "unlock": [
+              "fieldnotes.3"
+            ],
+            "log": "fieldnotes.read:3"
+          },
+          "next": "4.2.fail_end"
+        },
+        "4.2.notes.4": {
+          "type": "line",
+          "speaker": "NOTES",
+          "delivery": "S",
+          "emotion": "reading",
+          "volume": "whisper",
+          "text": "ON LANES. Signal, mirror, shoulder, move. In that order. A hundred feet before, in town. Right lane's for driving. Left lane's for passing. Turn from the lane closest to where you're going, into the lane closest to where you came from.",
+          "effects": {
+            "unlock": [
+              "fieldnotes.4"
+            ],
+            "log": "fieldnotes.read:4"
+          },
+          "next": "4.2.fail_end"
+        },
+        "4.2.notes.5": {
+          "type": "line",
+          "speaker": "NOTES",
+          "delivery": "S",
+          "emotion": "reading",
+          "volume": "whisper",
+          "text": "ON STOPPING. You don't stop where you brake. You stop where you brake plus where you were when you decided to. At sixty that's most of a football field. Pick a sign. Count three. Rain, four. Snow, don't be out there.",
+          "effects": {
+            "unlock": [
+              "fieldnotes.5"
+            ],
+            "log": "fieldnotes.read:5"
+          },
+          "next": "4.2.fail_end"
+        },
+        "4.2.notes.6": {
+          "type": "line",
+          "speaker": "NOTES",
+          "delivery": "S",
+          "emotion": "reading",
+          "volume": "whisper",
+          "text": "ON SNOW. Everything gentle. Skid, foot off, steer where you want to go. Bridges freeze first. So does your judgment. Sign says chains, sign means chains.",
+          "effects": {
+            "unlock": [
+              "fieldnotes.6"
+            ],
+            "log": "fieldnotes.read:6"
+          },
+          "next": "4.2.fail_end"
+        },
+        "4.2.notes.7": {
+          "type": "line",
+          "speaker": "NOTES",
+          "delivery": "S",
+          "emotion": "reading",
+          "volume": "whisper",
+          "text": "ON BIG RIGS. If you can't see the truck's mirrors, the truck can't see you. Don't hang out beside it. It turns wide. Lights on the shoulder, move over a lane. If you can't, slow down. That rule never changed.",
+          "effects": {
+            "unlock": [
+              "fieldnotes.7"
+            ],
+            "log": "fieldnotes.read:7"
+          },
+          "next": "4.2.fail_end"
+        },
+        "4.2.notes.8": {
+          "type": "line",
+          "speaker": "NOTES",
+          "delivery": "S",
+          "emotion": "reading",
+          "volume": "whisper",
+          "text": "ON PASSENGERS. A distraction doesn't have to be loud to be dangerous. It just has to be interesting. Yes, the cat counts. Tired is a distraction too. Tired is quiet. It gets you before they do.",
+          "effects": {
+            "unlock": [
+              "fieldnotes.8"
+            ],
+            "log": "fieldnotes.read:8"
+          },
+          "next": "4.2.fail_end"
+        },
+        "4.2.fail_end": {
+          "type": "end",
+          "effects": {
+            "checkpoint": "exam_failed",
+            "log": "scene.complete:4.2.fail"
+          },
+          "next_scene": "4.3"
+        }
+      },
+      "triggers": [
+        {
+          "event": "exam.pass",
+          "node": "4.2.pass",
+          "priority": 20,
+          "interrupt": true
+        },
+        {
+          "event": "exam.fail",
+          "node": "4.2.fail",
+          "priority": 20,
+          "interrupt": true
+        },
+        {
+          "event": "exam.abandon",
+          "node": "4.2.abandon",
+          "priority": 20,
+          "interrupt": true
+        }
+      ]
+    },
+    "4.3": {
+      "id": "4.3",
+      "act": 4,
+      "title": "The Week",
+      "type": "still",
+      "location": "issaquah_bay_dawn",
+      "background": "res://backgrounds/issaquah_bay_dawn.png",
+      "music": "res://audio/music/convoy_prep.ogg",
+      "guide_refs": [
+        "Knowledge Test: Retest Preparation"
+      ],
+      "entry": "4.3.1",
+      "nodes": {
+        "4.3.1": {
+          "type": "direction",
+          "text": "Six a.m. The bay. Deac with a clipboard she doesn't need.",
+          "anim": "deac.clipboard",
+          "auto_ms": 2200,
+          "next": "4.3.2"
+        },
+        "4.3.2": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Local runs. Pharmacy, Bea, back. Nothing past the valley.",
+          "next": "4.3.3"
+        },
+        "4.3.3": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "One chapter a night. Not the whole book. The whole book is how you got here.",
+          "next": "4.3.4"
+        },
+        "4.3.4": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "S",
+          "emotion": "amused",
+          "volume": "low",
+          "anim": "jonah.lean_on_van",
+          "text": "{Var_words:exam_score}? I got thirty-one my first time. We're basically the same person.",
+          "next": "4.3.5"
+        },
+        "4.3.5": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "text": "We are not.",
+          "next": "4.3.6"
+        },
+        "4.3.6": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "He got thirty-one twice.",
+          "next": "4.3.7"
+        },
+        "4.3.7": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "S",
+          "emotion": "tired",
+          "volume": "low",
+          "text": "Wheels up, everybody.",
+          "next": "4.3.go"
+        },
+        "4.3.go": {
+          "type": "effects",
+          "effects": {
+            "add_vars": {
+              "exam_attempts": 1
+            },
+            "set_vars": {
+              "study_sets_tonight": 0
+            },
+            "unlock": [
+              "mission.local_loop"
+            ],
+            "start_gameplay": "local_loop_week",
+            "checkpoint": "retest_week",
+            "log": "mission.begin:local_loop_week"
+          },
+          "next": "4.3.wait"
+        },
+        "4.3.wait": {
+          "type": "wait",
+          "wait_for": "week.elapsed",
+          "next": "4.3.8"
+        },
+        "4.3.8": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Week's up. Terminal tonight. Test in the morning.",
+          "next": "4.3.9"
+        },
+        "4.3.9": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "You drove clean all week. That's not the test. But it's not nothing.",
+          "effects": {
+            "respect": 3,
+            "tp": 30,
+            "log": "retest_week.complete"
+          },
+          "next": "4.3.end"
+        },
+        "4.3.end": {
+          "type": "end",
+          "effects": {
+            "checkpoint": "retest_eve",
+            "log": "scene.complete:4.3"
+          },
+          "next_scene": "4.1"
+        }
+      },
+      "triggers": [
+        {
+          "event": "qte.gracie.start",
+          "node": "pool:gracie_qte_start",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.success",
+          "node": "pool:gracie_qte_success",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.fail",
+          "node": "pool:gracie_qte_fail",
+          "cooldown_ms": 3000,
+          "priority": 3
+        },
+        {
+          "event": "noise.yellow",
+          "node": "pool:noise_yellow",
+          "cooldown_ms": 8000
+        },
+        {
+          "event": "noise.red",
+          "node": "pool:noise_red",
+          "cooldown_ms": 12000,
+          "priority": 5,
+          "interrupt": true
+        },
+        {
+          "event": "mission.complete.quiet",
+          "node": "pool:mission_complete_quiet",
+          "cooldown_ms": 5000
+        },
+        {
+          "event": "mission.complete.loud",
+          "node": "pool:mission_complete_loud",
+          "cooldown_ms": 5000
+        },
+        {
+          "event": "mission.fail.swarm",
+          "node": "pool:mission_fail_swarm",
+          "priority": 20,
+          "interrupt": true
+        }
+      ]
+    }
+  },
+  "pools": {}
+}

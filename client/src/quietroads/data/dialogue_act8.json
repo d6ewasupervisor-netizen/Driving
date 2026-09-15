@@ -1,0 +1,1874 @@
+{
+  "meta": {
+    "schema_version": "1.3.0",
+    "game": "Quiet Roads",
+    "acts": [
+      8
+    ],
+    "locale": "en-US",
+    "placeholders": {
+      "MOM": "Mom",
+      "RAY": "Ray",
+      "GRANDMA": "Grandma",
+      "GRANDMA_NAME": "June",
+      "PLAYER": "Ali",
+      "PLAYER_FULL": "Alison"
+    }
+  },
+  "variables": {
+    "respect": {
+      "type": "int",
+      "default": 0,
+      "min": 0,
+      "max": 100,
+      "hidden": true
+    },
+    "calm": {
+      "type": "int",
+      "default": 50,
+      "min": 0,
+      "max": 100
+    },
+    "trade_points": {
+      "type": "int",
+      "default": 0,
+      "min": 0
+    },
+    "park_gap_in": {
+      "type": "int",
+      "default": 99,
+      "min": 0,
+      "max": 999
+    }
+  },
+  "flags": {
+    "spokane_retry": false,
+    "checkpoint_on_speed": false,
+    "muffler_from_ritzville": false,
+    "ritzville_short": false,
+    "tire_checked": false,
+    "stall_stopped": false,
+    "stall_continued": false,
+    "has_gracie_toy": false,
+    "has_sori_card": false,
+    "hank_report_clean": false,
+    "mya_passive": false,
+    "deac_answered": false,
+    "act8_complete": false,
+    "game_complete": false
+  },
+  "characters": {
+    "ALI": {
+      "name": "Ali",
+      "color": "#F28DB2",
+      "portrait_dir": "res://portraits/ali",
+      "default_volume": "whisper"
+    },
+    "MYA": {
+      "name": "Mya",
+      "color": "#8B6B4A",
+      "portrait_dir": "res://portraits/mya",
+      "speaks": false
+    },
+    "GRACIE": {
+      "name": "Gracie",
+      "color": "#F2A63B",
+      "portrait_dir": "res://portraits/gracie",
+      "speaks": false
+    },
+    "MOM": {
+      "name": "{MOM}",
+      "color": "#7FB3D5",
+      "portrait_dir": "res://portraits/mom",
+      "voice_bed": "radio_static",
+      "default_volume": "low"
+    },
+    "RAY": {
+      "name": "{RAY}",
+      "color": "#6C8E7F",
+      "portrait_dir": "res://portraits/ray",
+      "voice_bed": "radio_static",
+      "default_volume": "low"
+    },
+    "DEAC": {
+      "name": "Deac",
+      "color": "#B0B0B0",
+      "portrait_dir": "res://portraits/deac",
+      "default_volume": "low"
+    }
+  },
+  "scenes": {
+    "8.1": {
+      "id": "8.1",
+      "act": 8,
+      "title": "Spokane",
+      "type": "gameplay",
+      "location": "i90_ritzville_to_spokane_division",
+      "background": "res://backgrounds/i90_spokane_approach_night.png",
+      "ambience": "res://audio/amb/city_night_still.ogg",
+      "music": "res://audio/music/home_stretch.ogg",
+      "guide_refs": [
+        "Night Driving: Headlight Range and Speed",
+        "Signs, Signals & Pavement Markings",
+        "School Zones",
+        "Railroad Crossings",
+        "Right-of-Way: Four-Way and Uncontrolled Intersections",
+        "Lane Changes and Signaling",
+        "Parallel Parking",
+        "Speed Limits: Posted vs. Conditions"
+      ],
+      "entry": "8.1.entry",
+      "nodes": {
+        "8.1.entry": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "spokane_retry",
+                "is": true
+              },
+              "next": "8.1.retry"
+            },
+            {
+              "next": "8.1.0"
+            }
+          ]
+        },
+        "8.1.0": {
+          "type": "direction",
+          "text": "Two hours. The last two. I-90 east out of Ritzville, the sky gone from gray to black, and somewhere past the horizon a city that kept some of its lights on.",
+          "anim": "beetle.depart_ritzville",
+          "auto_ms": 3600,
+          "next": "8.1.lights_branch"
+        },
+        "8.1.lights_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "has_item": "led_lights"
+              },
+              "next": "8.1.lights_a"
+            },
+            {
+              "condition": {
+                "all": [
+                  {
+                    "flag": "ritzville_short",
+                    "is": true
+                  },
+                  {
+                    "not": {
+                      "has_item": "led_lights"
+                    }
+                  }
+                ]
+              },
+              "next": "8.1.lights_b"
+            },
+            {
+              "next": "8.1.lights_c"
+            }
+          ]
+        },
+        "8.1.lights_a": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Lights. Shadow inside the light. Hold it there. Two hours.",
+          "next": "8.1.go"
+        },
+        "8.1.lights_b": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "wry",
+          "volume": "whisper",
+          "anim": "ali.touch_photocard_visor",
+          "text": "Old lights. Slower, then. …Sori was worth it.",
+          "next": "8.1.go"
+        },
+        "8.1.lights_c": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Old lights. Slower, then.",
+          "next": "8.1.go"
+        },
+        "8.1.retry": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tired",
+          "volume": "whisper",
+          "text": "Long way around. Both cats. Same city. Fewer mistakes.",
+          "next": "8.1.go"
+        },
+        "8.1.go": {
+          "type": "effects",
+          "effects": {
+            "set_flags": {
+              "spokane_retry": false,
+              "checkpoint_on_speed": false
+            },
+            "set_vars": {
+              "park_gap_in": 99
+            },
+            "start_gameplay": "spokane_home",
+            "checkpoint": "spokane_begin",
+            "log": "mission.begin:spokane"
+          }
+        },
+        "8.1.inside": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1400,
+          "text": "Inside. Hold it.",
+          "effects": {
+            "tp": 5,
+            "log": "shadow.inside_lights.home"
+          }
+        },
+        "8.1.city": {
+          "type": "direction",
+          "text": "The Division exit. Sprague Avenue. Stop signs, a school with its lights still going, tracks, a four-way — everything from Kent, in a different order, and none of it new.",
+          "anim": "beetle.exit_ramp_city",
+          "auto_ms": 3600,
+          "next": "8.1.city2"
+        },
+        "8.1.city2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "Nothing new. Just right.",
+          "effects": {
+            "log": "city.enter"
+          }
+        },
+        "8.1.cluster": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "has_item": "muffler"
+              },
+              "next": "8.1.cluster_src"
+            },
+            {
+              "next": "8.1.5x"
+            }
+          ]
+        },
+        "8.1.cluster_src": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "muffler_from_ritzville",
+                "is": true
+              },
+              "next": "8.1.5r"
+            },
+            {
+              "next": "8.1.5"
+            }
+          ]
+        },
+        "8.1.5": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "warm",
+          "volume": "whisper",
+          "auto_ms": 2800,
+          "anim": "quiet.no_reaction",
+          "text": "…They didn't even look. Tuna, I love you.",
+          "effects": {
+            "tp": 20,
+            "log": "cluster.ignored"
+          }
+        },
+        "8.1.5r": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "warm",
+          "volume": "whisper",
+          "auto_ms": 3200,
+          "anim": "quiet.no_reaction",
+          "text": "…They didn't even look. Ritzville guy, I love you. Tuna, I love you more.",
+          "effects": {
+            "tp": 20,
+            "log": "cluster.ignored.ritzville"
+          }
+        },
+        "8.1.5x": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "anim": "quiet.heads_turn_slow",
+          "text": "They looked. Nobody moved.",
+          "next": "8.1.5y"
+        },
+        "8.1.5y": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 2000,
+          "text": "…Nobody moved is enough.",
+          "effects": {
+            "tp": 10,
+            "log": "cluster.turned"
+          }
+        },
+        "8.1.6": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "anim": "mya.sit_up",
+          "text": "Mya's up. Slow down.",
+          "next": "8.1.wait_reason"
+        },
+        "8.1.wait_reason": {
+          "type": "wait",
+          "wait_for": "quiet.reason_passed",
+          "next": "8.1.7"
+        },
+        "8.1.7": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "wry",
+          "volume": "whisper",
+          "auto_ms": 2000,
+          "anim": "quiet.blind_corner_cluster",
+          "text": "…Yep. Never no reason.",
+          "effects": {
+            "tp": 15,
+            "log": "mya.wake.heeded"
+          }
+        },
+        "8.1.speed_ok": {
+          "type": "direction",
+          "text": "Twenty-five. Exactly. Two figures behind the sawhorses, closer every second, and the speedometer doesn't move.",
+          "anim": "checkpoint.approach_steady",
+          "auto_ms": 3000,
+          "effects": {
+            "tp": 20,
+            "set_flags": {
+              "checkpoint_on_speed": true
+            },
+            "log": "checkpoint.on_speed"
+          },
+          "next": "8.1.speed_ok2"
+        },
+        "8.1.speed_ok2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 2000,
+          "text": "Don't rush the last two hours."
+        },
+        "8.1.speed_over": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 2200,
+          "text": "— rushing. Everybody rushes. Not me.",
+          "effects": {
+            "log": "checkpoint.over"
+          }
+        },
+        "8.1.8": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Okay. Parallel park. Fred Meyer lot. Forty times. One more.",
+          "auto_ms": 3000
+        },
+        "8.1.adjust": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 2000,
+          "text": "Little tighter. …Got it."
+        },
+        "8.1.curb": {
+          "type": "direction",
+          "text": "Curb. Behind the sawhorses, a hand goes to a mouth. Nobody else hears it.",
+          "anim": "mom.hand_to_mouth",
+          "auto_ms": 2200,
+          "effects": {
+            "respect": -1,
+            "log": "park.parallel.curb"
+          },
+          "next": "8.1.curb2"
+        },
+        "8.1.curb2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 2000,
+          "text": "Again. Slow. She's watching."
+        },
+        "8.1.over_line": {
+          "type": "direction",
+          "text": "Over the line. Six inches of paint under the bumper.",
+          "anim": "beetle.over_line",
+          "auto_ms": 1800,
+          "effects": {
+            "respect": -1,
+            "log": "park.parallel.over_line"
+          },
+          "next": "8.1.over2"
+        },
+        "8.1.over2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "Back. Small. …There."
+        },
+        "8.1.clean_fx": {
+          "type": "effects",
+          "effects": {
+            "log": "park.parallel.clean"
+          },
+          "next": "8.1.gap_branch"
+        },
+        "8.1.gap_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "var": "park_gap_in",
+                "lte": 12
+              },
+              "next": "8.1.gap_foot"
+            },
+            {
+              "condition": {
+                "var": "park_gap_in",
+                "lte": 36
+              },
+              "next": "8.1.gap_ok"
+            },
+            {
+              "next": "8.1.gap_far"
+            }
+          ]
+        },
+        "8.1.gap_foot": {
+          "type": "direction",
+          "text": "The front bumper stops a foot from the line. Maybe less. No squeal.",
+          "anim": "beetle.settle_line",
+          "auto_ms": 2800,
+          "effects": {
+            "respect": 3,
+            "tp": 40,
+            "log": "park.gap:foot"
+          },
+          "next": "8.1.end"
+        },
+        "8.1.gap_ok": {
+          "type": "direction",
+          "text": "A little over a foot from the line. No squeal. Nobody's measuring. Ali is.",
+          "anim": "beetle.settle_line",
+          "auto_ms": 2800,
+          "effects": {
+            "respect": 1,
+            "tp": 25,
+            "log": "park.gap:close"
+          },
+          "next": "8.1.end"
+        },
+        "8.1.gap_far": {
+          "type": "direction",
+          "text": "Not a foot. Not close. But straight, and quiet, and here.",
+          "anim": "beetle.settle_line",
+          "auto_ms": 2800,
+          "effects": {
+            "tp": 15,
+            "log": "park.gap:far"
+          },
+          "next": "8.1.end"
+        },
+        "8.1.end": {
+          "type": "end",
+          "effects": {
+            "checkpoint": "division_parked",
+            "log": "scene.complete:8.1"
+          },
+          "next_scene": "8.2"
+        },
+        "8.1.swarm": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "low",
+          "text": "Ali? Dispatch has movement on Sprague. Is that — are you —",
+          "next": "8.1.swarm2"
+        },
+        "8.1.swarm2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "I'm fine. Both cats. Coming around the long way.",
+          "next": "8.1.swarm3"
+        },
+        "8.1.swarm3": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "…Okay. Okay. I'm not moving.",
+          "next": "8.1.swarm_end"
+        },
+        "8.1.swarm_end": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "spokane_retry": true
+            },
+            "respect": -2,
+            "log": "mission.fail:spokane"
+          },
+          "next_scene": "8.1"
+        }
+      },
+      "triggers": [
+        {
+          "event": "shadow.exceeds_lights",
+          "node": "pool:ali_home_outdriving",
+          "cooldown_ms": 15000,
+          "priority": 2
+        },
+        {
+          "event": "shadow.inside_lights",
+          "node": "8.1.inside",
+          "once": true,
+          "priority": 2
+        },
+        {
+          "event": "city.enter",
+          "node": "8.1.city",
+          "once": true,
+          "priority": 10,
+          "interrupt": true
+        },
+        {
+          "event": "stop.full",
+          "node": "pool:ali_home_stop_full",
+          "cooldown_ms": 6000
+        },
+        {
+          "event": "stop.rolled",
+          "node": "pool:ali_home_stop_rolled",
+          "cooldown_ms": 6000,
+          "priority": 2
+        },
+        {
+          "event": "zone.school.enter",
+          "node": "pool:ali_home_school",
+          "cooldown_ms": 20000
+        },
+        {
+          "event": "zone.rail.enter",
+          "node": "pool:ali_home_rail",
+          "cooldown_ms": 20000
+        },
+        {
+          "event": "intersection.fourway.approach",
+          "node": "pool:ali_home_fourway",
+          "cooldown_ms": 10000
+        },
+        {
+          "event": "intersection.uncontrolled.approach",
+          "node": "pool:ali_home_uncontrolled",
+          "cooldown_ms": 10000
+        },
+        {
+          "event": "lanechange.clean",
+          "node": "pool:ali_home_lanechange",
+          "cooldown_ms": 5000
+        },
+        {
+          "event": "lanechange.no_signal",
+          "node": "pool:ali_home_nosignal",
+          "cooldown_ms": 5000,
+          "priority": 3
+        },
+        {
+          "event": "quiet.pass_cluster",
+          "node": "8.1.cluster",
+          "once": true,
+          "priority": 8,
+          "interrupt": true
+        },
+        {
+          "event": "mya.wake",
+          "node": "8.1.6",
+          "once": true,
+          "priority": 6,
+          "interrupt": true,
+          "condition": {
+            "flag": "mya_passive",
+            "is": true
+          }
+        },
+        {
+          "event": "checkpoint.approach:on_speed",
+          "node": "8.1.speed_ok",
+          "once": true,
+          "priority": 10,
+          "interrupt": true
+        },
+        {
+          "event": "checkpoint.approach:over",
+          "node": "8.1.speed_over",
+          "once": true,
+          "priority": 10,
+          "interrupt": true
+        },
+        {
+          "event": "park.parallel.start",
+          "node": "8.1.8",
+          "once": true,
+          "priority": 10,
+          "interrupt": true
+        },
+        {
+          "event": "park.parallel.adjust",
+          "node": "8.1.adjust",
+          "once": true
+        },
+        {
+          "event": "park.parallel.curb",
+          "node": "8.1.curb",
+          "cooldown_ms": 5000,
+          "priority": 5,
+          "interrupt": true
+        },
+        {
+          "event": "park.parallel.over_line",
+          "node": "8.1.over_line",
+          "cooldown_ms": 5000,
+          "priority": 5,
+          "interrupt": true
+        },
+        {
+          "event": "park.parallel.clean",
+          "node": "8.1.clean_fx",
+          "once": true,
+          "priority": 20,
+          "interrupt": true
+        },
+        {
+          "event": "qte.gracie.start",
+          "node": "pool:gracie_qte_start",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.success",
+          "node": "pool:gracie_qte_success",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.fail",
+          "node": "pool:gracie_qte_fail",
+          "cooldown_ms": 3000,
+          "priority": 3
+        },
+        {
+          "event": "noise.yellow",
+          "node": "pool:noise_yellow",
+          "cooldown_ms": 8000
+        },
+        {
+          "event": "noise.red",
+          "node": "pool:noise_red",
+          "cooldown_ms": 12000,
+          "priority": 5,
+          "interrupt": true
+        },
+        {
+          "event": "mission.fail.swarm",
+          "node": "8.1.swarm",
+          "priority": 25,
+          "interrupt": true
+        }
+      ]
+    },
+    "8.2": {
+      "id": "8.2",
+      "act": 8,
+      "title": "Division Street",
+      "type": "video",
+      "location": "spokane_division_checkpoint",
+      "video": "res://cutscenes/act8_division_street.ogv",
+      "music": "res://audio/music/home.ogg",
+      "entry": "8.2.pre_branch",
+      "nodes": {
+        "8.2.pre_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "checkpoint_on_speed",
+                "is": true
+              },
+              "next": "8.2.pre"
+            },
+            {
+              "next": "8.2.pre_b"
+            }
+          ]
+        },
+        "8.2.pre": {
+          "type": "direction",
+          "text": "Division Street. The checkpoint gate. Two figures behind the sawhorses. The Beetle rolls the last fifty feet at exactly the posted speed.",
+          "anim": "checkpoint.establishing",
+          "auto_ms": 3200,
+          "next": "8.2.wait_stop"
+        },
+        "8.2.pre_b": {
+          "type": "direction",
+          "text": "Division Street. The checkpoint gate. Two figures behind the sawhorses. The Beetle rolls the last fifty feet slower than the posted speed — she caught it.",
+          "anim": "checkpoint.establishing",
+          "auto_ms": 3200,
+          "next": "8.2.wait_stop"
+        },
+        "8.2.wait_stop": {
+          "type": "wait",
+          "wait_for": "cutscene.beetle_stops",
+          "next": "8.2.gap_branch"
+        },
+        "8.2.gap_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "var": "park_gap_in",
+                "lte": 12
+              },
+              "next": "8.2.stop_foot"
+            },
+            {
+              "condition": {
+                "var": "park_gap_in",
+                "lte": 36
+              },
+              "next": "8.2.stop_close"
+            },
+            {
+              "next": "8.2.stop_far"
+            }
+          ]
+        },
+        "8.2.stop_foot": {
+          "type": "direction",
+          "text": "It stops with the front bumper a foot from the line. No squeal.",
+          "auto_ms": 2400,
+          "next": "8.2.wait_out"
+        },
+        "8.2.stop_close": {
+          "type": "direction",
+          "text": "It stops with the front bumper a little over a foot from the line. No squeal.",
+          "auto_ms": 2400,
+          "next": "8.2.wait_out"
+        },
+        "8.2.stop_far": {
+          "type": "direction",
+          "text": "It stops. Not close to the line. No squeal. Nobody behind the sawhorses is looking at the line.",
+          "auto_ms": 2600,
+          "next": "8.2.wait_out"
+        },
+        "8.2.wait_out": {
+          "type": "wait",
+          "wait_for": "cutscene.ali_out",
+          "next": "8.2.out"
+        },
+        "8.2.out": {
+          "type": "direction",
+          "text": "Ali gets out. Mya is asleep in the passenger seat. Gracie is on the dashboard, yelling silently through the glass.",
+          "anim": "gracie.dash_silent_yell",
+          "auto_ms": 3200,
+          "next": "8.2.walk"
+        },
+        "8.2.walk": {
+          "type": "direction",
+          "text": "Mom doesn't run — nobody runs anymore. She walks fast, very quiet, and holds on.",
+          "anim": "mom.walk_fast_hold",
+          "auto_ms": 3600,
+          "next": "8.2.wait_mom"
+        },
+        "8.2.wait_mom": {
+          "type": "wait",
+          "wait_for": "cutscene.mom_arrives",
+          "next": "8.2.1"
+        },
+        "8.2.1": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "V",
+          "emotion": "relieved",
+          "volume": "whisper",
+          "voice_bed": "none",
+          "anim": "mom.into_hair",
+          "text": "Okay. Okay. Okay.",
+          "next": "8.2.2"
+        },
+        "8.2.2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "V",
+          "emotion": "warm",
+          "volume": "whisper",
+          "text": "Hi.",
+          "next": "8.2.3"
+        },
+        "8.2.3": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "V",
+          "emotion": "warm",
+          "volume": "whisper",
+          "voice_bed": "none",
+          "text": "Hi.",
+          "next": "8.2.4"
+        },
+        "8.2.4": {
+          "type": "direction",
+          "text": "Ray, behind her, holding the gray blanket. Looking at the car.",
+          "anim": "ray.blanket_look_car",
+          "auto_ms": 2600,
+          "next": "8.2.5"
+        },
+        "8.2.5": {
+          "type": "line",
+          "speaker": "RAY",
+          "delivery": "V",
+          "emotion": "neutral",
+          "volume": "low",
+          "voice_bed": "none",
+          "text": "Is that a plow?",
+          "next": "8.2.6"
+        },
+        "8.2.6": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "V",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "Tuna did it. Filing cabinets.",
+          "next": "8.2.7"
+        },
+        "8.2.7": {
+          "type": "direction",
+          "text": "Ray, for a moment, has nothing.",
+          "anim": "ray.nothing",
+          "auto_ms": 1800,
+          "next": "8.2.8"
+        },
+        "8.2.8": {
+          "type": "line",
+          "speaker": "RAY",
+          "delivery": "V",
+          "emotion": "deadpan",
+          "volume": "low",
+          "voice_bed": "none",
+          "text": "We're going to need to talk about insurance.",
+          "next": "8.2.9"
+        },
+        "8.2.9": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "V",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "voice_bed": "none",
+          "anim": "mom.not_letting_go",
+          "text": "{RAY}.",
+          "next": "8.2.10"
+        },
+        "8.2.10": {
+          "type": "line",
+          "speaker": "RAY",
+          "delivery": "V",
+          "emotion": "neutral",
+          "volume": "low",
+          "voice_bed": "none",
+          "text": "I'm just saying.",
+          "next": "8.2.10beat"
+        },
+        "8.2.10beat": {
+          "type": "direction",
+          "text": "Beat.",
+          "auto_ms": 1200,
+          "next": "8.2.10b"
+        },
+        "8.2.10b": {
+          "type": "line",
+          "speaker": "RAY",
+          "delivery": "V",
+          "emotion": "tense",
+          "volume": "low",
+          "voice_bed": "none",
+          "text": "Did you check the tire pressure?",
+          "next": "8.2.tire_branch"
+        },
+        "8.2.tire_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "tire_checked",
+                "is": true
+              },
+              "next": "8.2.11"
+            },
+            {
+              "next": "8.2.11b"
+            }
+          ]
+        },
+        "8.2.11": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "V",
+          "emotion": "warm",
+          "volume": "whisper",
+          "text": "Every morning.",
+          "effects": {
+            "log": "home.tire:every_morning"
+          },
+          "next": "8.2.12"
+        },
+        "8.2.12": {
+          "type": "line",
+          "speaker": "RAY",
+          "delivery": "V",
+          "emotion": "warm",
+          "volume": "whisper",
+          "voice_bed": "none",
+          "anim": "ray.look_down_quiet",
+          "text": "…Good. That's good.",
+          "next": "8.2.lights_branch"
+        },
+        "8.2.11b": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "V",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "…Most mornings.",
+          "effects": {
+            "log": "home.tire:most_mornings"
+          },
+          "next": "8.2.12b"
+        },
+        "8.2.12b": {
+          "type": "line",
+          "speaker": "RAY",
+          "delivery": "V",
+          "emotion": "warm",
+          "volume": "whisper",
+          "voice_bed": "none",
+          "anim": "ray.look_down_quiet",
+          "text": "…Most is good. Most is honest. We'll do the rest tomorrow.",
+          "next": "8.2.lights_branch"
+        },
+        "8.2.lights_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "all": [
+                  {
+                    "flag": "ritzville_short",
+                    "is": true
+                  },
+                  {
+                    "not": {
+                      "has_item": "led_lights"
+                    }
+                  }
+                ]
+              },
+              "next": "8.2.lights1"
+            },
+            {
+              "next": "8.2.stall_branch"
+            }
+          ]
+        },
+        "8.2.lights1": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "V",
+          "emotion": "tense",
+          "volume": "whisper",
+          "voice_bed": "none",
+          "anim": "mom.pull_back_look_car",
+          "text": "You came in with the old lights. In the dark.",
+          "next": "8.2.lights2"
+        },
+        "8.2.lights2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "V",
+          "emotion": "warm",
+          "volume": "whisper",
+          "text": "Sori was worth it.",
+          "next": "8.2.lights3"
+        },
+        "8.2.lights3": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "V",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "voice_bed": "none",
+          "text": "…Who's Sori.",
+          "next": "8.2.lights4"
+        },
+        "8.2.lights4": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "V",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "Later. Long story.",
+          "effects": {
+            "log": "home.old_lights"
+          },
+          "next": "8.2.stall_branch"
+        },
+        "8.2.stall_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "stall_stopped",
+                "is": true
+              },
+              "next": "8.2.stall_a1"
+            },
+            {
+              "condition": {
+                "flag": "stall_continued",
+                "is": true
+              },
+              "next": "8.2.stall_b1"
+            },
+            {
+              "next": "8.2.wait_blanket"
+            }
+          ]
+        },
+        "8.2.stall_a1": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "V",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "{RAY}. A kid named Jonah says thank you.",
+          "next": "8.2.stall_a2"
+        },
+        "8.2.stall_a2": {
+          "type": "line",
+          "speaker": "RAY",
+          "delivery": "V",
+          "emotion": "neutral",
+          "volume": "low",
+          "voice_bed": "none",
+          "text": "For what?",
+          "next": "8.2.stall_a3"
+        },
+        "8.2.stall_a3": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "V",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "Your truck. Breaking constantly. I knew how to hook a strap.",
+          "next": "8.2.stall_a4"
+        },
+        "8.2.stall_a4": {
+          "type": "line",
+          "speaker": "RAY",
+          "delivery": "V",
+          "emotion": "warm",
+          "volume": "low",
+          "voice_bed": "none",
+          "text": "…That's the nicest thing anyone's ever said about that truck.",
+          "effects": {
+            "log": "home.stall:stopped"
+          },
+          "next": "8.2.wait_blanket"
+        },
+        "8.2.stall_b1": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "V",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "…Somebody walked six hours because of me, once. He says it was the right call.",
+          "next": "8.2.stall_b2"
+        },
+        "8.2.stall_b2": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "V",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "voice_bed": "none",
+          "text": "Was it?",
+          "next": "8.2.stall_b3"
+        },
+        "8.2.stall_b3": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "V",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Cargo made the window.",
+          "next": "8.2.stall_b4"
+        },
+        "8.2.stall_b4": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "V",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "voice_bed": "none",
+          "text": "That's not what I asked.",
+          "next": "8.2.stall_b5"
+        },
+        "8.2.stall_b5": {
+          "type": "direction",
+          "text": "Beat.",
+          "auto_ms": 1600,
+          "next": "8.2.stall_b6"
+        },
+        "8.2.stall_b6": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "V",
+          "emotion": "sad",
+          "volume": "whisper",
+          "text": "…No.",
+          "next": "8.2.stall_b7"
+        },
+        "8.2.stall_b7": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "V",
+          "emotion": "warm",
+          "volume": "whisper",
+          "voice_bed": "none",
+          "anim": "mom.hold_again",
+          "text": "Okay. You're home. That's the whole answer tonight.",
+          "effects": {
+            "log": "home.stall:continued"
+          },
+          "next": "8.2.wait_blanket"
+        },
+        "8.2.wait_blanket": {
+          "type": "wait",
+          "wait_for": "cutscene.ray_blanket",
+          "next": "8.2.13"
+        },
+        "8.2.13": {
+          "type": "direction",
+          "text": "He puts the gray blanket over the roof of the Beetle. Gracie immediately attacks it.",
+          "anim": "gracie.attack_blanket",
+          "sfx": [
+            "blanket_soft",
+            "cat_scrabble_soft"
+          ],
+          "auto_ms": 3200,
+          "next": "8.2.14"
+        },
+        "8.2.14": {
+          "type": "direction",
+          "text": "Mya does not wake up. She has not woken up for anything that mattered less than this, and she isn't starting now.",
+          "anim": "mya.asleep_passenger",
+          "auto_ms": 3600,
+          "next": "8.2.end"
+        },
+        "8.2.end": {
+          "type": "end",
+          "effects": {
+            "tp": 200,
+            "respect": 2,
+            "calm": 50,
+            "set_flags": {
+              "act8_complete": true
+            },
+            "unlock": [
+              "swag.home",
+              "codex.permit_on_fridge"
+            ],
+            "checkpoint": "home",
+            "log": "act.complete:8"
+          },
+          "next_scene": "8.3"
+        }
+      }
+    },
+    "8.3": {
+      "id": "8.3",
+      "act": 8,
+      "title": "Epilogue",
+      "type": "radio",
+      "location": "spokane_relay_desk",
+      "background": "res://backgrounds/relay_desk_headset_cats.png",
+      "ambience": "res://audio/amb/relay_hum.ogg",
+      "music": "res://audio/music/same_time_tomorrow.ogg",
+      "entry": "8.3.0",
+      "nodes": {
+        "8.3.0": {
+          "type": "direction",
+          "text": "A week later. The Spokane Relay. A headset that isn't hers, a chair that is now. Two cats on a gray blanket in the corner. Ali keys the mic.",
+          "anim": "ali.key_mic",
+          "sfx": [
+            "radio_click"
+          ],
+          "auto_ms": 3800,
+          "effects": {
+            "log": "radio.relay_open"
+          },
+          "next": "8.3.1"
+        },
+        "8.3.1": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Spokane Relay to Kent Valley. Deac, if you're on —",
+          "next": "8.3.2"
+        },
+        "8.3.2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "I got here. Both cats. Permit's on the fridge. {MOM} put a magnet on it. A cat magnet. It's very embarrassing.",
+          "next": "8.3.3"
+        },
+        "8.3.3": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "amused",
+          "volume": "whisper",
+          "text": "Tell Jonah he still drives like a golf cart.",
+          "next": "8.3.jonah_branch"
+        },
+        "8.3.jonah_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "stall_stopped",
+                "is": true
+              },
+              "next": "8.3.3b"
+            },
+            {
+              "next": "8.3.4"
+            }
+          ]
+        },
+        "8.3.3b": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "whisper",
+          "text": "Tell him {RAY} says you're welcome. He'll know.",
+          "next": "8.3.4"
+        },
+        "8.3.4": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "amused",
+          "volume": "whisper",
+          "text": "Tell Bea I'm getting a third cat and it's her fault.",
+          "next": "8.3.bea_branch"
+        },
+        "8.3.bea_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "has_gracie_toy",
+                "is": true
+              },
+              "next": "8.3.4b"
+            },
+            {
+              "next": "8.3.5"
+            }
+          ]
+        },
+        "8.3.4b": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "whisper",
+          "text": "Tell her the mouse made it. Tell her she was right about the bridge. She'll be insufferable. Tell her anyway.",
+          "next": "8.3.5"
+        },
+        "8.3.5": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "Tell Tuna {RAY} wants to know what gauge the doors are and I told him it's a filing cabinet and he didn't believe me.",
+          "next": "8.3.tuna_branch"
+        },
+        "8.3.tuna_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "all": [
+                  {
+                    "has_item": "muffler"
+                  },
+                  {
+                    "flag": "muffler_from_ritzville",
+                    "is": false
+                  }
+                ]
+              },
+              "next": "8.3.5b"
+            },
+            {
+              "next": "8.3.6"
+            }
+          ]
+        },
+        "8.3.5b": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "whisper",
+          "text": "Tell him the muffler's the reason nobody in Spokane looked up. He knows. Tell him anyway.",
+          "next": "8.3.6"
+        },
+        "8.3.6": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "whisper",
+          "text": "Tell Priya HUSH played \"Hold Still\" last night and the whole Relay sang it. Under their breath. Fifty people. Priya was right. I'd never heard anything like it.",
+          "next": "8.3.sori_branch"
+        },
+        "8.3.sori_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "has_sori_card",
+                "is": true
+              },
+              "next": "8.3.6b"
+            },
+            {
+              "next": "8.3.hank_branch"
+            }
+          ]
+        },
+        "8.3.6b": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "amused",
+          "volume": "whisper",
+          "text": "Tell her Sori's on the visor. Tell her I didn't tell Jonah.",
+          "next": "8.3.hank_branch"
+        },
+        "8.3.hank_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "hank_report_clean",
+                "is": true
+              },
+              "next": "8.3.hank"
+            },
+            {
+              "next": "8.3.7"
+            }
+          ]
+        },
+        "8.3.hank": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "Tell Hank — no. Hank's not yours. If you see him anyway, tell him I didn't do anything stupid on the way in either.",
+          "next": "8.3.7"
+        },
+        "8.3.7": {
+          "type": "direction",
+          "text": "Pause. The Relay hums. Gracie rearranges the blanket.",
+          "anim": "gracie.blanket_shuffle",
+          "auto_ms": 2800,
+          "next": "8.3.8"
+        },
+        "8.3.8": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "whisper",
+          "text": "Thank you for the cat.",
+          "next": "8.3.9"
+        },
+        "8.3.9": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "whisper",
+          "text": "Thank you for the test.",
+          "next": "8.3.10"
+        },
+        "8.3.10": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Same time tomorrow.",
+          "next": "8.3.11"
+        },
+        "8.3.11": {
+          "type": "direction",
+          "text": "Click. Static.",
+          "sfx": [
+            "radio_click",
+            "static_swell"
+          ],
+          "auto_ms": 3000,
+          "next": "8.3.gate"
+        },
+        "8.3.gate": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "var": "respect",
+                "gte": 80
+              },
+              "next": "8.3.far"
+            },
+            {
+              "next": "8.3.silence"
+            }
+          ]
+        },
+        "8.3.far": {
+          "type": "direction",
+          "text": "Then — very faint, very far —",
+          "sfx": [
+            "static_far_swell"
+          ],
+          "auto_ms": 2400,
+          "next": "8.3.12"
+        },
+        "8.3.12": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "whisper",
+          "voice_bed": "radio_static",
+          "text": "…Seatbelt.",
+          "effects": {
+            "set_flags": {
+              "deac_answered": true
+            },
+            "unlock": [
+              "swag.seatbelt"
+            ],
+            "log": "deac.answered"
+          },
+          "next": "8.3.13"
+        },
+        "8.3.13": {
+          "type": "direction",
+          "text": "Ali, in a chair that is now hers, puts her hand flat on the desk and doesn't say anything for a while.",
+          "anim": "ali.hand_flat_desk",
+          "auto_ms": 4200,
+          "next": "8.3.end"
+        },
+        "8.3.silence": {
+          "type": "direction",
+          "text": "Static. Only static. The mountains eat radio, and the pass is a long way from here.",
+          "sfx": [
+            "static_hold"
+          ],
+          "auto_ms": 4000,
+          "next": "8.3.12b"
+        },
+        "8.3.12b": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "tired",
+          "volume": "whisper",
+          "text": "…Yeah. Same time tomorrow.",
+          "sfx": [
+            "radio_click"
+          ],
+          "effects": {
+            "log": "deac.silent"
+          },
+          "next": "8.3.end"
+        },
+        "8.3.end": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "game_complete": true
+            },
+            "unlock": [
+              "credits",
+              "postgame.deacs_route"
+            ],
+            "checkpoint": "game_complete",
+            "log": "game.complete"
+          },
+          "next_scene": ""
+        }
+      }
+    }
+  },
+  "pools": {
+    "ali_home_stop_full": {
+      "pick": "sequential",
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1600,
+          "text": "Full stop. Count it.",
+          "effects": {
+            "tp": 3,
+            "log": "stop.full"
+          }
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1600,
+          "text": "Nobody's coming. Doing it.",
+          "effects": {
+            "tp": 3,
+            "log": "stop.full"
+          }
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1600,
+          "text": "One. Two. Three. Go.",
+          "effects": {
+            "tp": 3,
+            "log": "stop.full"
+          }
+        }
+      ]
+    },
+    "ali_home_stop_rolled": {
+      "pick": "sequential",
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "wry",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "…Suggestion. {GRANDMA} saw.",
+          "effects": {
+            "respect": -1,
+            "log": "stop.rolled"
+          }
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "auto_ms": 1600,
+          "text": "Rolled it. Titus again.",
+          "effects": {
+            "respect": -1,
+            "log": "stop.rolled"
+          }
+        }
+      ]
+    },
+    "ali_home_school": {
+      "pick": "sequential",
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1000,
+          "text": "Twenty.",
+          "effects": {
+            "tp": 3,
+            "log": "zone.school"
+          }
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1600,
+          "text": "Twenty. Lights still going.",
+          "effects": {
+            "tp": 3,
+            "log": "zone.school"
+          }
+        }
+      ]
+    },
+    "ali_home_fourway": {
+      "pick": "sequential",
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "Right goes first. Habits.",
+          "effects": {
+            "tp": 3,
+            "log": "fourway"
+          }
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "Same time? Right. Habits.",
+          "effects": {
+            "tp": 3,
+            "log": "fourway"
+          }
+        }
+      ]
+    },
+    "ali_home_uncontrolled": {
+      "pick": "sequential",
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "Slow. Look. Yield right.",
+          "effects": {
+            "tp": 3,
+            "log": "uncontrolled"
+          }
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1600,
+          "text": "No sign. Look anyway.",
+          "effects": {
+            "tp": 3,
+            "log": "uncontrolled"
+          }
+        }
+      ]
+    },
+    "ali_home_rail": {
+      "pick": "sequential",
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1200,
+          "text": "Both ways.",
+          "effects": {
+            "tp": 3,
+            "log": "zone.rail"
+          }
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1600,
+          "text": "Two years. Both ways.",
+          "effects": {
+            "tp": 3,
+            "log": "zone.rail"
+          }
+        }
+      ]
+    },
+    "ali_home_lanechange": {
+      "pick": "sequential",
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1600,
+          "text": "Signal. Mirror. Shoulder. Go.",
+          "effects": {
+            "tp": 2,
+            "log": "lanechange.clean"
+          }
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "wry",
+          "volume": "whisper",
+          "auto_ms": 1600,
+          "text": "Signaled to nobody. Fine.",
+          "effects": {
+            "tp": 2,
+            "log": "lanechange.clean"
+          }
+        }
+      ]
+    },
+    "ali_home_nosignal": {
+      "pick": "sequential",
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "No signal. Nobody saw. Habits.",
+          "effects": {
+            "respect": -1,
+            "log": "lanechange.no_signal"
+          }
+        }
+      ]
+    },
+    "ali_home_outdriving": {
+      "pick": "sequential",
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 1600,
+          "text": "Shadow's past. Off it.",
+          "effects": {
+            "log": "shadow.exceeds_lights.home"
+          }
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "Don't rush. Hank said.",
+          "effects": {
+            "log": "shadow.exceeds_lights.home"
+          }
+        }
+      ]
+    }
+  }
+}

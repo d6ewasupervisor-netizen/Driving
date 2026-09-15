@@ -1,0 +1,1015 @@
+{
+  "meta": {
+    "schema_version": "1.1.0",
+    "game": "Quiet Roads",
+    "acts": [
+      5
+    ],
+    "locale": "en-US",
+    "placeholders": {
+      "MOM": "Mom",
+      "RAY": "Ray",
+      "GRANDMA": "Grandma",
+      "GRANDMA_NAME": "June",
+      "PLAYER": "Ali",
+      "PLAYER_FULL": "Alison"
+    }
+  },
+  "variables": {
+    "respect": {
+      "type": "int",
+      "default": 0,
+      "min": 0,
+      "max": 100,
+      "hidden": true
+    },
+    "calm": {
+      "type": "int",
+      "default": 50,
+      "min": 0,
+      "max": 100
+    },
+    "trade_points": {
+      "type": "int",
+      "default": 0,
+      "min": 0
+    },
+    "skids_this_climb": {
+      "type": "int",
+      "default": 0,
+      "min": 0
+    }
+  },
+  "flags": {
+    "climb_retry": false,
+    "chainup_return": false,
+    "chainup_blocked": false,
+    "chains_mounted": false,
+    "mya_passive": false,
+    "has_gracie_toy": false,
+    "act5_complete": false
+  },
+  "characters": {
+    "ALI": {
+      "name": "Ali",
+      "color": "#F28DB2",
+      "portrait_dir": "res://portraits/ali",
+      "default_volume": "whisper"
+    },
+    "MYA": {
+      "name": "Mya",
+      "color": "#8B6B4A",
+      "portrait_dir": "res://portraits/mya",
+      "speaks": false
+    },
+    "GRACIE": {
+      "name": "Gracie",
+      "color": "#F2A63B",
+      "portrait_dir": "res://portraits/gracie",
+      "speaks": false
+    },
+    "DEAC": {
+      "name": "Deac",
+      "color": "#B0B0B0",
+      "portrait_dir": "res://portraits/deac",
+      "voice_bed": "cb_radio",
+      "default_volume": "low"
+    }
+  },
+  "scenes": {
+    "5.1": {
+      "id": "5.1",
+      "act": 5,
+      "title": "The Climb",
+      "type": "gameplay",
+      "location": "i90_snoqualmie_climb",
+      "background": "res://backgrounds/snoqualmie_climb_whiteout.png",
+      "ambience": "res://audio/amb/snow_wind_muffled.ogg",
+      "music": "res://audio/music/climb_low.ogg",
+      "guide_refs": [
+        "Adverse Conditions: Snow and Ice",
+        "Skid Recovery",
+        "Speed Limit vs. Conditions",
+        "Stopping Distance on Reduced Traction"
+      ],
+      "entry": "5.1.entry",
+      "nodes": {
+        "5.1.entry": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "climb_retry",
+                "is": true
+              },
+              "next": "5.1.retry"
+            },
+            {
+              "condition": {
+                "flag": "chainup_return",
+                "is": true
+              },
+              "next": "5.1.ret"
+            },
+            {
+              "next": "5.1.0"
+            }
+          ]
+        },
+        "5.1.0": {
+          "type": "direction",
+          "text": "Snow. The pass road climbs into white. A speed limit sign, half-buried: 60. The stopping shadow ahead of the Beetle is already longer than the road Ali can see.",
+          "anim": "beetle.climb_begin",
+          "auto_ms": 3600,
+          "next": "5.1.1"
+        },
+        "5.1.1": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Everything gentle. Gas gentle. Brake gentle. Steer gentle. You slam anything, you skid, and a skid on snow screams. They'll hear it in Ellensburg.",
+          "next": "5.1.2"
+        },
+        "5.1.2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Sign says sixty.",
+          "next": "5.1.3"
+        },
+        "5.1.3": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Sign was posted in July. Thirty-five.",
+          "next": "5.1.go"
+        },
+        "5.1.go": {
+          "type": "effects",
+          "effects": {
+            "set_vars": {
+              "skids_this_climb": 0
+            },
+            "set_flags": {
+              "climb_retry": false
+            },
+            "start_gameplay": "climb_snoqualmie",
+            "checkpoint": "climb_begin",
+            "log": "mission.begin:climb"
+          }
+        },
+        "5.1.retry": {
+          "type": "direction",
+          "text": "Morning. The Issaquah bay. Snow on the Beetle's hood that wasn't there yesterday.",
+          "anim": "beetle.hood_snow",
+          "auto_ms": 3000,
+          "next": "5.1.retry2"
+        },
+        "5.1.retry2": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Same road. Same thirty-five. The mountain doesn't grade on a curve either.",
+          "next": "5.1.go"
+        },
+        "5.1.ret": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Chains in the trunk this time?",
+          "next": "5.1.ret2"
+        },
+        "5.1.ret2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "text": "Yes.",
+          "next": "5.1.ret3"
+        },
+        "5.1.ret3": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Then let's go find out if you can put them on.",
+          "next": "5.1.ret_fx"
+        },
+        "5.1.ret_fx": {
+          "type": "effects",
+          "effects": {
+            "set_flags": {
+              "chainup_return": false
+            },
+            "set_vars": {
+              "skids_this_climb": 0
+            },
+            "start_gameplay": "climb_snoqualmie_from_below_chainup",
+            "log": "mission.begin:climb_return"
+          }
+        },
+        "5.1.4": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 3200,
+          "text": "Look at the shadow. Look how long it is. That's how far I need. That's — that's most of the road."
+        },
+        "5.1.gentle": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 2400,
+          "text": "That's it. Nothing sudden. Nothing sudden is the whole mountain.",
+          "effects": {
+            "respect": 2,
+            "tp": 15,
+            "log": "input.gentle_streak"
+          }
+        },
+        "5.1.skid_fx": {
+          "type": "effects",
+          "effects": {
+            "noise_db": 85,
+            "add_vars": {
+              "skids_this_climb": 1
+            },
+            "calm": -10,
+            "log": "skid.begin"
+          },
+          "next": "5.1.5"
+        },
+        "5.1.5": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "panicked",
+          "volume": "whisper",
+          "auto_ms": 700,
+          "text": "— no no no —",
+          "next": "5.1.skid_branch"
+        },
+        "5.1.skid_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "var": "skids_this_climb",
+                "gte": 2
+              },
+              "next": "5.1.6b"
+            },
+            {
+              "next": "5.1.6"
+            }
+          ]
+        },
+        "5.1.6": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "raised",
+          "auto_ms": 3000,
+          "text": "OFF the brake. Steer where you want to go. Not where you're going. Where you want to go."
+        },
+        "5.1.6b": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "raised",
+          "auto_ms": 1800,
+          "text": "Off. Off. Where you want to go."
+        },
+        "5.1.worse": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "shout",
+          "auto_ms": 1600,
+          "text": "FOOT OFF. Don't touch anything.",
+          "effects": {
+            "log": "skid.worsening"
+          }
+        },
+        "5.1.7": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "scared",
+          "volume": "whisper",
+          "auto_ms": 1600,
+          "anim": "ali.hands_shaking",
+          "text": "Okay. Okay.",
+          "effects": {
+            "tp": 10,
+            "log": "skid.recovered"
+          },
+          "next": "5.1.8"
+        },
+        "5.1.8": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 1400,
+          "text": "They heard that.",
+          "next": "5.1.9"
+        },
+        "5.1.9": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tired",
+          "volume": "whisper",
+          "auto_ms": 1000,
+          "text": "I know.",
+          "next": "5.1.10"
+        },
+        "5.1.10": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 3200,
+          "text": "Slow down and let them forget. They're good at forgetting. It's the only thing they're good at."
+        },
+        "5.1.14": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 2000,
+          "anim": "mya.sit_up",
+          "text": "Mya's up. Mya's up, why is Mya up —",
+          "next": "5.1.15"
+        },
+        "5.1.15": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 2200,
+          "text": "Bea said it's never no reason. Slow down. Slow down.",
+          "effects": {
+            "log": "mya.wake"
+          }
+        },
+        "5.1.settle": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 2000,
+          "text": "They forgot you. Go. Gently.",
+          "effects": {
+            "log": "quiet.settle_after_skid"
+          }
+        },
+        "5.1.end": {
+          "type": "end",
+          "effects": {
+            "checkpoint": "chainup_reached",
+            "log": "scene.complete:5.1"
+          },
+          "next_scene": "5.2"
+        },
+        "5.1.11": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Back down. Now. Issaquah. We try again tomorrow.",
+          "next": "5.1.12"
+        },
+        "5.1.12": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "I can —",
+          "next": "5.1.13"
+        },
+        "5.1.13": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "You can't. That's not an insult. Turn around.",
+          "next": "5.1.swarm_end"
+        },
+        "5.1.swarm_end": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "climb_retry": true
+            },
+            "respect": -2,
+            "log": "mission.fail:climb"
+          },
+          "next_scene": "5.1"
+        }
+      },
+      "triggers": [
+        {
+          "event": "ice.enter",
+          "node": "5.1.4",
+          "once": true,
+          "priority": 5
+        },
+        {
+          "event": "ice.enter",
+          "node": "pool:ali_ice",
+          "cooldown_ms": 12000,
+          "priority": 1
+        },
+        {
+          "event": "speed.over:35",
+          "node": "pool:deac_speed",
+          "cooldown_ms": 15000,
+          "priority": 2
+        },
+        {
+          "event": "input.gentle_streak",
+          "node": "5.1.gentle",
+          "once": true,
+          "priority": 2
+        },
+        {
+          "event": "skid.begin",
+          "node": "5.1.skid_fx",
+          "cooldown_ms": 2000,
+          "priority": 15,
+          "interrupt": true
+        },
+        {
+          "event": "skid.worsening",
+          "node": "5.1.worse",
+          "cooldown_ms": 2500,
+          "priority": 16,
+          "interrupt": true
+        },
+        {
+          "event": "skid.recovered",
+          "node": "5.1.7",
+          "cooldown_ms": 2000,
+          "priority": 10,
+          "interrupt": true
+        },
+        {
+          "event": "mya.wake",
+          "node": "5.1.14",
+          "condition": {
+            "flag": "mya_passive",
+            "is": true
+          },
+          "cooldown_ms": 20000,
+          "priority": 6,
+          "interrupt": true
+        },
+        {
+          "event": "quiet.settle",
+          "node": "5.1.settle",
+          "condition": {
+            "var": "skids_this_climb",
+            "gte": 1
+          },
+          "cooldown_ms": 15000,
+          "priority": 2
+        },
+        {
+          "event": "waypoint.reach:chainup",
+          "node": "5.1.end",
+          "once": true,
+          "priority": 20,
+          "interrupt": true
+        },
+        {
+          "event": "qte.gracie.start",
+          "node": "pool:gracie_qte_start",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.success",
+          "node": "pool:gracie_qte_success",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.fail",
+          "node": "pool:gracie_qte_fail",
+          "cooldown_ms": 3000,
+          "priority": 3
+        },
+        {
+          "event": "noise.yellow",
+          "node": "pool:noise_yellow",
+          "cooldown_ms": 8000
+        },
+        {
+          "event": "noise.red",
+          "node": "pool:noise_red",
+          "cooldown_ms": 12000,
+          "priority": 1,
+          "interrupt": false
+        },
+        {
+          "event": "mission.fail.swarm",
+          "node": "5.1.11",
+          "priority": 20,
+          "interrupt": true
+        }
+      ]
+    },
+    "5.2": {
+      "id": "5.2",
+      "act": 5,
+      "title": "Chain-Up Area",
+      "type": "gameplay",
+      "location": "snoqualmie_chainup_pullout",
+      "background": "res://backgrounds/chainup_pullout_drifts.png",
+      "ambience": "res://audio/amb/snow_wind_muffled.ogg",
+      "guide_refs": [
+        "Adverse Conditions: Traction Devices and Chain Requirements",
+        "Regulatory Signs: Chains Required"
+      ],
+      "entry": "5.2.entry",
+      "nodes": {
+        "5.2.entry": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "has_item": "chains"
+              },
+              "next": "5.2.0"
+            },
+            {
+              "next": "5.2.4"
+            }
+          ]
+        },
+        "5.2.0": {
+          "type": "direction",
+          "text": "Chain-up area. A wide pull-out nobody has plowed in two years. Across the road, the Quiet stand in the drifts up to their knees, facing uphill.",
+          "anim": "beetle.pullout",
+          "auto_ms": 3200,
+          "next": "5.2.1"
+        },
+        "5.2.1": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Chain-up. Pull in. I'll watch the grass.",
+          "next": "5.2.2"
+        },
+        "5.2.2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "Tuna showed me this. Drape, hook, tighten. Don't drop the tensioner. The tensioner is metal and the ground is ice.",
+          "next": "5.2.go"
+        },
+        "5.2.go": {
+          "type": "effects",
+          "effects": {
+            "start_gameplay": "chainup_qte",
+            "log": "chainup.begin"
+          }
+        },
+        "5.2.drop": {
+          "type": "direction",
+          "text": "The tensioner hits the ice. Across the road, a head comes up.",
+          "sfx": [
+            "metal_on_ice"
+          ],
+          "anim": "quiet.one_head_lift",
+          "effects": {
+            "noise_db": 60,
+            "calm": -5,
+            "respect": -1,
+            "log": "chainup.qte.drop"
+          },
+          "auto_ms": 1800,
+          "next": "5.2.drop2"
+        },
+        "5.2.drop2": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "low",
+          "auto_ms": 1800,
+          "text": "Pick it up. Slower than that."
+        },
+        "5.2.3": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "anim": "beetle.chains_on",
+          "text": "Good. Now you're the only car on this mountain that's allowed to be here.",
+          "effects": {
+            "tp": 30,
+            "respect": 3,
+            "set_flags": {
+              "chains_mounted": true
+            },
+            "log": "chainup.qte.success"
+          },
+          "next": "5.2.brief"
+        },
+        "5.2.brief": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Summit lot's full. Lights off past the sign. Walking speed. Don't stop, don't speed up, don't talk. I'm right behind you.",
+          "next": "5.2.brief2"
+        },
+        "5.2.brief2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "Don't talk.",
+          "next": "5.2.brief3"
+        },
+        "5.2.brief3": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "You either.",
+          "next": "5.2.end"
+        },
+        "5.2.end": {
+          "type": "end",
+          "effects": {
+            "checkpoint": "chains_on",
+            "log": "scene.complete:5.2"
+          },
+          "next_scene": "5.3"
+        },
+        "5.2.4": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "anim": "sign.chains_required",
+          "text": "Stop.",
+          "next": "5.2.5"
+        },
+        "5.2.5": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "It's not that bad up ahead, I can —",
+          "next": "5.2.6"
+        },
+        "5.2.6": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Sign says chains. Sign means chains.",
+          "next": "5.2.7"
+        },
+        "5.2.7": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "You go up without them and skid, I'm not coming after you. I can't. Nobody can. Go back down. Tuna's got a set. Earn it.",
+          "next": "5.2.turn"
+        },
+        "5.2.turn": {
+          "type": "direction",
+          "text": "Ali turns the Beetle around. It takes three tries on the ice. None of them squeal.",
+          "anim": "beetle.three_point_turn_ice",
+          "auto_ms": 3200,
+          "next": "5.2.8"
+        },
+        "5.2.8": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tired",
+          "volume": "whisper",
+          "anim": "gracie.look_at_ali",
+          "text": "Everybody said get the chains. Everybody. Including {MOM}. Including the radio.",
+          "next": "5.2.block"
+        },
+        "5.2.block": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "chainup_blocked": true
+            },
+            "respect": -2,
+            "unlock": [
+              "mission.local_loop"
+            ],
+            "checkpoint": "chainup_blocked",
+            "log": "chainup.blocked"
+          },
+          "next_scene": "2.8"
+        },
+        "5.2.swarm": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "low",
+          "text": "In the car. Now. Down. Tomorrow.",
+          "next": "5.2.swarm_end"
+        },
+        "5.2.swarm_end": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "climb_retry": true
+            },
+            "respect": -2,
+            "log": "mission.fail:chainup"
+          },
+          "next_scene": "5.1"
+        }
+      },
+      "triggers": [
+        {
+          "event": "chainup.qte.drop",
+          "node": "5.2.drop",
+          "cooldown_ms": 4000,
+          "priority": 5,
+          "interrupt": true
+        },
+        {
+          "event": "chainup.qte.success",
+          "node": "5.2.3",
+          "once": true,
+          "priority": 10,
+          "interrupt": true
+        },
+        {
+          "event": "noise.yellow",
+          "node": "pool:noise_yellow",
+          "cooldown_ms": 8000
+        },
+        {
+          "event": "mission.fail.swarm",
+          "node": "5.2.swarm",
+          "priority": 20,
+          "interrupt": true
+        }
+      ]
+    },
+    "5.3": {
+      "id": "5.3",
+      "act": 5,
+      "title": "The Summit",
+      "type": "video",
+      "location": "snoqualmie_summit_lot",
+      "video": "res://cutscenes/act5_summit.ogv",
+      "music": "res://audio/music/summit_silence.ogg",
+      "guide_refs": [
+        "Adverse Conditions: Reduced Visibility",
+        "Speed Limit vs. Conditions"
+      ],
+      "entry": "5.3.pre",
+      "nodes": {
+        "5.3.pre": {
+          "type": "direction",
+          "text": "The summit. Snow falling on a hundred silent figures standing in the ski resort parking lot. The Beetle rolls through at walking speed. Headlights off. Chains ticking.",
+          "anim": "summit.establishing",
+          "auto_ms": 3000,
+          "next": "5.3.hold"
+        },
+        "5.3.hold": {
+          "type": "wait",
+          "wait_for": "cutscene.summit_clear",
+          "next": "5.3.through"
+        },
+        "5.3.through": {
+          "type": "direction",
+          "text": "Mya asleep. Gracie — for once — perfectly still. The last row of figures slides past the window. Ali exhales.",
+          "anim": "summit.clear",
+          "auto_ms": 3200,
+          "next": "5.3.1"
+        },
+        "5.3.1": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "V",
+          "emotion": "relieved",
+          "volume": "whisper",
+          "auto_ms": 2800,
+          "text": "Nobody's ever going to believe we did that.",
+          "next": "5.3.2"
+        },
+        "5.3.2": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "low",
+          "auto_ms": 2200,
+          "text": "I believe it. I watched.",
+          "next": "5.3.gracie_branch"
+        },
+        "5.3.gracie_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "has_gracie_toy",
+                "is": true
+              },
+              "next": "5.3.3a"
+            },
+            {
+              "next": "5.3.3"
+            }
+          ]
+        },
+        "5.3.3": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "V",
+          "emotion": "amused",
+          "volume": "whisper",
+          "auto_ms": 2800,
+          "text": "Gracie didn't move. Gracie didn't move the whole time.",
+          "next": "5.3.4"
+        },
+        "5.3.4": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "wry",
+          "volume": "low",
+          "auto_ms": 2400,
+          "text": "Even the loud ones learn. Eventually.",
+          "next": "5.3.end"
+        },
+        "5.3.3a": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "V",
+          "emotion": "amused",
+          "volume": "whisper",
+          "auto_ms": 3000,
+          "anim": "gracie.toy_in_mouth",
+          "text": "Gracie didn't move. She had the toy in her mouth the whole time. Bea was right.",
+          "next": "5.3.4a"
+        },
+        "5.3.4a": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "low",
+          "auto_ms": 2400,
+          "text": "Don't tell her. She'll be insufferable.",
+          "next": "5.3.end"
+        },
+        "5.3.end": {
+          "type": "end",
+          "effects": {
+            "tp": 120,
+            "respect": 5,
+            "set_flags": {
+              "act5_complete": true
+            },
+            "unlock": [
+              "region.ellensburg",
+              "fieldnotes.6",
+              "swag.summit"
+            ],
+            "checkpoint": "summit_crossed",
+            "log": "act.complete:5"
+          },
+          "next_scene": "6.1"
+        }
+      }
+    }
+  },
+  "pools": {
+    "ali_ice": {
+      "pick": "random",
+      "no_repeat": true,
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 1000,
+          "text": "Ice."
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 1600,
+          "text": "Patch. Feet still. Feet still."
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "Bridge. Bridges freeze first. Field Notes said."
+        }
+      ]
+    },
+    "deac_speed": {
+      "pick": "random",
+      "no_repeat": true,
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "low",
+          "auto_ms": 1200,
+          "text": "Thirty-five.",
+          "effects": {
+            "respect": -1,
+            "log": "speed.over35"
+          }
+        },
+        {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "low",
+          "auto_ms": 1600,
+          "text": "That's not thirty-five.",
+          "effects": {
+            "respect": -1,
+            "log": "speed.over35"
+          }
+        },
+        {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 2400,
+          "text": "Sign was posted in July. The road wasn't.",
+          "effects": {
+            "respect": -1,
+            "log": "speed.over35"
+          }
+        }
+      ]
+    }
+  }
+}

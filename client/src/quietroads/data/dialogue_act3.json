@@ -1,0 +1,1765 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "game": "Quiet Roads",
+    "acts": [
+      3
+    ],
+    "locale": "en-US",
+    "placeholders": {
+      "MOM": "Mom",
+      "RAY": "Ray",
+      "GRANDMA": "Grandma",
+      "GRANDMA_NAME": "June",
+      "PLAYER": "Ali",
+      "PLAYER_FULL": "Alison"
+    }
+  },
+  "variables": {
+    "respect": {
+      "type": "int",
+      "default": 0,
+      "min": 0,
+      "max": 100,
+      "hidden": true
+    },
+    "calm": {
+      "type": "int",
+      "default": 50,
+      "min": 0,
+      "max": 100
+    },
+    "trade_points": {
+      "type": "int",
+      "default": 0,
+      "min": 0
+    }
+  },
+  "flags": {
+    "convoy_briefed": false,
+    "merge_clean": false,
+    "stall_stopped": false,
+    "stall_continued": false,
+    "strap_failed_once": false,
+    "mya_lost": true,
+    "mya_passive": false,
+    "mya_deferred": false,
+    "has_gracie_toy": false,
+    "act3_complete": false
+  },
+  "characters": {
+    "ALI": {
+      "name": "Ali",
+      "color": "#F28DB2",
+      "portrait_dir": "res://portraits/ali",
+      "default_volume": "whisper"
+    },
+    "MYA": {
+      "name": "Mya",
+      "color": "#8B6B4A",
+      "portrait_dir": "res://portraits/mya",
+      "speaks": false
+    },
+    "GRACIE": {
+      "name": "Gracie",
+      "color": "#F2A63B",
+      "portrait_dir": "res://portraits/gracie",
+      "speaks": false
+    },
+    "DEAC": {
+      "name": "Deac",
+      "color": "#B0B0B0",
+      "portrait_dir": "res://portraits/deac",
+      "voice_bed": "cb_radio",
+      "default_volume": "low"
+    },
+    "JONAH": {
+      "name": "Jonah",
+      "color": "#5DADE2",
+      "portrait_dir": "res://portraits/jonah",
+      "voice_bed": "cb_radio",
+      "default_volume": "normal"
+    },
+    "BEA": {
+      "name": "Auntie Bea",
+      "color": "#C39BD3",
+      "portrait_dir": "res://portraits/bea",
+      "default_volume": "low"
+    },
+    "MOM": {
+      "name": "{MOM}",
+      "color": "#7FB3D5",
+      "portrait_dir": "res://portraits/mom",
+      "voice_bed": "radio_static",
+      "default_volume": "low"
+    },
+    "RAY": {
+      "name": "{RAY}",
+      "color": "#6C8E7F",
+      "portrait_dir": "res://portraits/ray",
+      "voice_bed": "radio_static",
+      "default_volume": "low"
+    }
+  },
+  "scenes": {
+    "3.1": {
+      "id": "3.1",
+      "act": 3,
+      "title": "Briefing",
+      "type": "still",
+      "location": "warehouse_bay_dawn",
+      "background": "res://backgrounds/warehouse_convoy_lineup.png",
+      "music": "res://audio/music/convoy_prep.ogg",
+      "guide_refs": [
+        "Freeway Driving: Entering",
+        "Following Distance: 3-Second Rule",
+        "Speed Limits"
+      ],
+      "entry": "3.1.1",
+      "nodes": {
+        "3.1.1": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "anim": "deac.map_table",
+          "text": "Issaquah checkpoint. Medical. Three vehicles. I lead, Jonah's middle, you sweep.",
+          "next": "3.1.2"
+        },
+        "3.1.2": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Freeway. First time?",
+          "next": "3.1.3"
+        },
+        "3.1.3": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "First time on purpose.",
+          "next": "3.1.4"
+        },
+        "3.1.4": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Match speed on the ramp. Don't merge slow, don't merge loud. Three seconds behind Jonah. Count it out loud if you have to.",
+          "next": "3.1.5"
+        },
+        "3.1.5": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "low",
+          "text": "Four. I brake hard.",
+          "next": "3.1.6"
+        },
+        "3.1.6": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "anim": "deac.look_jonah",
+          "text": "He does.",
+          "next": "3.1.7"
+        },
+        "3.1.7": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "S",
+          "emotion": "tired",
+          "volume": "low",
+          "text": "I'm working on it.",
+          "next": "3.1.8"
+        },
+        "3.1.8": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Work faster. Wheels up in ten.",
+          "next": "3.1.bea"
+        },
+        "3.1.bea": {
+          "type": "direction",
+          "text": "Bea, at the bay door, presses a paper bag into Ali's hand.",
+          "anim": "bea.doorway_handoff",
+          "auto_ms": 1600,
+          "next": "3.1.9"
+        },
+        "3.1.9": {
+          "type": "line",
+          "speaker": "BEA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "Treats. For the orange one. Freeway's long and she'll get ideas.",
+          "effects": {
+            "give_items": [
+              "gracie_treats"
+            ],
+            "log": "item.given:gracie_treats"
+          },
+          "next": "3.1.10"
+        },
+        "3.1.10": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "Bea, do you know if — is Mya —",
+          "next": "3.1.11"
+        },
+        "3.1.11": {
+          "type": "line",
+          "speaker": "BEA",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Deac took her carrier out to the truck an hour ago.",
+          "next": "3.1.12"
+        },
+        "3.1.12": {
+          "type": "line",
+          "speaker": "BEA",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "I didn't say that. Go.",
+          "next": "3.1.end"
+        },
+        "3.1.end": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "convoy_briefed": true
+            },
+            "checkpoint": "convoy_briefed",
+            "log": "scene.complete:3.1"
+          },
+          "next_scene": "3.2"
+        }
+      }
+    },
+    "3.2": {
+      "id": "3.2",
+      "act": 3,
+      "title": "I-90 Eastbound",
+      "type": "gameplay",
+      "location": "i90_kent_to_issaquah",
+      "ambience": "res://audio/amb/freeway_dead_wind.ogg",
+      "guide_refs": [
+        "Freeway Driving: Entering and Merging",
+        "Following Distance: 3-Second Rule",
+        "Speed Limits: Limit vs. Conditions"
+      ],
+      "entry": "3.2.go",
+      "nodes": {
+        "3.2.go": {
+          "type": "effects",
+          "effects": {
+            "start_gameplay": "mission_convoy_issaquah",
+            "log": "mission.begin:convoy_issaquah"
+          },
+          "next": "3.2.wait_ramp"
+        },
+        "3.2.wait_ramp": {
+          "type": "wait",
+          "wait_for": "ramp.enter",
+          "next": "3.2.1"
+        },
+        "3.2.1": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 2200,
+          "text": "Ramp. Get up to speed on the ramp. Not after.",
+          "next": "3.2.wait_gap"
+        },
+        "3.2.wait_gap": {
+          "type": "wait",
+          "wait_for": "merge.gap_open",
+          "next": "3.2.2"
+        },
+        "3.2.2": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 1600,
+          "text": "Gap's yours. Take it.",
+          "next": "3.2.wait_merge"
+        },
+        "3.2.wait_merge": {
+          "type": "wait",
+          "wait_for": "merge.",
+          "next": "3.2.merge_branch"
+        },
+        "3.2.merge_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "merge_clean",
+                "is": true
+              },
+              "next": "3.2.3"
+            },
+            {
+              "next": "3.2.6"
+            }
+          ]
+        },
+        "3.2.3": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "amused",
+          "volume": "normal",
+          "auto_ms": 2000,
+          "text": "Oh, look at that. Textbook.",
+          "effects": {
+            "respect": 3,
+            "tp": 20,
+            "log": "merge.clean"
+          },
+          "next": "3.2.4"
+        },
+        "3.2.4": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "low",
+          "auto_ms": 1200,
+          "text": "Quiet.",
+          "next": "3.2.5"
+        },
+        "3.2.5": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "wry",
+          "volume": "normal",
+          "auto_ms": 1800,
+          "text": "I was being nice —"
+        },
+        "3.2.6": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "low",
+          "auto_ms": 3000,
+          "text": "Slow merge. You made Jonah brake. He made noise. Your noise.",
+          "effects": {
+            "respect": -2,
+            "log": "merge.bad"
+          },
+          "next": "3.2.7"
+        },
+        "3.2.7": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 1800,
+          "text": "Next ramp, commit."
+        },
+        "3.2.merge_ok_fx": {
+          "type": "effects",
+          "effects": {
+            "set_flags": {
+              "merge_clean": true
+            }
+          }
+        },
+        "3.2.merge_bad_fx": {
+          "type": "effects",
+          "effects": {
+            "set_flags": {
+              "merge_clean": false
+            }
+          }
+        },
+        "3.2.8": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 2400,
+          "text": "That's the gap. Keep it. It feels far. It's not.",
+          "effects": {
+            "tp": 3,
+            "log": "follow.green"
+          }
+        },
+        "3.2.9": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "low",
+          "auto_ms": 1200,
+          "text": "You're on him.",
+          "effects": {
+            "respect": -1,
+            "log": "follow.red"
+          },
+          "next": "3.2.10"
+        },
+        "3.2.10": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "panicked",
+          "volume": "raised",
+          "auto_ms": 1200,
+          "text": "She's on me!",
+          "next": "3.2.11"
+        },
+        "3.2.11": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 3200,
+          "text": "Pick a sign. Count when he passes it. Three before you pass it or you back off."
+        },
+        "3.2.12": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 2800,
+          "text": "Seventy. That's a limit, not a target. You go what the road gives you."
+        },
+        "3.2.over": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "low",
+          "auto_ms": 2600,
+          "text": "That's not the road giving you that. That's you taking it.",
+          "effects": {
+            "respect": -1,
+            "log": "speed.over"
+          }
+        },
+        "3.2.13": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "text": "Question. Why pink.",
+          "next": "3.2.14"
+        },
+        "3.2.14": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "{GRANDMA} said nobody expects anything from a pink car. So nobody bothers you.",
+          "next": "3.2.15"
+        },
+        "3.2.15": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "amused",
+          "volume": "normal",
+          "text": "That's… actually kind of genius.",
+          "next": "3.2.16"
+        },
+        "3.2.16": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "sad",
+          "volume": "whisper",
+          "text": "She was.",
+          "next": "3.2.17"
+        },
+        "3.2.17": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "normal",
+          "text": "Is she —",
+          "next": "3.2.18"
+        },
+        "3.2.18": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "She's in Spokane. She got on the bus.",
+          "next": "3.2.19"
+        },
+        "3.2.19": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "relieved",
+          "volume": "normal",
+          "auto_ms": 2400,
+          "text": "Oh. Good. Okay. Good."
+        },
+        "3.2.stall": {
+          "type": "end",
+          "effects": {
+            "checkpoint": "convoy_stall_choice",
+            "log": "scene.complete:3.2"
+          },
+          "next_scene": "3.3"
+        }
+      },
+      "triggers": [
+        {
+          "event": "merge.clean",
+          "node": "3.2.merge_ok_fx",
+          "once": true,
+          "priority": 15,
+          "interrupt": true
+        },
+        {
+          "event": "merge.slow",
+          "node": "3.2.merge_bad_fx",
+          "once": true,
+          "priority": 15,
+          "interrupt": true
+        },
+        {
+          "event": "merge.loud",
+          "node": "3.2.merge_bad_fx",
+          "once": true,
+          "priority": 15,
+          "interrupt": true
+        },
+        {
+          "event": "follow.green",
+          "node": "3.2.8",
+          "once": true
+        },
+        {
+          "event": "follow.red",
+          "node": "3.2.9",
+          "cooldown_ms": 15000,
+          "priority": 3
+        },
+        {
+          "event": "speed.limit_change:70",
+          "node": "3.2.12",
+          "once": true
+        },
+        {
+          "event": "speed.over",
+          "node": "3.2.over",
+          "cooldown_ms": 20000,
+          "priority": 2
+        },
+        {
+          "event": "cruise.idle",
+          "node": "3.2.13",
+          "once": true,
+          "priority": 1
+        },
+        {
+          "event": "qte.gracie.start",
+          "node": "pool:gracie_qte_start",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.success",
+          "node": "pool:gracie_qte_success",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.fail",
+          "node": "pool:gracie_qte_fail",
+          "cooldown_ms": 3000,
+          "priority": 3
+        },
+        {
+          "event": "noise.yellow",
+          "node": "pool:noise_yellow",
+          "cooldown_ms": 8000
+        },
+        {
+          "event": "noise.red",
+          "node": "pool:noise_red",
+          "cooldown_ms": 12000,
+          "priority": 5,
+          "interrupt": true
+        },
+        {
+          "event": "waypoint.reach:stall_point",
+          "node": "3.2.stall",
+          "once": true,
+          "priority": 20,
+          "interrupt": true
+        },
+        {
+          "event": "mission.fail.swarm",
+          "node": "pool:mission_fail_swarm",
+          "priority": 20,
+          "interrupt": true
+        }
+      ]
+    },
+    "3.3": {
+      "id": "3.3",
+      "act": 3,
+      "title": "The Stall",
+      "type": "gameplay",
+      "location": "i90_shoulder_median_grass",
+      "ambience": "res://audio/amb/freeway_dead_wind.ogg",
+      "music": "res://audio/music/stall_tension_low.ogg",
+      "guide_refs": [
+        "Emergencies: Disabled Vehicle on the Shoulder",
+        "Hazard Lights",
+        "Towing at Reduced Speed"
+      ],
+      "entry": "3.3.pre",
+      "nodes": {
+        "3.3.pre": {
+          "type": "direction",
+          "text": "Jonah's van sputters and drifts to the shoulder. In the median grass: dozens of the Quiet, dormant. Deac's truck is already a mile ahead.",
+          "anim": "jonah_van.die",
+          "sfx": [
+            "engine_sputter_distant"
+          ],
+          "auto_ms": 3200,
+          "next": "3.3.1"
+        },
+        "3.3.1": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "panicked",
+          "volume": "normal",
+          "text": "— no, no, come on —",
+          "next": "3.3.2"
+        },
+        "3.3.2": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "normal",
+          "text": "Fuel pump. I'm dead. I'm dead on the shoulder.",
+          "next": "3.3.3"
+        },
+        "3.3.3": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "text": "Go. I'll walk it.",
+          "next": "3.3.4"
+        },
+        "3.3.4": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "You're not walking past forty of them.",
+          "next": "3.3.5"
+        },
+        "3.3.5": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "normal",
+          "text": "Ali, the cargo has a window. It's insulin. It's literally on a clock.",
+          "next": "3.3.6"
+        },
+        "3.3.6": {
+          "type": "direction",
+          "text": "Ali says nothing. The van's hazards tick.",
+          "sfx": [
+            "hazard_tick"
+          ],
+          "auto_ms": 2200,
+          "next": "3.3.7"
+        },
+        "3.3.7": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "text": "Deac would go.",
+          "next": "3.3.8"
+        },
+        "3.3.8": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Deac's not here.",
+          "next": "3.3.C"
+        },
+        "3.3.C": {
+          "type": "choice",
+          "choices": [
+            {
+              "id": "continue",
+              "text": "Keep going. The cargo's on a clock.",
+              "next": "3.3.9",
+              "tracked": true,
+              "effects": {
+                "respect": -20,
+                "set_flags": {
+                  "stall_continued": true
+                },
+                "log": "choice.stall:continue"
+              }
+            },
+            {
+              "id": "stop",
+              "text": "Stop. Nobody walks past forty of them.",
+              "next": "3.3.19",
+              "tracked": true,
+              "effects": {
+                "respect": 40,
+                "set_flags": {
+                  "stall_stopped": true
+                },
+                "log": "choice.stall:stop"
+              }
+            }
+          ]
+        },
+        "3.3.9": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "sad",
+          "volume": "whisper",
+          "text": "I'm sorry.",
+          "next": "3.3.10"
+        },
+        "3.3.10": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "tired",
+          "volume": "normal",
+          "text": "…Yeah. No. You're right. Go.",
+          "next": "3.3.11"
+        },
+        "3.3.11": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "text": "Tell Deac I said it was the right call.",
+          "next": "3.3.A_go"
+        },
+        "3.3.A_go": {
+          "type": "effects",
+          "effects": {
+            "start_gameplay": "convoy_continue_solo",
+            "log": "mission.branch:stall_continue"
+          },
+          "next": "3.3.A_wait"
+        },
+        "3.3.A_wait": {
+          "type": "wait",
+          "wait_for": "waypoint.reach:issaquah",
+          "next": "3.3.A_arrive"
+        },
+        "3.3.A_arrive": {
+          "type": "direction",
+          "text": "Issaquah checkpoint. The cargo goes through the gate with eleven minutes to spare.",
+          "anim": "cargo.handoff",
+          "auto_ms": 2800,
+          "effects": {
+            "tp": 60,
+            "log": "delivery.complete:issaquah_on_time"
+          },
+          "next": "3.3.12"
+        },
+        "3.3.12": {
+          "type": "direction",
+          "text": "Six hours later. Jonah walks in through the gate, coated in road dust, silent. Sits down. Doesn't look at Ali.",
+          "anim": "jonah.walk_in_dust",
+          "music": "res://audio/music/aftermath_low.ogg",
+          "auto_ms": 4200,
+          "next": "3.3.13"
+        },
+        "3.3.13": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Cargo made the window.",
+          "next": "3.3.14"
+        },
+        "3.3.14": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Yes.",
+          "next": "3.3.15"
+        },
+        "3.3.15": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Jonah made it back.",
+          "next": "3.3.16"
+        },
+        "3.3.16": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "Yes.",
+          "next": "3.3.17"
+        },
+        "3.3.17": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Those aren't the same size.",
+          "next": "3.3.18"
+        },
+        "3.3.18": {
+          "type": "direction",
+          "text": "She walks away. The carrier stays in the truck.",
+          "anim": "deac.walk_off_carrier_stays",
+          "auto_ms": 3000,
+          "next": "3.3.A_end"
+        },
+        "3.3.A_end": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "mya_deferred": true
+            },
+            "checkpoint": "stall_continued",
+            "log": "scene.complete:3.3.continue"
+          },
+          "next_scene": "3.4a"
+        },
+        "3.3.19": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "text": "Shut up and pop your hood so it looks like you know what you're doing.",
+          "next": "3.3.20"
+        },
+        "3.3.20": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "Roll up behind him. Off the gas early. No brake squeal. No brake squeal. No brake —",
+          "next": "3.3.B_go"
+        },
+        "3.3.B_go": {
+          "type": "effects",
+          "effects": {
+            "start_gameplay": "convoy_tow_jonah",
+            "log": "mission.branch:stall_stop"
+          },
+          "next": "3.3.B_wait_tow"
+        },
+        "3.3.pull_quiet": {
+          "type": "direction",
+          "text": "The Beetle settles behind the van. Nothing squeals. The grass doesn't move.",
+          "auto_ms": 2200,
+          "effects": {
+            "respect": 2,
+            "log": "stall.pullup.quiet"
+          }
+        },
+        "3.3.pull_squeal": {
+          "type": "direction",
+          "text": "Brakes squeal. In the median, heads lift.",
+          "sfx": [
+            "brake_squeal_short"
+          ],
+          "effects": {
+            "noise_db": 70,
+            "respect": -2,
+            "log": "stall.pullup.squeal"
+          },
+          "auto_ms": 1600,
+          "next": "3.3.pull_squeal2"
+        },
+        "3.3.pull_squeal2": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 2200,
+          "text": "Okay. Okay. Don't do that again. Sit. Let it fade."
+        },
+        "3.3.21": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 2400,
+          "text": "Tow strap. Slow. Every click is a click."
+        },
+        "3.3.22": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "anim": "jonah.lean_out_window",
+          "text": "You've done this before?",
+          "effects": {
+            "tp": 20,
+            "log": "qte.strap.success"
+          },
+          "next": "3.3.23"
+        },
+        "3.3.23": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "My stepdad drives a truck that breaks constantly.",
+          "next": "3.3.24"
+        },
+        "3.3.24": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "G",
+          "emotion": "warm",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "Tell him thank you."
+        },
+        "3.3.25": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "scared",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "sfx": [
+            "metal_clank"
+          ],
+          "text": "— don't move — don't —",
+          "effects": {
+            "noise_db": 62,
+            "calm": -5,
+            "set_flags": {
+              "strap_failed_once": true
+            },
+            "log": "qte.strap.fail"
+          },
+          "next": "3.3.26"
+        },
+        "3.3.26": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "G",
+          "emotion": "scared",
+          "volume": "whisper",
+          "auto_ms": 2000,
+          "text": "I'm not moving. I am so not moving.",
+          "next": "3.3.27"
+        },
+        "3.3.27": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "relieved",
+          "volume": "whisper",
+          "auto_ms": 2000,
+          "text": "Okay. Fading. Again."
+        },
+        "3.3.B_wait_tow": {
+          "type": "wait",
+          "wait_for": "tow.start",
+          "next": "3.3.28"
+        },
+        "3.3.28": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 3400,
+          "text": "Thirty-five. Hazards. Shoulder. Don't jerk it. He's heavy and I'm heavy and neither of us stops fast now.",
+          "next": "3.3.29"
+        },
+        "3.3.29": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "tired",
+          "volume": "normal",
+          "auto_ms": 2600,
+          "text": "This is the slowest I have ever gone in my entire life.",
+          "next": "3.3.30"
+        },
+        "3.3.30": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "auto_ms": 1200,
+          "text": "Good.",
+          "next": "3.3.B_wait_arrive"
+        },
+        "3.3.jerk": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "normal",
+          "auto_ms": 2200,
+          "text": "Strap's snapping tight — ease it, ease it —",
+          "effects": {
+            "noise_db": 58,
+            "respect": -1,
+            "log": "tow.jerk"
+          }
+        },
+        "3.3.B_wait_arrive": {
+          "type": "wait",
+          "wait_for": "waypoint.reach:issaquah",
+          "next": "3.3.B_arrive"
+        },
+        "3.3.B_arrive": {
+          "type": "direction",
+          "text": "Issaquah checkpoint. The cargo goes through the gate forty minutes past its window. It's fine. Barely.",
+          "anim": "cargo.handoff",
+          "auto_ms": 3000,
+          "effects": {
+            "tp": 45,
+            "log": "delivery.complete:issaquah_late"
+          },
+          "next": "3.3.silence"
+        },
+        "3.3.silence": {
+          "type": "direction",
+          "text": "Long silence. Then the radio.",
+          "sfx": [
+            "cb_static_soft"
+          ],
+          "auto_ms": 2600,
+          "next": "3.3.31"
+        },
+        "3.3.31": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Late.",
+          "next": "3.3.32"
+        },
+        "3.3.32": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "I know.",
+          "next": "3.3.33"
+        },
+        "3.3.33": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Both of you.",
+          "next": "3.3.34"
+        },
+        "3.3.34": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Yes.",
+          "next": "3.3.35"
+        },
+        "3.3.35": {
+          "type": "direction",
+          "text": "Static. A long one.",
+          "sfx": [
+            "cb_static_soft"
+          ],
+          "auto_ms": 2800,
+          "next": "3.3.36"
+        },
+        "3.3.36": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "Good.",
+          "next": "3.3.B_end"
+        },
+        "3.3.B_end": {
+          "type": "end",
+          "effects": {
+            "checkpoint": "stall_stopped",
+            "log": "scene.complete:3.3.stop"
+          },
+          "next_scene": "3.4"
+        },
+        "3.3.swarm": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "panicked",
+          "volume": "normal",
+          "text": "They're up. They're all up. Cats, go —",
+          "next": "3.3.swarm2"
+        },
+        "3.3.swarm2": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Both of you. Walk it in. Cargo's a loss. Cats aren't. Try again tomorrow.",
+          "next": "3.3.swarm_end"
+        },
+        "3.3.swarm_end": {
+          "type": "end",
+          "effects": {
+            "log": "mission.fail:stall"
+          },
+          "next_scene": "3.3"
+        }
+      },
+      "triggers": [
+        {
+          "event": "stall.pullup.quiet",
+          "node": "3.3.pull_quiet",
+          "once": true,
+          "priority": 5
+        },
+        {
+          "event": "stall.pullup.squeal",
+          "node": "3.3.pull_squeal",
+          "once": true,
+          "priority": 5,
+          "interrupt": true
+        },
+        {
+          "event": "qte.strap.start",
+          "node": "3.3.21",
+          "once": true
+        },
+        {
+          "event": "qte.strap.success",
+          "node": "3.3.22",
+          "once": true,
+          "priority": 5
+        },
+        {
+          "event": "qte.strap.fail",
+          "node": "3.3.25",
+          "cooldown_ms": 4000,
+          "priority": 5,
+          "interrupt": true
+        },
+        {
+          "event": "tow.jerk",
+          "node": "3.3.jerk",
+          "cooldown_ms": 8000,
+          "priority": 3,
+          "interrupt": true
+        },
+        {
+          "event": "qte.gracie.start",
+          "node": "pool:gracie_qte_start",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.success",
+          "node": "pool:gracie_qte_success",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.fail",
+          "node": "pool:gracie_qte_fail",
+          "cooldown_ms": 3000,
+          "priority": 3
+        },
+        {
+          "event": "noise.yellow",
+          "node": "pool:noise_yellow",
+          "cooldown_ms": 8000
+        },
+        {
+          "event": "noise.red",
+          "node": "pool:noise_red",
+          "cooldown_ms": 12000,
+          "priority": 5,
+          "interrupt": true
+        },
+        {
+          "event": "mission.fail.swarm",
+          "node": "3.3.swarm",
+          "priority": 20,
+          "interrupt": true
+        }
+      ]
+    },
+    "3.4": {
+      "id": "3.4",
+      "act": 3,
+      "title": "Issaquah: Mya Returns",
+      "type": "video",
+      "location": "issaquah_checkpoint_lot",
+      "video": "res://cutscenes/act3_mya_returns.ogv",
+      "music": "res://audio/music/mya_returns.ogg",
+      "entry": "3.4.pre",
+      "nodes": {
+        "3.4.pre": {
+          "type": "direction",
+          "text": "Deac gets out of the truck with the carrier. Sets it on the Beetle's hood. Says nothing. Walks away.",
+          "anim": "deac.carrier_on_hood",
+          "auto_ms": 5000,
+          "next": "3.4.open"
+        },
+        "3.4.open": {
+          "type": "direction",
+          "text": "Ali opens it. Mya doesn't get up. Ali reaches in. Mya rolls onto her back and makes the stomach-rub noise.",
+          "anim": "mya.belly_roll",
+          "sfx": [
+            "cat_chirp_soft"
+          ],
+          "auto_ms": 4200,
+          "next": "3.4.1"
+        },
+        "3.4.1": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "V",
+          "emotion": "relieved",
+          "volume": "whisper",
+          "text": "Hi. Hi. Hi, fat girl.",
+          "auto_ms": 2400,
+          "next": "3.4.2"
+        },
+        "3.4.2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "V",
+          "emotion": "warm",
+          "volume": "whisper",
+          "text": "You didn't even notice, did you. You didn't even —",
+          "auto_ms": 2600,
+          "next": "3.4.wait_yell"
+        },
+        "3.4.wait_yell": {
+          "type": "wait",
+          "wait_for": "cutscene.gracie_yell",
+          "next": "3.4.3"
+        },
+        "3.4.3": {
+          "type": "direction",
+          "text": "Gracie climbs onto the roof and yells about it. Once. Every Quiet within a hundred yards turns.",
+          "anim": "gracie.roof_yell",
+          "sfx": [
+            "cat_yowl_single"
+          ],
+          "effects": {
+            "noise_db": 82,
+            "log": "cutscene.gracie_yell"
+          },
+          "auto_ms": 2600,
+          "next": "3.4.4"
+        },
+        "3.4.4": {
+          "type": "direction",
+          "text": "Ali freezes. Hand still on Mya's stomach.",
+          "anim": "ali.freeze_hand_on_cat",
+          "auto_ms": 2200,
+          "next": "3.4.5"
+        },
+        "3.4.5": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "V",
+          "emotion": "deadpan",
+          "volume": "low",
+          "anim": "deac.not_looking_back",
+          "text": "Loud one stays in the car.",
+          "auto_ms": 2400,
+          "next": "3.4.6"
+        },
+        "3.4.6": {
+          "type": "direction",
+          "text": "Beat. The heads turn away. Ali breathes.",
+          "anim": "quiet.settle",
+          "auto_ms": 2800,
+          "next": "3.4.7"
+        },
+        "3.4.7": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "V",
+          "emotion": "warm",
+          "volume": "whisper",
+          "text": "I love you. Get in.",
+          "auto_ms": 2200,
+          "next": "3.4.end"
+        },
+        "3.4.end": {
+          "type": "end",
+          "effects": {
+            "calm": 30,
+            "set_flags": {
+              "mya_lost": false,
+              "mya_passive": true,
+              "mya_deferred": false
+            },
+            "unlock": [
+              "passive.mya"
+            ],
+            "checkpoint": "mya_returned",
+            "log": "scene.complete:3.4"
+          },
+          "next_scene": "3.5"
+        }
+      }
+    },
+    "3.4a": {
+      "id": "3.4a",
+      "act": 3,
+      "title": "Issaquah: Empty Hood",
+      "type": "still",
+      "location": "issaquah_checkpoint_lot_night",
+      "background": "res://backgrounds/issaquah_lot_beetle_alone.png",
+      "music": "res://audio/music/aftermath_low.ogg",
+      "entry": "3.4a.1",
+      "nodes": {
+        "3.4a.1": {
+          "type": "direction",
+          "text": "Night. Deac's truck, parked across the lot, tailgate closed. The Beetle's hood is empty. Gracie is asleep on the dash, which she never does.",
+          "auto_ms": 4000,
+          "next": "3.4a.2"
+        },
+        "3.4a.2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tired",
+          "volume": "whisper",
+          "text": "He said it was the right call.",
+          "next": "3.4a.3"
+        },
+        "3.4a.3": {
+          "type": "direction",
+          "text": "Jonah, three spaces over, sitting on his bumper. He doesn't look up.",
+          "anim": "jonah.bumper_sit",
+          "auto_ms": 2400,
+          "next": "3.4a.4"
+        },
+        "3.4a.4": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "S",
+          "emotion": "tired",
+          "volume": "whisper",
+          "text": "It was.",
+          "next": "3.4a.5"
+        },
+        "3.4a.5": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "That's not the same as it being the one she wanted.",
+          "next": "3.4a.6"
+        },
+        "3.4a.6": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "sad",
+          "volume": "whisper",
+          "text": "What does she want?",
+          "next": "3.4a.7"
+        },
+        "3.4a.7": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "Everybody home. Cargo's a distant second. She'll never say it.",
+          "next": "3.4a.8"
+        },
+        "3.4a.8": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Pass the test. She'll give you the cat. She's mean, not cruel.",
+          "next": "3.4a.9"
+        },
+        "3.4a.9": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "text": "You walked six hours.",
+          "next": "3.4a.10"
+        },
+        "3.4a.10": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "Five and a half. I'm the fast one.",
+          "next": "3.4a.end"
+        },
+        "3.4a.end": {
+          "type": "end",
+          "effects": {
+            "checkpoint": "mya_deferred",
+            "log": "scene.complete:3.4a"
+          },
+          "next_scene": "3.5"
+        }
+      }
+    },
+    "3.5": {
+      "id": "3.5",
+      "act": 3,
+      "title": "Radio, That Night",
+      "type": "radio",
+      "location": "issaquah_safehouse_bunk",
+      "background": "res://backgrounds/issaquah_bunk_radio.png",
+      "ambience": "res://audio/amb/radio_static_bed.ogg",
+      "entry": "3.5.1",
+      "nodes": {
+        "3.5.1": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "low",
+          "text": "— Ali?",
+          "next": "3.5.2"
+        },
+        "3.5.2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "whisper",
+          "text": "Hi Mom.",
+          "next": "3.5.3"
+        },
+        "3.5.3": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "relieved",
+          "volume": "low",
+          "anim": "mom.breath_out",
+          "text": "Hi baby.",
+          "next": "3.5.4"
+        },
+        "3.5.4": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "relieved",
+          "volume": "low",
+          "text": "{RAY}. {RAY}, she's on.",
+          "next": "3.5.5"
+        },
+        "3.5.5": {
+          "type": "line",
+          "speaker": "RAY",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "low",
+          "text": "Is she okay? Ask her if she's —",
+          "next": "3.5.6"
+        },
+        "3.5.6": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "Where are you?",
+          "next": "3.5.cats_branch"
+        },
+        "3.5.cats_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "mya_deferred",
+                "is": true
+              },
+              "next": "3.5.7a"
+            },
+            {
+              "next": "3.5.7"
+            }
+          ]
+        },
+        "3.5.7": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "whisper",
+          "text": "Issaquah. I've got a job. I've got both cats. I've got… a teacher, kind of.",
+          "next": "3.5.8"
+        },
+        "3.5.7a": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "tired",
+          "volume": "whisper",
+          "text": "Issaquah. I've got a job. I've got Gracie. Mya's… with my teacher. It's a long story. She's fine.",
+          "next": "3.5.7b"
+        },
+        "3.5.7b": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "low",
+          "text": "Your teacher has your cat.",
+          "next": "3.5.7c"
+        },
+        "3.5.7c": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "text": "Yes.",
+          "next": "3.5.7d"
+        },
+        "3.5.7d": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "wry",
+          "volume": "low",
+          "text": "…Okay. Long story. Later.",
+          "next": "3.5.8"
+        },
+        "3.5.8": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Is she good?",
+          "next": "3.5.9"
+        },
+        "3.5.9": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "She's terrifying.",
+          "next": "3.5.10"
+        },
+        "3.5.10": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "Good.",
+          "next": "3.5.11"
+        },
+        "3.5.11": {
+          "type": "line",
+          "speaker": "RAY",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "low",
+          "text": "Tell her the Bug takes ninety-one octane and not to let anybody —",
+          "next": "3.5.12"
+        },
+        "3.5.12": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "She knows, {RAY}.",
+          "next": "3.5.13"
+        },
+        "3.5.13": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "amused",
+          "volume": "whisper",
+          "text": "I know, {RAY}.",
+          "next": "3.5.14"
+        },
+        "3.5.14": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Test soon?",
+          "next": "3.5.15"
+        },
+        "3.5.15": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "Tomorrow.",
+          "next": "3.5.16"
+        },
+        "3.5.16": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "You'll pass.",
+          "next": "3.5.17"
+        },
+        "3.5.17": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "You don't know that.",
+          "next": "3.5.18"
+        },
+        "3.5.18": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "I know you. Same time tomorrow.",
+          "sfx": [
+            "radio_click"
+          ],
+          "next": "3.5.end"
+        },
+        "3.5.end": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "act3_complete": true
+            },
+            "unlock": [
+              "terminal.exam_40",
+              "region.issaquah_safehouse"
+            ],
+            "checkpoint": "act3_complete",
+            "log": "act.complete:3"
+          },
+          "next_scene": "4.1"
+        }
+      }
+    }
+  },
+  "pools": {
+    "follow_green_ali": {
+      "pick": "random",
+      "no_repeat": true,
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 2400,
+          "text": "One-thousand-one. One-thousand-two. One-thousand-three. Okay."
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "wry",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "Three. Jonah said four. Splitting the difference."
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1400,
+          "text": "Green. Hold it there."
+        }
+      ]
+    }
+  }
+}

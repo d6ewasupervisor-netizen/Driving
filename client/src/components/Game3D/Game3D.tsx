@@ -35,6 +35,12 @@ import { PostProcessing } from './PostProcessing';
 import { SkidMarks } from './SkidMarks';
 import { SceneEnvironment } from './SceneEnvironment';
 import { NpcState } from '@/systems/TrafficManager';
+import { KentWorld } from './KentWorld';
+import { QuietSwarm } from './QuietSwarm';
+import { StoppingShadow } from './StoppingShadow';
+import { QuietRoadsFrame } from './QuietRoadsFrame';
+import { DialogueBox } from './DialogueBox';
+import { QuietHUD } from './QuietHUD';
 
 // ─── Low-end detection (computed once) ───────────────────────────────────────
 const LOW_END = isLowEndDevice();
@@ -76,6 +82,7 @@ function AudioBridge() {
 // ─── Inner scene (needs Canvas context) ──────────────────────────────────────
 function Scene({ lowEnd }: { lowEnd: boolean }) {
   const npcsRef = useRef<NpcState[]>([]);
+  const worldMode = useGameStore((s) => s.worldMode);
 
   const handleNpcsRef = useRef((ref: React.MutableRefObject<NpcState[]>) => {
     npcsRef.current = ref.current;
@@ -90,11 +97,22 @@ function Scene({ lowEnd }: { lowEnd: boolean }) {
       <Lighting />
       <SceneEnvironment lowEnd={lowEnd} />
       <Skybox />
-      <RoadChunks lowEnd={lowEnd} />
+      {worldMode === 'kent' ? (
+        <>
+          <KentWorld />
+          <QuietSwarm />
+          <StoppingShadow />
+          <QuietRoadsFrame />
+        </>
+      ) : (
+        <>
+          <RoadChunks lowEnd={lowEnd} />
+          <TrafficRenderer lowEnd={lowEnd} onNpcsRef={handleNpcsRef} />
+          <Collectibles />
+          <CollisionSystem npcsRef={npcsRef} />
+        </>
+      )}
       <Vehicle />
-      <TrafficRenderer lowEnd={lowEnd} onNpcsRef={handleNpcsRef} />
-      <Collectibles />
-      <CollisionSystem npcsRef={npcsRef} />
       <SkidMarks />
       <GameCamera />
     </Physics>
@@ -230,6 +248,8 @@ export function Game3D({ onExit }: Game3DProps) {
         <EngineHUD />
         <QuizOverlay />
         <TouchOverlay />
+        <QuietHUD />
+        <DialogueBox />
         <PauseMenu onExit={onExit} />
         <VictoryScreen onExit={onExit} />
         <GameOverScreen />

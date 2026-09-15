@@ -1,0 +1,3363 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "game": "Quiet Roads",
+    "bank": "v1",
+    "locale": "en-US",
+    "sources": {
+      "DG": "Washington Driver Guide (text-only, 2025) — section numbers",
+      "PG": "Washington Parent Guide to Teen Driving — page numbers"
+    },
+    "exam": {
+      "questions": 40,
+      "required": 32,
+      "default_chapters": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "difficulty_scale": {
+      "1": "recall",
+      "2": "apply",
+      "3": "judge / multi-step"
+    },
+    "chapters": {
+      "1": {
+        "codex": "Who's Allowed",
+        "topics": "Licensing, permits, intermediate rules, DUI thresholds, insurance"
+      },
+      "2": {
+        "codex": "On Signs",
+        "topics": "Signs, signals, pavement markings, zones"
+      },
+      "3": {
+        "codex": "On Going First",
+        "topics": "Right-of-way at every kind of intersection"
+      },
+      "4": {
+        "codex": "On Lanes",
+        "topics": "Lane use, turning, steering, parking, backing"
+      },
+      "5": {
+        "codex": "On Stopping",
+        "topics": "Speed, space, following time, freeways, night range"
+      },
+      "6": {
+        "codex": "On Snow",
+        "topics": "Adverse conditions, skids, vehicle failures, crash response"
+      },
+      "7": {
+        "codex": "On Big Rigs",
+        "topics": "Sharing the road: trucks, bikes, buses, trains, emergency zones, road rage"
+      },
+      "8": {
+        "codex": "On Passengers",
+        "topics": "Distraction, fatigue, impairment, occupant protection"
+      }
+    }
+  },
+  "questions": [
+    {
+      "id": "c1_001",
+      "ch": 1,
+      "difficulty": 1,
+      "guide_ref": "DG 1.8",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "The comeback tour is six months out and you want your instruction permit before it starts. You're enrolled in an approved driver training course. How old must you be to apply for the permit?",
+      "choices": [
+        "14½",
+        "15",
+        "15½",
+        "16"
+      ],
+      "answer": 1,
+      "explanation": "With an approved course you can apply at 15 (1–10 days before class starts). Without one, you wait until 15½."
+    },
+    {
+      "id": "c1_002",
+      "ch": 1,
+      "difficulty": 2,
+      "guide_ref": "DG 1.8",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "You skip driver training, pass the knowledge exam at 15½, and cruise the block with 'Hold Still' on 91.3. When can you take the skills exam and actually get a license?",
+      "choices": [
+        "As soon as you've held the permit 6 months",
+        "At 16",
+        "At 17",
+        "Not until you're 18"
+      ],
+      "answer": 3,
+      "explanation": "No approved course means no license until 18. The permit still lets you practice with a qualified supervisor."
+    },
+    {
+      "id": "c1_003",
+      "ch": 1,
+      "difficulty": 1,
+      "guide_ref": "DG 1.8",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Your permit is like a limited-run photocard — it expires. How long is a Washington instruction permit valid before it must be renewed?",
+      "choices": [
+        "6 months",
+        "1 year",
+        "2 years",
+        "Until your 18th birthday"
+      ],
+      "answer": 1,
+      "explanation": "One year, renewable for a fee. Your knowledge-exam score itself is good for 2 years."
+    },
+    {
+      "id": "c1_004",
+      "ch": 1,
+      "difficulty": 1,
+      "guide_ref": "DG 1.8",
+      "tags": [
+        "story"
+      ],
+      "prompt": "Deac won't stamp anything until the practice log is full. For a 16- or 17-year-old, how much supervised practice does Washington require?",
+      "choices": [
+        "30 hours, any time of day",
+        "40 hours of day driving plus 10 hours at night",
+        "50 hours of day driving plus 10 at night",
+        "100 hours, 20 at night"
+      ],
+      "answer": 1,
+      "explanation": "50 total: 40 daytime, 10 nighttime, attested by a parent or guardian."
+    },
+    {
+      "id": "c1_005",
+      "ch": 1,
+      "difficulty": 2,
+      "guide_ref": "DG 1.8",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "HUSH's road manager offers to ride shotgun while you practice on your permit at 16. To legally supervise a driver under 18, that passenger must be…",
+      "choices": [
+        "Any adult over 18",
+        "A licensed driver with 3 or more years of experience",
+        "Any licensed driver, however new",
+        "A parent or guardian only"
+      ],
+      "answer": 1,
+      "explanation": "3+ years licensed for under-18 practice. Applicants 18 and over need a supervisor with 5+ years."
+    },
+    {
+      "id": "c1_006",
+      "ch": 1,
+      "difficulty": 1,
+      "guide_ref": "DG 1.8",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "You got your intermediate license three weeks ago. All four HUSH members (ages 18–19) want a lift to the Tacoma Dome. How many may ride with you?",
+      "choices": [
+        "All four — it's a short trip",
+        "Three",
+        "One, in the front seat",
+        "None — no passengers under 20 except immediate family for the first 6 months"
+      ],
+      "answer": 3,
+      "explanation": "First six months: zero non-family passengers under 20. OT4 takes the bus."
+    },
+    {
+      "id": "c1_007",
+      "ch": 1,
+      "difficulty": 1,
+      "guide_ref": "DG 1.8",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Eight months into your intermediate license, the maknae wants to bring friends to the fansign. What's the maximum number of non-family passengers under 20 you may carry now?",
+      "choices": [
+        "0",
+        "1",
+        "3",
+        "No limit after 6 months"
+      ],
+      "answer": 2,
+      "explanation": "Months 6–12 (or until 18): no more than three passengers under 20 who aren't immediate family."
+    },
+    {
+      "id": "c1_008",
+      "ch": 1,
+      "difficulty": 2,
+      "guide_ref": "DG 1.8",
+      "tags": [
+        "kpop",
+        "quiet"
+      ],
+      "prompt": "Lightstick-ocean rehearsal at the Harbor runs until 1:30 a.m., and the Quiet are thickest after dark anyway. During your first year on an intermediate license, when may you drive between 1 and 5 a.m.?",
+      "choices": [
+        "Never",
+        "Only with a parent, guardian, or licensed driver who is at least 25",
+        "Only on weekends",
+        "Any time, as long as you carry no passengers"
+      ],
+      "answer": 1,
+      "explanation": "The night restriction lifts after one year of safe driving; until then you need the 25+ supervisor (agricultural work is the other exception)."
+    },
+    {
+      "id": "c1_009",
+      "ch": 1,
+      "difficulty": 1,
+      "guide_ref": "DG 1.8, 3.0",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Weverse pings — Sori just went live. With a permit or intermediate license, when may you use your phone while driving?",
+      "choices": [
+        "Hands-free only",
+        "Only at red lights",
+        "Only to report an emergency",
+        "Any time on speakerphone"
+      ],
+      "answer": 2,
+      "explanation": "Permit and intermediate holders can't use a phone at all while driving, even hands-free, except to report an emergency."
+    },
+    {
+      "id": "c1_010",
+      "ch": 1,
+      "difficulty": 2,
+      "guide_ref": "DG 1.8",
+      "tags": [
+        "story"
+      ],
+      "prompt": "Jonah squeals his tires through one intersection too many and picks up his second traffic violation on an intermediate license. What happens?",
+      "choices": [
+        "A warning letter goes to his parents",
+        "License suspended 6 months or until he turns 18, whichever comes first",
+        "License suspended until 18",
+        "Restrictions extend by one year"
+      ],
+      "answer": 1,
+      "explanation": "1st: restrictions stay until 18. 2nd: 6-month suspension (or until 18). 3rd: suspended until 18."
+    },
+    {
+      "id": "c1_011",
+      "ch": 1,
+      "difficulty": 1,
+      "guide_ref": "DG 1.8",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "You turn 18 the day of the encore show. What must you do to remove your intermediate restrictions?",
+      "choices": [
+        "Retake the knowledge exam",
+        "Visit a licensing office for a new card",
+        "Nothing — they're lifted automatically",
+        "Pay a reissue fee"
+      ],
+      "answer": 2,
+      "explanation": "Restrictions drop off automatically at 18. You can wait until renewal for an updated card."
+    },
+    {
+      "id": "c1_012",
+      "ch": 1,
+      "difficulty": 2,
+      "guide_ref": "DG 1.15",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Afterparty at the Fandom Harbor. For a driver under 21, what blood alcohol concentration is treated the same as a DUI?",
+      "choices": [
+        "0.08% or more",
+        "0.05% or more",
+        "0.02% or more",
+        "Only if visibly impaired"
+      ],
+      "answer": 2,
+      "explanation": "Under 21: 0.02% BAC, or any active THC above 0.00 ng. Adults: 0.08% / 5 ng."
+    },
+    {
+      "id": "c1_013",
+      "ch": 1,
+      "difficulty": 2,
+      "guide_ref": "DG 1.15",
+      "tags": [],
+      "prompt": "Under Washington's Implied Consent Law, what have you agreed to simply by driving here?",
+      "choices": [
+        "To carry proof of insurance",
+        "To be tested for alcohol or drugs if an officer suspects impairment",
+        "To register as an organ donor",
+        "To allow a vehicle search at any stop"
+      ],
+      "answer": 1,
+      "explanation": "Refusing the test can cost your license for 90 to 730 days, or until 21, whichever is longer."
+    },
+    {
+      "id": "c1_014",
+      "ch": 1,
+      "difficulty": 2,
+      "guide_ref": "DG 2.3",
+      "tags": [
+        "story"
+      ],
+      "prompt": "Ray wants to know what the Beetle's liability policy has to cover. Washington's minimum liability insurance is…",
+      "choices": [
+        "$10,000 / $20,000 / $5,000",
+        "$25,000 / $50,000 / $10,000",
+        "$50,000 / $100,000 / $25,000",
+        "$100,000 / $300,000 / $50,000"
+      ],
+      "answer": 1,
+      "explanation": "$25k one person injured, $50k two or more, $10k property damage — and carry proof in the car."
+    },
+    {
+      "id": "c1_015",
+      "ch": 1,
+      "difficulty": 2,
+      "guide_ref": "DG 1.6, 1.7",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "HUSH adds a Vancouver, B.C. date. An enhanced driver license gets you across the border by land or sea — but it is NOT valid for…",
+      "choices": [
+        "Domestic air travel",
+        "Entering federal facilities",
+        "International air travel",
+        "Identification"
+      ],
+      "answer": 2,
+      "explanation": "Enhanced = REAL ID compliant, good for domestic flights, land/sea crossings, federal buildings. International flights still need a passport."
+    },
+    {
+      "id": "c1_016",
+      "ch": 1,
+      "difficulty": 1,
+      "guide_ref": "DG 1.5",
+      "tags": [
+        "story"
+      ],
+      "prompt": "Priya's cousin moves from Idaho to Kent with a valid Idaho license. How long do new residents have to get a Washington license?",
+      "choices": [
+        "10 days",
+        "30 days",
+        "60 days",
+        "90 days"
+      ],
+      "answer": 1,
+      "explanation": "30 days for a license, and 30 days to register the vehicle."
+    },
+    {
+      "id": "c1_017",
+      "ch": 1,
+      "difficulty": 1,
+      "guide_ref": "DG 1.12",
+      "tags": [
+        "story"
+      ],
+      "prompt": "Skills exam day. Mya and Gracie are in their carriers by the door. Who may be in the vehicle during the exam?",
+      "choices": [
+        "You, the examiner, and one parent",
+        "You and the examiner only (service animals and sign language interpreters excepted)",
+        "You, the examiner, and pets in carriers",
+        "Anyone who stays quiet"
+      ],
+      "answer": 1,
+      "explanation": "Two people: you and the examiner. The cats wait."
+    },
+    {
+      "id": "c1_018",
+      "ch": 1,
+      "difficulty": 2,
+      "guide_ref": "DG 1.16",
+      "tags": [
+        "story"
+      ],
+      "prompt": "You move from Grandma June's to the Spokane Relay. How soon must you update your address in License Express?",
+      "choices": [
+        "Within 10 days",
+        "Within 30 days",
+        "Within 6 months",
+        "At your next renewal"
+      ],
+      "answer": 0,
+      "explanation": "Address changes: 10 days, online. Name changes must be done in an office."
+    },
+    {
+      "id": "c1_019",
+      "ch": 1,
+      "difficulty": 2,
+      "guide_ref": "DG 1.7",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "REAL ID is…",
+      "choices": [
+        "A specific card you order online",
+        "A federal law setting ID standards — an enhanced license is one way to meet it",
+        "Any license with a photo",
+        "A Weverse-verified fan membership"
+      ],
+      "answer": 1,
+      "explanation": "REAL ID is a law, not a card. Standard licenses don't meet it."
+    },
+    {
+      "id": "c2_001",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.12",
+      "tags": [
+        "kpop"
+      ],
+      "in_world_trigger": "sign.prompt:warning",
+      "prompt": "Album versions come in colors; so do signs. A plain yellow sign is telling you…",
+      "choices": [
+        "A rule you must obey",
+        "A general warning about road conditions ahead",
+        "Construction ahead",
+        "Where to find a service"
+      ],
+      "answer": 1,
+      "explanation": "Yellow = warning of general or unexpected conditions (curves, hills, crossings)."
+    },
+    {
+      "id": "c2_002",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.12",
+      "tags": [
+        "quiet"
+      ],
+      "in_world_trigger": "sign.prompt:workzone",
+      "prompt": "Orange signs line the road into the Valley where the Authority crews are shoring up a bridge. Orange means…",
+      "choices": [
+        "School zone",
+        "Construction or maintenance warning",
+        "Historic site",
+        "No passing"
+      ],
+      "answer": 1,
+      "explanation": "Orange = work zones. Slow down even if you see no workers."
+    },
+    {
+      "id": "c2_003",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.12",
+      "tags": [
+        "kpop"
+      ],
+      "in_world_trigger": "sign.prompt:school",
+      "prompt": "The bright yellow-green sign by the old elementary school — the exact shade of Lumi's lightbar — is warning you about…",
+      "choices": [
+        "Deer crossing",
+        "School, pedestrian, or bicycle activity",
+        "Slippery pavement",
+        "A tsunami hazard zone"
+      ],
+      "answer": 1,
+      "explanation": "Fluorescent yellow-green is reserved for people on foot and on bikes, especially near schools."
+    },
+    {
+      "id": "c2_004",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.12",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Priya needs an EV charging station for the radio van. Signs pointing to services — gas, charging, hospitals, rest areas — are…",
+      "choices": [
+        "Green",
+        "Blue",
+        "Brown",
+        "White"
+      ],
+      "answer": 1,
+      "explanation": "Blue = motorist services. Green = directions and distances."
+    },
+    {
+      "id": "c2_005",
+      "ch": 2,
+      "difficulty": 2,
+      "guide_ref": "DG 4.12",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Coming down toward Vantage you pass a sign for the Gorge Amphitheatre, where HUSH played their last outdoor show before the Quiet came. Signs for recreation, cultural, and historic sites are…",
+      "choices": [
+        "Green",
+        "Blue",
+        "Brown",
+        "Orange"
+      ],
+      "answer": 2,
+      "explanation": "Brown = public recreation and cultural/historic identification."
+    },
+    {
+      "id": "c2_006",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.11",
+      "tags": [
+        "quiet"
+      ],
+      "in_world_trigger": "signal.flashing_red",
+      "prompt": "The signal at Central and Titus blinks red on emergency power while a dozen of the Quiet stand on the corner. Treat a flashing red light as…",
+      "choices": [
+        "A yield sign",
+        "A stop sign — full stop, then go when it's your turn",
+        "A dead signal — go if clear",
+        "A stop for cross traffic only"
+      ],
+      "answer": 1,
+      "explanation": "Flashing red functions exactly like a stop sign."
+    },
+    {
+      "id": "c2_007",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.11",
+      "tags": [],
+      "prompt": "A flashing yellow light has the same meaning as…",
+      "choices": [
+        "A stop sign",
+        "A yield sign — slow down, proceed when you have the right-of-way",
+        "A green light",
+        "A school zone"
+      ],
+      "answer": 1,
+      "explanation": "Flashing yellow: treat the intersection as uncontrolled and yield as needed."
+    },
+    {
+      "id": "c2_008",
+      "ch": 2,
+      "difficulty": 2,
+      "guide_ref": "DG 4.10",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "The grid's been dead two years; the signal ahead is completely dark. What do you do?",
+      "choices": [
+        "Proceed — a dark signal means no control",
+        "Treat it as a four-way stop: stop, yield to the vehicle on your right, go when safe",
+        "Treat it as a yield",
+        "Stop only if you see cross traffic"
+      ],
+      "answer": 1,
+      "explanation": "Broken signal = four-way stop. Habits outlive the power grid."
+    },
+    {
+      "id": "c2_009",
+      "ch": 2,
+      "difficulty": 2,
+      "guide_ref": "DG 4.11",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Red light, no 'NO TURN ON RED' sign, plenty of room, and your bias just walked into the shop on the corner. May you turn right?",
+      "choices": [
+        "No, never on red",
+        "Yes, after coming to a complete stop and checking for pedestrians",
+        "Yes, without stopping if nobody's coming",
+        "Only between 1 and 5 a.m."
+      ],
+      "answer": 1,
+      "explanation": "Right on red is legal after a full stop unless a sign prohibits it. Your bias on the sidewalk is a pedestrian — yield."
+    },
+    {
+      "id": "c2_010",
+      "ch": 2,
+      "difficulty": 3,
+      "guide_ref": "DG 4.11",
+      "tags": [],
+      "prompt": "Red light. You want to turn left onto a one-way street and no sign prohibits it. May you?",
+      "choices": [
+        "Never — left on red is always illegal",
+        "Yes, after a complete stop, when there's room to enter traffic safely",
+        "Only with a green arrow",
+        "Only if the cross street's light is also red"
+      ],
+      "answer": 1,
+      "explanation": "Washington allows a left turn on red onto a one-way street after a complete stop, absent a sign."
+    },
+    {
+      "id": "c2_011",
+      "ch": 2,
+      "difficulty": 2,
+      "guide_ref": "DG 4.11",
+      "tags": [
+        "kpop",
+        "quiet"
+      ],
+      "prompt": "The light goes solid yellow as you approach. The maknae yells 'floor it!' Out here a hard throttle is also a dinner bell. Legally, you…",
+      "choices": [
+        "May accelerate to clear the intersection",
+        "May not exceed the posted limit to enter or clear it — slow down and prepare to stop",
+        "Must stop immediately, even if you're already in the intersection",
+        "Should honk and proceed"
+      ],
+      "answer": 1,
+      "explanation": "Yellow means prepare to stop. If you're already inside, continue at the posted speed."
+    },
+    {
+      "id": "c2_012",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.11",
+      "tags": [],
+      "prompt": "A red arrow means…",
+      "choices": [
+        "Stop, then turn when clear",
+        "You may not travel in the arrow's direction",
+        "Yield to oncoming traffic",
+        "A protected turn"
+      ],
+      "answer": 1,
+      "explanation": "Red arrow: no movement in that direction until it changes."
+    },
+    {
+      "id": "c2_013",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.11",
+      "tags": [],
+      "prompt": "A green arrow gives you…",
+      "choices": [
+        "The right-of-way in that direction — no oncoming, crossing, or pedestrian traffic should be moving",
+        "Permission to turn only if you yield",
+        "A warning the light is changing",
+        "Nothing beyond a solid green"
+      ],
+      "answer": 0,
+      "explanation": "Green arrow = protected turn. Still look; someone may run the red."
+    },
+    {
+      "id": "c2_014",
+      "ch": 2,
+      "difficulty": 2,
+      "guide_ref": "DG 4.12",
+      "tags": [],
+      "prompt": "Square sign, a white horizontal bar inside a red circle. It means…",
+      "choices": [
+        "No parking",
+        "Do Not Enter from this direction",
+        "Stop ahead",
+        "One-way street"
+      ],
+      "answer": 1,
+      "explanation": "That's DO NOT ENTER. If you're already past it, the next sign you'll see is WRONG WAY."
+    },
+    {
+      "id": "c2_015",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.12",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "WRONG WAY. Nobody's coming — nobody's ever coming — but the sign is still right. You…",
+      "choices": [
+        "Slow down and continue",
+        "Stop and turn around immediately",
+        "Continue to the next exit",
+        "Flash your headlights"
+      ],
+      "answer": 1,
+      "explanation": "The sign exists to prevent head-on collisions. Stop and turn around."
+    },
+    {
+      "id": "c2_016",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.16",
+      "tags": [
+        "story"
+      ],
+      "in_world_trigger": "sign.prompt:no_passing",
+      "prompt": "Double solid yellow centerline. Jonah's van is crawling ahead of you. May you pass?",
+      "choices": [
+        "Yes, if the oncoming lane is clear",
+        "No — no passing in either direction",
+        "Only across the dashed side",
+        "Only to pass farm equipment"
+      ],
+      "answer": 1,
+      "explanation": "Double solid yellow = no passing for anyone."
+    },
+    {
+      "id": "c2_017",
+      "ch": 2,
+      "difficulty": 2,
+      "guide_ref": "DG 4.16",
+      "tags": [],
+      "prompt": "The centerline is solid yellow on your side and dashed on the other. May you pass?",
+      "choices": [
+        "Yes",
+        "No — you may not pass when the solid line is on your side",
+        "Yes, but only at night",
+        "Only if the other lane is empty"
+      ],
+      "answer": 1,
+      "explanation": "Dashed on your side means you may pass when safe. Solid on your side means you may not."
+    },
+    {
+      "id": "c2_018",
+      "ch": 2,
+      "difficulty": 2,
+      "guide_ref": "DG 4.16",
+      "tags": [],
+      "prompt": "Two solid white lines run between your lane and the next. You may…",
+      "choices": [
+        "Cross to change lanes if safe",
+        "Not cross — double solid white is a barrier",
+        "Cross only to exit",
+        "Cross only to enter an HOV lane"
+      ],
+      "answer": 1,
+      "explanation": "Crossing double solid white lines is illegal."
+    },
+    {
+      "id": "c2_019",
+      "ch": 2,
+      "difficulty": 2,
+      "guide_ref": "DG 4.16",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "The shared center lane has left-turn arrows painted both ways. Your friend wants to use it to shoot past a slow truck for a better fancam angle. That lane is for…",
+      "choices": [
+        "Passing slow traffic",
+        "Left turns (and permitted U-turns) only — never passing, and no more than 300 feet of travel",
+        "Getting around a stopped school bus",
+        "Emergency stopping"
+      ],
+      "answer": 1,
+      "explanation": "Center turn lanes are two-way turn pockets; watch for oncoming drivers using the same lane."
+    },
+    {
+      "id": "c2_020",
+      "ch": 2,
+      "difficulty": 2,
+      "guide_ref": "DG 4.16",
+      "tags": [],
+      "prompt": "Reversible express lane. The overhead signal shows a steady yellow X. That means…",
+      "choices": [
+        "The lane is yours",
+        "The lane is about to change direction — move out as soon as it's safe",
+        "Slow down",
+        "Lane closed to trucks"
+      ],
+      "answer": 1,
+      "explanation": "Green arrow = usable. Red X = not yours. Steady yellow X = get out."
+    },
+    {
+      "id": "c2_021",
+      "ch": 2,
+      "difficulty": 2,
+      "guide_ref": "DG 4.16",
+      "tags": [
+        "story"
+      ],
+      "prompt": "A bike lane on Central is separated from your lane by two solid white lines with diagonal cross-hatching between them. The hatched buffer is…",
+      "choices": [
+        "A passing strip for cars",
+        "Part of the bike lane — don't enter it unless making a legal turn after checking it's safe",
+        "A parking zone",
+        "A turn pocket"
+      ],
+      "answer": 1,
+      "explanation": "Buffer = bike lane. Drive in bike lanes only to turn or to cross to a parking spot."
+    },
+    {
+      "id": "c2_022",
+      "ch": 2,
+      "difficulty": 2,
+      "guide_ref": "DG 4.16",
+      "tags": [],
+      "prompt": "Bicycle-and-chevron 'sharrow' markings appear in your lane. That tells you…",
+      "choices": [
+        "The lane is bikes only",
+        "The lane is shared with bicycles — watch for riders, drive slowly, pass with at least 3 feet",
+        "It's a no-passing zone",
+        "It's a bus lane"
+      ],
+      "answer": 1,
+      "explanation": "Sharrows mark a shared lane. Riders position themselves on the marking."
+    },
+    {
+      "id": "c2_023",
+      "ch": 2,
+      "difficulty": 2,
+      "guide_ref": "DG 4.16",
+      "tags": [],
+      "prompt": "A green painted bicycle box sits between the stop line and the crosswalk. On red, you…",
+      "choices": [
+        "May turn right after stopping",
+        "May not turn right on red; stay behind the white line until the box is clear",
+        "Pull into the box for a better view",
+        "Treat it like any other intersection"
+      ],
+      "answer": 1,
+      "explanation": "Bike boxes let cyclists go first on green. No right on red near one."
+    },
+    {
+      "id": "c2_024",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.16",
+      "tags": [
+        "quiet"
+      ],
+      "in_world_trigger": "zone.school.enter",
+      "prompt": "The school-zone lights are still flashing on solar power, and there's a bike still chained to the rack. The speed limit is…",
+      "choices": [
+        "15 mph",
+        "20 mph",
+        "25 mph",
+        "30 mph"
+      ],
+      "answer": 1,
+      "explanation": "School zones are 20 mph when in effect. Automated cameras can enforce it."
+    },
+    {
+      "id": "c2_025",
+      "ch": 2,
+      "difficulty": 2,
+      "guide_ref": "DG 4.12",
+      "tags": [],
+      "prompt": "Automated traffic safety cameras record an image if you…",
+      "choices": [
+        "Speed anywhere in the city",
+        "Run a steady red, fail to stop for a railroad signal, or speed in a school zone",
+        "Park illegally",
+        "Hold a phone"
+      ],
+      "answer": 1,
+      "explanation": "Those three violations. Tickets are mailed to the registered owner."
+    },
+    {
+      "id": "c2_026",
+      "ch": 2,
+      "difficulty": 2,
+      "guide_ref": "DG 4.13",
+      "tags": [
+        "quiet"
+      ],
+      "in_world_trigger": "stop.approach",
+      "prompt": "Stop sign, painted stop line, marked crosswalk — and your view of the cross street is blocked by an abandoned bus. Where do you stop, and then what?",
+      "choices": [
+        "Roll through the crosswalk to see",
+        "Stop before the stop line; then edge forward slowly until you can see",
+        "Stop in the crosswalk",
+        "Stop at the corner past the crosswalk"
+      ],
+      "answer": 1,
+      "explanation": "Stop at the line first (or crosswalk, or corner if unmarked), then creep forward so crossing drivers see your nose before you see them."
+    },
+    {
+      "id": "c2_027",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.11",
+      "tags": [],
+      "prompt": "A freeway ramp meter shows red. You…",
+      "choices": [
+        "Ignore it — meters are advisory",
+        "Stop at the white line and go when it turns green",
+        "Treat it as a yield",
+        "Use it only if you're in an HOV"
+      ],
+      "answer": 1,
+      "explanation": "Ramp meters work like regular signals."
+    },
+    {
+      "id": "c2_028",
+      "ch": 2,
+      "difficulty": 3,
+      "guide_ref": "DG 4.16",
+      "tags": [],
+      "prompt": "An 18-inch-wide solid yellow strip with diagonal stripes runs down the middle of the road. It's…",
+      "choices": [
+        "A wide shoulder",
+        "A median — illegal to drive within, over, or across",
+        "A center turn lane",
+        "A bike buffer"
+      ],
+      "answer": 1,
+      "explanation": "Painted medians count the same as concrete ones."
+    },
+    {
+      "id": "c3_001",
+      "ch": 3,
+      "difficulty": 2,
+      "guide_ref": "DG 4.1",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Your bias from HUSH steps into the crosswalk ahead of you, hood up, headphones in. When may you legally proceed?",
+      "choices": [
+        "As soon as they're out of your lane",
+        "Once they've cleared your lane and one additional lane",
+        "Once they're on the far sidewalk",
+        "Immediately, if you drive slowly around them"
+      ],
+      "answer": 1,
+      "explanation": "Your lane plus one more. And never swing into oncoming traffic to get around a pedestrian."
+    },
+    {
+      "id": "c3_002",
+      "ch": 3,
+      "difficulty": 2,
+      "guide_ref": "DG 4.1",
+      "tags": [
+        "kpop",
+        "quiet"
+      ],
+      "prompt": "A fan with a guide dog is crossing mid-block. The passenger wants you to tap the horn so they hurry. Per the guide…",
+      "choices": [
+        "One short tap is polite",
+        "Don't honk — it can confuse or frighten the animal; wait until they have completely crossed",
+        "Honk only if they're slow",
+        "Honk twice, then go"
+      ],
+      "answer": 1,
+      "explanation": "For anyone using a wheelchair, cane, or service animal: wait for the full crossing, no horn. It's also unlawful to interfere with a service animal."
+    },
+    {
+      "id": "c3_003",
+      "ch": 3,
+      "difficulty": 1,
+      "guide_ref": "DG 4.13",
+      "tags": [
+        "story"
+      ],
+      "in_world_trigger": "intersection.fourway.approach",
+      "prompt": "Four-way stop. You and Deac's truck arrive at exactly the same moment. Who goes first?",
+      "choices": [
+        "The bigger vehicle",
+        "The vehicle on the right",
+        "The vehicle on the left",
+        "Whoever waves first"
+      ],
+      "answer": 1,
+      "explanation": "Same time: yield to the right. Otherwise first to stop is first to go."
+    },
+    {
+      "id": "c3_004",
+      "ch": 3,
+      "difficulty": 2,
+      "guide_ref": "DG 4.13",
+      "tags": [],
+      "in_world_trigger": "intersection.fourway.approach",
+      "prompt": "Four-way stop. You're turning left; the driver across from you is going straight. You both arrived together. Who goes?",
+      "choices": [
+        "You — left turns go first",
+        "The driver going straight; a left-turner yields to vehicles going straight or turning right",
+        "Whoever is on the right",
+        "Both at once"
+      ],
+      "answer": 1,
+      "explanation": "Left turn yields. Same rule as a two-way stop: turning yields to through traffic."
+    },
+    {
+      "id": "c3_005",
+      "ch": 3,
+      "difficulty": 1,
+      "guide_ref": "DG 4.13",
+      "tags": [],
+      "prompt": "Two-way stop. You've stopped and want to turn left; a through vehicle on the cross street is approaching. Who has the right-of-way?",
+      "choices": [
+        "You, because you stopped first",
+        "The vehicle going straight",
+        "Whichever is faster",
+        "The one on the right"
+      ],
+      "answer": 1,
+      "explanation": "Turning vehicles yield to vehicles going straight."
+    },
+    {
+      "id": "c3_006",
+      "ch": 3,
+      "difficulty": 2,
+      "guide_ref": "DG 4.15",
+      "tags": [
+        "story"
+      ],
+      "in_world_trigger": "intersection.uncontrolled.approach",
+      "prompt": "You're leaving the gravel lot behind Bea's sanctuary onto a paved street. No signs. Who yields?",
+      "choices": [
+        "The paved-road traffic",
+        "You — a driver entering a paved road from an unpaved road yields",
+        "Whoever arrives first",
+        "Nobody; it's uncontrolled"
+      ],
+      "answer": 1,
+      "explanation": "Uncontrolled intersection rules: yield if you're on unpaved entering paved, or a secondary road entering a state highway."
+    },
+    {
+      "id": "c3_007",
+      "ch": 3,
+      "difficulty": 2,
+      "guide_ref": "DG 4.15",
+      "tags": [],
+      "in_world_trigger": "intersection.uncontrolled.approach",
+      "prompt": "At an uncontrolled intersection you must yield in all of these cases EXCEPT…",
+      "choices": [
+        "A vehicle is already in the intersection",
+        "You're entering a state highway from a secondary road",
+        "You're turning left and a vehicle approaches from the opposite direction",
+        "You're going straight and a vehicle on your left arrives after you"
+      ],
+      "answer": 3,
+      "explanation": "The other three are the guide's yield cases. A later-arriving vehicle on your left yields to you."
+    },
+    {
+      "id": "c3_008",
+      "ch": 3,
+      "difficulty": 1,
+      "guide_ref": "DG 4.15",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "Roundabout ahead. Sixty of the Quiet stand on the center island like an audience. Entering, you must…",
+      "choices": [
+        "Stop fully, then enter",
+        "Look left and yield to all traffic already in the roundabout, then enter to the right",
+        "Speed up to merge",
+        "Look right and yield to entering traffic"
+      ],
+      "answer": 1,
+      "explanation": "Yield on entry, travel counterclockwise, stay in your lane until you exit."
+    },
+    {
+      "id": "c3_009",
+      "ch": 3,
+      "difficulty": 1,
+      "guide_ref": "DG 4.15",
+      "tags": [],
+      "prompt": "Roundabouts are designed for speeds between…",
+      "choices": [
+        "5 and 10 mph",
+        "15 and 25 mph",
+        "30 and 35 mph",
+        "The posted highway limit"
+      ],
+      "answer": 1,
+      "explanation": "15–25 mph. Pick your lane from the sign before you enter."
+    },
+    {
+      "id": "c3_010",
+      "ch": 3,
+      "difficulty": 2,
+      "guide_ref": "DG 4.4, 4.15",
+      "tags": [
+        "story"
+      ],
+      "prompt": "Hank's grain truck enters the roundabout ahead of you and drifts across both lanes and up onto the truck apron. That's…",
+      "choices": [
+        "Illegal — report it",
+        "Allowed — large vehicles may use both lanes and the apron; give them room",
+        "Only allowed at night",
+        "A sign his brakes failed"
+      ],
+      "answer": 1,
+      "explanation": "Big rigs need two lanes of space in a roundabout. Hang back."
+    },
+    {
+      "id": "c3_011",
+      "ch": 3,
+      "difficulty": 2,
+      "guide_ref": "DG 4.15",
+      "tags": [],
+      "prompt": "You're inside a roundabout when an Authority ambulance approaches with lights on. You should…",
+      "choices": [
+        "Stop where you are",
+        "Continue through to your exit, then pull over to the right",
+        "Reverse out",
+        "Pull onto the center island"
+      ],
+      "answer": 1,
+      "explanation": "Never stop in the circle. Exit, then yield like at any intersection."
+    },
+    {
+      "id": "c3_012",
+      "ch": 3,
+      "difficulty": 1,
+      "guide_ref": "DG 4.9",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "Siren behind you — the first one you've heard in a month. Fire trucks, ambulances, and police using lights or sirens always have the right-of-way. You…",
+      "choices": [
+        "Speed up to stay ahead",
+        "Pull to the right side and stop; after it passes, signal and re-enter in the order you were traveling",
+        "Stop in your lane",
+        "Pull left to give it the right lane"
+      ],
+      "answer": 1,
+      "explanation": "Right and stop. Then merge back in turn, not in a scramble."
+    },
+    {
+      "id": "c3_013",
+      "ch": 3,
+      "difficulty": 1,
+      "guide_ref": "DG 4.3",
+      "tags": [],
+      "prompt": "A transit bus ahead has signaled and is pulling away from its stop back into your lane. You…",
+      "choices": [
+        "Speed up to get past",
+        "Yield to it",
+        "Honk to let it know you're there",
+        "Pass on the right"
+      ],
+      "answer": 1,
+      "explanation": "Yield to a transit vehicle signaling to re-enter the roadway in your direction."
+    },
+    {
+      "id": "c3_014",
+      "ch": 3,
+      "difficulty": 1,
+      "guide_ref": "DG 4.7",
+      "tags": [
+        "quiet"
+      ],
+      "in_world_trigger": "zone.rail.enter",
+      "prompt": "No train has come through Kent in two years. You look both ways anyway, because trains…",
+      "choices": [
+        "Yield to cars at unmarked crossings",
+        "Always have the right-of-way and can take up to a mile to stop",
+        "Stop for flashing lights like everyone else",
+        "Only run on the main track"
+      ],
+      "answer": 1,
+      "explanation": "Trains always win. They can come from either direction on any track."
+    },
+    {
+      "id": "c3_015",
+      "ch": 3,
+      "difficulty": 2,
+      "guide_ref": "DG 5.3",
+      "tags": [
+        "story"
+      ],
+      "in_world_trigger": "merge.gap_open",
+      "prompt": "You're on the I-90 on-ramp behind Jonah, matching speed. Who has the right-of-way — you or the vehicles already on the freeway?",
+      "choices": [
+        "You — merging traffic has priority",
+        "The vehicles already on the freeway; you adjust speed to find a gap",
+        "Whoever is faster",
+        "Nobody; freeways are uncontrolled"
+      ],
+      "answer": 1,
+      "explanation": "Use the whole ramp, signal, mirrors, and speed up or slow down to fit a safe gap."
+    },
+    {
+      "id": "c3_016",
+      "ch": 3,
+      "difficulty": 1,
+      "guide_ref": "DG 4.14",
+      "tags": [],
+      "prompt": "You're on the road that dead-ends into a T-intersection. Who has the right-of-way?",
+      "choices": [
+        "You, because you're going straight",
+        "Traffic on the through road",
+        "Whoever arrives first",
+        "The vehicle on the right"
+      ],
+      "answer": 1,
+      "explanation": "The through road has priority; your road usually has a yield or stop sign."
+    },
+    {
+      "id": "c3_017",
+      "ch": 3,
+      "difficulty": 2,
+      "guide_ref": "DG 4.6",
+      "tags": [],
+      "prompt": "A bicyclist is riding across the intersection inside the crosswalk. Legally they are…",
+      "choices": [
+        "A vehicle — yield as you would to a car",
+        "A pedestrian — you must yield in marked and unmarked crosswalks",
+        "Not allowed there",
+        "Required to walk the bike"
+      ],
+      "answer": 1,
+      "explanation": "Bikes in crosswalks are pedestrians. Bikes in the lane are vehicles."
+    },
+    {
+      "id": "c3_018",
+      "ch": 3,
+      "difficulty": 3,
+      "guide_ref": "DG 5.4",
+      "tags": [
+        "story"
+      ],
+      "prompt": "Turning left across an oncoming lane. Deac's trick: watch an oncoming car pass a tree and count until it reaches your road. Why?",
+      "choices": [
+        "To see if the driver is impaired",
+        "Oncoming traffic has the right-of-way; timing one car tells you how long the next one will take, so you know when you have enough time",
+        "To estimate their speed for the report",
+        "To make sure they aren't one of the Quiet"
+      ],
+      "answer": 1,
+      "explanation": "Better too much time than not enough. Approaching traffic has the right-of-way."
+    },
+    {
+      "id": "c3_019",
+      "ch": 3,
+      "difficulty": 1,
+      "guide_ref": "DG 4.13",
+      "tags": [],
+      "prompt": "There's no paint at the intersection. Is there a crosswalk?",
+      "choices": [
+        "No — only marked crosswalks count",
+        "Yes — every intersection is legally a crosswalk, marked or not",
+        "Only if a sign says so",
+        "Only in school zones"
+      ],
+      "answer": 1,
+      "explanation": "Unmarked crosswalks carry the same right-of-way as painted ones."
+    },
+    {
+      "id": "c3_020",
+      "ch": 3,
+      "difficulty": 2,
+      "guide_ref": "DG 4.15",
+      "tags": [],
+      "prompt": "At a small neighborhood traffic-calming circle, a fire truck goes clockwise around the island — the 'wrong' way. That's…",
+      "choices": [
+        "A violation",
+        "Allowed — calming circles are built for passenger cars; large vehicles may need to go clockwise. Give them room",
+        "Only legal with lights on",
+        "A sign the circle is closed"
+      ],
+      "answer": 1,
+      "explanation": "Same right-of-way rules as any intersection, but expect big vehicles to cut the circle."
+    },
+    {
+      "id": "c3_021",
+      "ch": 3,
+      "difficulty": 2,
+      "guide_ref": "DG 4.20",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "HUSH shoots a music video on an ocean beach in Grays Harbor County, one of the two counties where beach driving is allowed. On the beach, the speed limit is ___ and pedestrians and cyclists have the right-of-way ___.",
+      "choices": [
+        "15 mph / at crossings",
+        "25 mph / at all times",
+        "35 mph / in marked lanes",
+        "No limit / never"
+      ],
+      "answer": 1,
+      "explanation": "The beach is a state highway: 25 mph, hard-packed sand only, people always first."
+    },
+    {
+      "id": "c3_022",
+      "ch": 3,
+      "difficulty": 1,
+      "guide_ref": "DG 4.10",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "An Authority crossing guard in a vest waves you through a red light so a convoy can pass before the Quiet notice. You…",
+      "choices": [
+        "Wait for green — signals always win",
+        "Follow the guard; law enforcement, construction workers, and crossing guards can overrule signals",
+        "Honk to confirm",
+        "Turn around"
+      ],
+      "answer": 1,
+      "explanation": "People authorized to direct traffic override signs and signals."
+    },
+    {
+      "id": "c3_023",
+      "ch": 3,
+      "difficulty": 1,
+      "guide_ref": "DG 4.20",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "The tour van is late for the ferry to the Kitsap Harbor. Cutting into the ferry holding line is…",
+      "choices": [
+        "Fine if you're polite",
+        "A traffic offense that can lead to a fine",
+        "Allowed for commercial vehicles",
+        "Allowed for bicycles only"
+      ],
+      "answer": 1,
+      "explanation": "Ferry line-cutting is an offense. Bicyclists do get priority loading — that's the exception."
+    },
+    {
+      "id": "c4_001",
+      "ch": 4,
+      "difficulty": 1,
+      "guide_ref": "DG 4.14",
+      "tags": [],
+      "prompt": "Turning right from a two-lane street onto a four-lane street. Which lane must you turn into?",
+      "choices": [
+        "Any open lane",
+        "The lane closest to the direction you came from (the nearest right lane)",
+        "The left lane, then move right",
+        "The center turn lane"
+      ],
+      "answer": 1,
+      "explanation": "Nearest legal lane in, nearest legal lane out. Change lanes after the turn if needed."
+    },
+    {
+      "id": "c4_002",
+      "ch": 4,
+      "difficulty": 1,
+      "guide_ref": "DG 2.5, 4.14",
+      "tags": [
+        "quiet"
+      ],
+      "in_world_trigger": "lanechange.start",
+      "prompt": "Nobody alive is behind you on Central, but you signal anyway. How far before a turn or lane change must you signal?",
+      "choices": [
+        "50 feet",
+        "100 feet",
+        "200 feet",
+        "One block"
+      ],
+      "answer": 1,
+      "explanation": "At least 100 feet. Then make sure the signal cancels after the turn."
+    },
+    {
+      "id": "c4_003",
+      "ch": 4,
+      "difficulty": 2,
+      "guide_ref": "DG 4.14",
+      "tags": [],
+      "prompt": "Two left-turn lanes side by side. You're in the outer one. During the turn you must…",
+      "choices": [
+        "Take whichever lane is open",
+        "Stay in your own lane all the way through the turn",
+        "Merge into the inner lane",
+        "Turn wide into the far lane"
+      ],
+      "answer": 1,
+      "explanation": "Multiple turn lanes: hold your lane. Change lanes only after the turn is complete."
+    },
+    {
+      "id": "c4_004",
+      "ch": 4,
+      "difficulty": 2,
+      "guide_ref": "DG 4.14",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "You missed the turn for the pop-up shop where Priya trades photocards. No sign prohibits U-turns. Where is a U-turn NOT allowed?",
+      "choices": [
+        "On any city street",
+        "On a curve or approaching the crest of a hill, where you can't see in all directions",
+        "At an intersection with a signal",
+        "Anywhere after dark"
+      ],
+      "answer": 1,
+      "explanation": "U-turns are generally legal in Washington unless posted, but you need clear visibility in every direction."
+    },
+    {
+      "id": "c4_005",
+      "ch": 4,
+      "difficulty": 1,
+      "guide_ref": "DG 4.10",
+      "tags": [],
+      "prompt": "Multiple lanes in your direction, light traffic. Which lane should you normally drive in?",
+      "choices": [
+        "The left lane — it's smoother",
+        "The right lane; use the left to pass",
+        "The carpool lane if you have a passenger",
+        "Whichever has fewer potholes"
+      ],
+      "answer": 1,
+      "explanation": "Keep right except to pass. Carpool lanes are not passing lanes, and you follow the limit even while passing."
+    },
+    {
+      "id": "c4_006",
+      "ch": 4,
+      "difficulty": 1,
+      "guide_ref": "DG 4.10",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "Traffic's stopped for a dormant cluster in the road. The shoulder is wide open. May you use it to get around?",
+      "choices": [
+        "Yes, if you go slowly",
+        "No — don't drive or pass on the shoulder unless directed by officials or signs",
+        "Yes, on freeways only",
+        "Yes, if your hazards are on"
+      ],
+      "answer": 1,
+      "explanation": "Shoulders aren't travel lanes."
+    },
+    {
+      "id": "c4_007",
+      "ch": 4,
+      "difficulty": 1,
+      "guide_ref": "DG 4.10",
+      "tags": [
+        "story"
+      ],
+      "prompt": "You blow past the Issaquah exit. Gracie yells. Can you back up along the shoulder to reach it?",
+      "choices": [
+        "Yes, slowly with hazards on",
+        "No — it's illegal to back up on a shoulder or freeway; take the next exit",
+        "Yes, if nobody is behind you",
+        "Only at night"
+      ],
+      "answer": 1,
+      "explanation": "Keep moving forward. Backing on a freeway is illegal and dangerous."
+    },
+    {
+      "id": "c4_008",
+      "ch": 4,
+      "difficulty": 1,
+      "guide_ref": "DG 4.18",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Perfect spot right in front of the fansign venue — next to a fire hydrant. How far from a hydrant must you park?",
+      "choices": [
+        "5 feet",
+        "10 feet",
+        "15 feet",
+        "20 feet"
+      ],
+      "answer": 2,
+      "explanation": "15 feet from a hydrant."
+    },
+    {
+      "id": "c4_009",
+      "ch": 4,
+      "difficulty": 2,
+      "guide_ref": "DG 4.18",
+      "tags": [],
+      "prompt": "How far from a stop sign, yield sign, or traffic signal must you park?",
+      "choices": [
+        "10 feet",
+        "20 feet",
+        "30 feet",
+        "50 feet"
+      ],
+      "answer": 2,
+      "explanation": "30 feet. (Railroad crossings: 50. Driveways: 5. Fire station driveway, opposite side: 75.)"
+    },
+    {
+      "id": "c4_010",
+      "ch": 4,
+      "difficulty": 2,
+      "guide_ref": "DG 4.18",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "You want to park near the tracks to wait out a passing swarm. The minimum distance from a railroad crossing is…",
+      "choices": [
+        "15 feet",
+        "30 feet",
+        "50 feet",
+        "100 feet"
+      ],
+      "answer": 2,
+      "explanation": "50 feet from a crossing — and never on the tracks."
+    },
+    {
+      "id": "c4_011",
+      "ch": 4,
+      "difficulty": 1,
+      "guide_ref": "DG 4.18",
+      "tags": [],
+      "prompt": "Parallel parked on a street with a curb, your tires may be no more than ___ from the curb.",
+      "choices": [
+        "6 inches",
+        "12 inches",
+        "18 inches",
+        "24 inches"
+      ],
+      "answer": 1,
+      "explanation": "12 inches. And never park facing oncoming traffic."
+    },
+    {
+      "id": "c4_012",
+      "ch": 4,
+      "difficulty": 2,
+      "guide_ref": "DG 4.18",
+      "tags": [
+        "story"
+      ],
+      "prompt": "Parking the Beetle facing DOWNHILL on a Spokane street with a curb. Which way do you turn the wheels?",
+      "choices": [
+        "Away from the curb",
+        "Toward the curb, so the front tire rests against it",
+        "Straight",
+        "It doesn't matter if the parking brake is set"
+      ],
+      "answer": 1,
+      "explanation": "Downhill: toward the curb. If the brake fails, the car rolls into the curb, not the road. Always set the parking brake."
+    },
+    {
+      "id": "c4_013",
+      "ch": 4,
+      "difficulty": 2,
+      "guide_ref": "DG 4.18",
+      "tags": [],
+      "prompt": "Parking facing UPHILL next to a tall curb. Which way do you turn the wheels?",
+      "choices": [
+        "Toward the curb",
+        "Away from the curb, so the back of the front tire touches the curb",
+        "Straight",
+        "Either way"
+      ],
+      "answer": 1,
+      "explanation": "Uphill with a tall curb: away from the curb. With a low rounded curb, toward the curb may be safer."
+    },
+    {
+      "id": "c4_014",
+      "ch": 4,
+      "difficulty": 2,
+      "guide_ref": "DG 4.18",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "Parking on a hill on the pass road with no curb at all. Turn the wheels…",
+      "choices": [
+        "Toward the center of the road",
+        "Toward the edge of the road, so a rolling car leaves traffic",
+        "Straight",
+        "Doesn't matter without a curb"
+      ],
+      "answer": 1,
+      "explanation": "No curb: toward the edge, uphill or down."
+    },
+    {
+      "id": "c4_015",
+      "ch": 4,
+      "difficulty": 2,
+      "guide_ref": "DG 4.18",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "You've parked outside the venue and a stream of fans on bikes is rolling past. The 'Dutch Reach' means opening your door with…",
+      "choices": [
+        "Your nearest hand, quickly",
+        "The hand farthest from the door, which turns your body to see approaching cyclists",
+        "Both hands",
+        "Your foot"
+      ],
+      "answer": 1,
+      "explanation": "Far hand forces the shoulder check and slows the door."
+    },
+    {
+      "id": "c4_016",
+      "ch": 4,
+      "difficulty": 2,
+      "guide_ref": "DG 4.18",
+      "tags": [
+        "story"
+      ],
+      "prompt": "Bea asks you to watch her 11-year-old nephew for five minutes while she loads cat food. Leaving him alone in the parked Beetle is…",
+      "choices": [
+        "Fine if the doors are locked",
+        "A crime — a child under 12 may not be left unattended in a parked vehicle (under 16 if the engine is running)",
+        "Fine for under 15 minutes",
+        "Only a problem in hot weather"
+      ],
+      "answer": 1,
+      "explanation": "Same for animals at risk from heat, cold, or no water. Law enforcement can break in to remove them."
+    },
+    {
+      "id": "c4_017",
+      "ch": 4,
+      "difficulty": 1,
+      "guide_ref": "DG 4.18",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "The only open space at the Harbor is an EV charging stall. Priya's gas van may park there…",
+      "choices": [
+        "For 15 minutes",
+        "Never — only a vehicle connected to the charger may occupy it",
+        "Overnight if the lot is empty",
+        "If you leave a note"
+      ],
+      "answer": 1,
+      "explanation": "It's illegal to park in a charging station unless you're plugged in."
+    },
+    {
+      "id": "c4_018",
+      "ch": 4,
+      "difficulty": 1,
+      "guide_ref": "DG 2.7",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Hands on the wheel like a clock face. For the best control (and clear of the airbag), the guide recommends…",
+      "choices": [
+        "12 and 6",
+        "9 and 3, or 10 and 2",
+        "One hand at 12",
+        "8 and 4 only"
+      ],
+      "answer": 1,
+      "explanation": "Hands on the top half, outside the rim. Hand-to-hand steering keeps arms out of the airbag zone."
+    },
+    {
+      "id": "c4_019",
+      "ch": 4,
+      "difficulty": 2,
+      "guide_ref": "DG 2.7",
+      "tags": [],
+      "prompt": "Which situation calls for hand-over-hand steering rather than hand-to-hand?",
+      "choices": [
+        "Cruising on the freeway",
+        "Low-speed turns, parking, an intersection, or recovering from a skid",
+        "Any time you're above 40 mph",
+        "Backing in a straight line"
+      ],
+      "answer": 1,
+      "explanation": "Hand-over-hand for sharp, slow, or corrective steering. One hand at 12 only when backing."
+    },
+    {
+      "id": "c4_020",
+      "ch": 4,
+      "difficulty": 2,
+      "guide_ref": "DG 2.12",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Your 'bias wrecker' is the one you didn't see coming. On the road, that's the blind zone. When you turn your head to check it, you should…",
+      "choices": [
+        "Steer slightly the same way you look",
+        "Keep the steering wheel straight",
+        "Brake lightly",
+        "Close one eye"
+      ],
+      "answer": 1,
+      "explanation": "New drivers drift toward where they look. Head turns, wheel stays."
+    },
+    {
+      "id": "c4_021",
+      "ch": 4,
+      "difficulty": 1,
+      "guide_ref": "DG 2.5",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "You hang Priya's HUSH eungwonbong (lightstick) from the rearview mirror. Per the guide…",
+      "choices": [
+        "Fine if it's small",
+        "Don't — nothing hanging from the mirror or cluttering the windows that blocks your view",
+        "Fine if it's off",
+        "Only a problem at night"
+      ],
+      "answer": 1,
+      "explanation": "Same rule for the disabled placard: don't hang it while driving."
+    },
+    {
+      "id": "c4_022",
+      "ch": 4,
+      "difficulty": 2,
+      "guide_ref": "DG 4.6",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "A cyclist is ahead on a two-lane road with one lane each way. To pass, you…",
+      "choices": [
+        "Squeeze by in your lane",
+        "Move into the other lane only when there's no oncoming traffic, pass slowly on their left with at least 3 feet, and don't cut back too soon",
+        "Cross into oncoming traffic if the bike is slow",
+        "Honk, then pass"
+      ],
+      "answer": 1,
+      "explanation": "3 feet minimum from the widest part of your car. Two lanes your way: move over a full lane. Never into oncoming traffic."
+    },
+    {
+      "id": "c4_023",
+      "ch": 4,
+      "difficulty": 2,
+      "guide_ref": "DG 4.6",
+      "tags": [],
+      "prompt": "You're about to turn right and a cyclist is just ahead in the bike lane. You should…",
+      "choices": [
+        "Pass, then turn quickly",
+        "Let the cyclist clear the intersection before turning — never pass a bike just before a right turn",
+        "Turn from the bike lane behind them",
+        "Honk so they stop"
+      ],
+      "answer": 1,
+      "explanation": "The 'right hook' is a classic crash. Wait."
+    },
+    {
+      "id": "c4_024",
+      "ch": 4,
+      "difficulty": 1,
+      "guide_ref": "DG 2.5",
+      "tags": [
+        "story"
+      ],
+      "prompt": "Tuna hasn't fixed the Beetle's turn signals yet. Left arm out the window, bent at the elbow with fingers pointing up means…",
+      "choices": [
+        "Left turn",
+        "Right turn",
+        "Stop",
+        "Slow down"
+      ],
+      "answer": 1,
+      "explanation": "Straight out = left. Bent up = right. Pointing down = stop or slowing."
+    },
+    {
+      "id": "c4_025",
+      "ch": 4,
+      "difficulty": 2,
+      "guide_ref": "DG 5.3",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Lane closure ahead of the venue exit; traffic crawling. The correct 'zipper merge' is to…",
+      "choices": [
+        "Merge as early as possible to be polite",
+        "Use both lanes to the merge point, then alternate one car from each lane",
+        "Speed up and cut in at the end",
+        "Stop and wait for a wave"
+      ],
+      "answer": 1,
+      "explanation": "Zipper merging improves flow by about 60% and makes merging predictable."
+    },
+    {
+      "id": "c4_026",
+      "ch": 4,
+      "difficulty": 2,
+      "guide_ref": "DG 2.8",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "The Beetle has ABS. In an emergency stop, it does what?",
+      "choices": [
+        "Shortens your stopping distance",
+        "Keeps the wheels from locking so you can still steer — it does not shorten the stop; expect the pedal to shake",
+        "Turns on the hazards",
+        "Makes the stop silent"
+      ],
+      "answer": 1,
+      "explanation": "Press firmly and steer. Practice it once in an empty lot so the shaking doesn't surprise you."
+    },
+    {
+      "id": "c4_027",
+      "ch": 4,
+      "difficulty": 1,
+      "guide_ref": "DG 2.8",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "The guide's braking image — 'a cup of water in your lap you don't want to spill' — is about which two levels you should use almost all the time?",
+      "choices": [
+        "Firm and emergency",
+        "Light and medium",
+        "Emergency only",
+        "None; coast to stops"
+      ],
+      "answer": 1,
+      "explanation": "Four levels: light, medium, firm, emergency. Smooth braking also doesn't surprise the driver behind you."
+    },
+    {
+      "id": "c5_001",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 4.12, 5.1",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "The sign says 60; the road is glazed and the Quiet are on both shoulders. You're doing 50 and get a ticket. How?",
+      "choices": [
+        "You can't — you were under the limit",
+        "The limit is for ideal conditions; you can be cited for going too fast for conditions even below it",
+        "Only cameras can ticket that",
+        "Because you had passengers"
+      ],
+      "answer": 1,
+      "explanation": "Posted limits are maximums under ideal conditions. Slower is your responsibility."
+    },
+    {
+      "id": "c5_002",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 4.12",
+      "tags": [],
+      "prompt": "Some highways post a MINIMUM speed. Its purpose is…",
+      "choices": [
+        "To keep trucks off",
+        "So slow vehicles don't become a hazard to others",
+        "To set toll rates",
+        "It's advisory only"
+      ],
+      "answer": 1,
+      "explanation": "You must travel at least that fast when conditions allow."
+    },
+    {
+      "id": "c5_003",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "PG p.7",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "You double your speed from 30 to 60 to catch the ending-fairy shot. Your braking distance…",
+      "choices": [
+        "Doubles",
+        "Roughly quadruples",
+        "Stays the same with ABS",
+        "Triples"
+      ],
+      "answer": 1,
+      "explanation": "Doubling speed quadruples braking distance. Doubling vehicle weight (say, a plow and armored doors) doubles it."
+    },
+    {
+      "id": "c5_004",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "PG p.22",
+      "tags": [],
+      "in_world_trigger": "follow.green",
+      "prompt": "Below 30 mph, the minimum following time behind the vehicle ahead is…",
+      "choices": [
+        "1 second",
+        "2 seconds",
+        "4 seconds",
+        "6 seconds"
+      ],
+      "answer": 1,
+      "explanation": "2 or more under 30 mph; 4 or more above 30, in congestion, bad weather, or behind a motorcycle, truck, or bus."
+    },
+    {
+      "id": "c5_005",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "PG p.22",
+      "tags": [
+        "story"
+      ],
+      "in_world_trigger": "follow.red",
+      "prompt": "Jonah brakes hard, it's raining, and you're on the freeway behind him. Deac says four seconds, not three. Which of these does NOT call for a 4-second gap?",
+      "choices": [
+        "Speeds over 30 mph",
+        "Poor weather",
+        "Following a truck or bus",
+        "A dry residential street at 20 mph"
+      ],
+      "answer": 3,
+      "explanation": "The slow, dry street is the only 2-second case here."
+    },
+    {
+      "id": "c5_006",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.2",
+      "tags": [],
+      "prompt": "The Driver Guide's distance rule near other vehicles: leave at least…",
+      "choices": [
+        "One car length",
+        "Twice the length of your vehicle",
+        "Half a car length in traffic",
+        "Ten feet"
+      ],
+      "answer": 1,
+      "explanation": "At least two vehicle lengths, and more when merging so you can plan, communicate, check, execute, evaluate."
+    },
+    {
+      "id": "c5_007",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 4.4",
+      "tags": [
+        "story"
+      ],
+      "prompt": "Hank's loaded truck is doing 55 with properly adjusted brakes. How far does it need to come to a complete stop?",
+      "choices": [
+        "150 feet",
+        "300 feet",
+        "450 feet",
+        "One mile"
+      ],
+      "answer": 2,
+      "explanation": "About 450 feet — a football field and a half. Don't cut in front of it."
+    },
+    {
+      "id": "c5_008",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 4.4",
+      "tags": [
+        "story"
+      ],
+      "in_world_trigger": "pass.complete",
+      "prompt": "You've passed Hank's rig. When is it safe to move back in front of him?",
+      "choices": [
+        "As soon as your rear bumper clears his front bumper",
+        "When you can see both of his headlights in your rearview mirror",
+        "After 3 seconds",
+        "When he flashes his lights"
+      ],
+      "answer": 1,
+      "explanation": "Both headlights in the mirror, then merge and keep the flow."
+    },
+    {
+      "id": "c5_009",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.6",
+      "tags": [
+        "quiet"
+      ],
+      "in_world_trigger": "shadow.exceeds_lights",
+      "prompt": "Night on I-90, nobody for fifty miles, high beams on. The rule that keeps you from 'outdriving your headlights' is to drive at a speed that lets you…",
+      "choices": [
+        "Reach the next town before midnight",
+        "Stop within the lit area of your headlights (usually about 400 feet)",
+        "See the next mile marker",
+        "Keep the engine quiet"
+      ],
+      "answer": 1,
+      "explanation": "If your stopping distance is longer than your light, you'll hit it before you see it."
+    },
+    {
+      "id": "c5_010",
+      "ch": 5,
+      "difficulty": 3,
+      "guide_ref": "PG p.65",
+      "tags": [],
+      "prompt": "Low beams light about 182 feet. At 50 mph you need roughly 190 feet to stop. What does that tell you?",
+      "choices": [
+        "Low beams are fine at 50",
+        "At 50 on low beams you're already 'driving blind' — slow down or use high beams when no one's oncoming",
+        "You should tailgate to borrow their light",
+        "Brake harder to compensate"
+      ],
+      "answer": 1,
+      "explanation": "High beams reach ~350 feet. Use them on empty roads; dim within 500 ft of oncoming traffic."
+    },
+    {
+      "id": "c5_011",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 2.5",
+      "tags": [],
+      "prompt": "Dim your high beams when an oncoming vehicle is within ___ and when you're following within ___.",
+      "choices": [
+        "200 ft / 100 ft",
+        "500 ft / 300 ft",
+        "1,000 ft / 500 ft",
+        "300 ft / 500 ft"
+      ],
+      "answer": 1,
+      "explanation": "500 feet oncoming, 300 feet behind. If someone won't dim theirs, look toward the right edge of the road."
+    },
+    {
+      "id": "c5_012",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.1",
+      "tags": [],
+      "prompt": "Which is NOT an effect of excessive speed listed in the guide?",
+      "choices": [
+        "Seat belts become less effective",
+        "Less time to scan for hazards",
+        "Longer stopping distances",
+        "Better traction on wet roads"
+      ],
+      "answer": 3,
+      "explanation": "Speed reduces traction and control; it never improves it."
+    },
+    {
+      "id": "c5_013",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 5.9",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "The guide names three typical causes of collisions. They are too much speed, too little space, and…",
+      "choices": [
+        "Bad luck",
+        "Insufficient situational awareness",
+        "Old tires",
+        "Loud music"
+      ],
+      "answer": 1,
+      "explanation": "Speed, space, awareness. The Quiet punish the same three."
+    },
+    {
+      "id": "c5_014",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.6",
+      "tags": [
+        "quiet"
+      ],
+      "in_world_trigger": "curve.approach",
+      "prompt": "Curve ahead on the pass road. The right sequence is…",
+      "choices": [
+        "Brake hard mid-curve",
+        "Slow before the curve, hold a steady speed through it, accelerate gently as you exit",
+        "Accelerate in, coast out",
+        "Downshift at the apex"
+      ],
+      "answer": 1,
+      "explanation": "Sudden braking or throttle in a curve upsets the car's balance — and the tires scream."
+    },
+    {
+      "id": "c5_015",
+      "ch": 5,
+      "difficulty": 3,
+      "guide_ref": "DG 5.6",
+      "tags": [],
+      "prompt": "Approaching a curve, the guide suggests positioning the vehicle…",
+      "choices": [
+        "Slightly to the inside of the lane",
+        "Slightly to the outside of the lane, for more room and better visibility around it",
+        "Exactly centered, always",
+        "Straddling the centerline"
+      ],
+      "answer": 1,
+      "explanation": "Outside on approach improves sight lines; steer smoothly, no jerky inputs."
+    },
+    {
+      "id": "c5_016",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 5.4",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "The 'count seconds' drill: pick a utility pole you think is ___ ahead, then count until you reach it. Like timing a fanchant, you get better with practice.",
+      "choices": [
+        "5 seconds",
+        "15 seconds",
+        "60 seconds",
+        "One minute"
+      ],
+      "answer": 1,
+      "explanation": "Guess, count, compare. It builds the distance-judgment novice drivers lack."
+    },
+    {
+      "id": "c5_017",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.0",
+      "tags": [],
+      "prompt": "In Washington, vehicle crashes are a leading cause of death for which age group?",
+      "choices": [
+        "Under 10",
+        "16 to 25",
+        "40 to 55",
+        "Over 70"
+      ],
+      "answer": 1,
+      "explanation": "Common fatal factors: speed, impairment, distraction, unrestrained occupants, inexperience."
+    },
+    {
+      "id": "c5_018",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.0",
+      "tags": [],
+      "prompt": "The guide's hazard routine is Plan, Communicate, Check, Execute, Evaluate. In the Check step, you set position and speed so you can make the change with no more than…",
+      "choices": [
+        "Light braking",
+        "Medium braking",
+        "Firm braking",
+        "Emergency braking"
+      ],
+      "answer": 1,
+      "explanation": "If it needs firm braking, you planned too late."
+    },
+    {
+      "id": "c5_019",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 3.3",
+      "tags": [],
+      "prompt": "The OODA Loop the guide recommends for on-road problem solving stands for…",
+      "choices": [
+        "Observe, Orient, Decide, Act",
+        "Open, Overtake, Drive, Arrive",
+        "Observe, Overreact, Drift, Apologize",
+        "Order, Organize, Direct, Accelerate"
+      ],
+      "answer": 0,
+      "explanation": "It's a loop because every situation leads to the next."
+    },
+    {
+      "id": "c5_020",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.5",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Reading a set list on your dash uses your central vision; catching a shape at the roadside while looking ahead uses…",
+      "choices": [
+        "Central vision",
+        "Peripheral vision",
+        "Night vision",
+        "Fringe hearing"
+      ],
+      "answer": 1,
+      "explanation": "Central, fringe, peripheral. Higher speeds degrade all three."
+    },
+    {
+      "id": "c5_021",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 4.12",
+      "tags": [],
+      "prompt": "A yellow sign shows a curve arrow with '35 MPH' under it, but the posted limit is 55. The 35 is…",
+      "choices": [
+        "The legal limit in the curve",
+        "An advisory speed — adjust for road, weather, and traffic and follow it",
+        "For trucks only",
+        "Only in the rain"
+      ],
+      "answer": 1,
+      "explanation": "Speed-warning signs recommend a change for a hazard. Deac's '35' on the pass is the same idea."
+    },
+    {
+      "id": "c5_022",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 2.9",
+      "tags": [],
+      "prompt": "In stop-and-go traffic, often the only 'acceleration' you need is…",
+      "choices": [
+        "A quick tap of gas",
+        "Releasing the brake pedal",
+        "Downshifting",
+        "Cruise control"
+      ],
+      "answer": 1,
+      "explanation": "Accelerate like you brake: don't spill the cup of water."
+    },
+    {
+      "id": "c6_001",
+      "ch": 6,
+      "difficulty": 1,
+      "guide_ref": "DG 5.6",
+      "tags": [],
+      "prompt": "The best way to avoid hydroplaning is to…",
+      "choices": [
+        "Use cruise control",
+        "Slow down when the road is wet",
+        "Drive in the tire tracks of the car ahead",
+        "Turn off traction control"
+      ],
+      "answer": 1,
+      "explanation": "Water builds under the tires faster at speed."
+    },
+    {
+      "id": "c6_002",
+      "ch": 6,
+      "difficulty": 2,
+      "guide_ref": "DG 5.6",
+      "tags": [
+        "quiet"
+      ],
+      "in_world_trigger": "hydroplane.begin",
+      "prompt": "The Beetle starts to float on standing water. You…",
+      "choices": [
+        "Brake hard and steer sharply",
+        "Ease off the gas, brake gently, keep the wheel steady, look where you want to go",
+        "Accelerate through it",
+        "Shift to neutral and turn the wheel"
+      ],
+      "answer": 1,
+      "explanation": "No sudden inputs. Wait for the tires to grip again."
+    },
+    {
+      "id": "c6_003",
+      "ch": 6,
+      "difficulty": 2,
+      "guide_ref": "DG 5.6, PG p.66",
+      "tags": [
+        "quiet"
+      ],
+      "in_world_trigger": "skid.begin",
+      "prompt": "The back of the car steps out on packed snow. A skid on snow screams, and every Quiet on the shoulder hears it. Your first moves are…",
+      "choices": [
+        "Slam the brakes and crank the wheel opposite",
+        "Take your foot off the accelerator and steer toward the path you want the car to travel, correcting as it regains grip",
+        "Accelerate to pull out of it",
+        "Shift to neutral and let go of the wheel"
+      ],
+      "answer": 1,
+      "explanation": "Foot off, eyes and wheel on the target. With ABS keep steady brake pressure; without it, don't stab the pedal."
+    },
+    {
+      "id": "c6_004",
+      "ch": 6,
+      "difficulty": 2,
+      "guide_ref": "DG 5.6",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "First rain after a hot week — the whole Harbor is outside for the comeback livestream. Why are the first minutes of that rain especially slick?",
+      "choices": [
+        "Rain is colder than pavement",
+        "Heat brings oil in the asphalt to the surface; it's slippery until it washes away",
+        "Tires shrink in rain",
+        "It isn't — wet is wet"
+      ],
+      "answer": 1,
+      "explanation": "Give it a few minutes, and give yourself more space."
+    },
+    {
+      "id": "c6_005",
+      "ch": 6,
+      "difficulty": 1,
+      "guide_ref": "DG 5.6",
+      "tags": [],
+      "in_world_trigger": "ice.enter",
+      "prompt": "On a cold wet day, which surface is most likely to have ice when the rest of the road doesn't?",
+      "choices": [
+        "Fresh asphalt",
+        "Bridges and overpasses",
+        "Uphill grades",
+        "Painted crosswalks"
+      ],
+      "answer": 1,
+      "explanation": "Bridges freeze first. So do shady spots."
+    },
+    {
+      "id": "c6_006",
+      "ch": 6,
+      "difficulty": 2,
+      "guide_ref": "DG 5.6",
+      "tags": [],
+      "prompt": "'Black ice' is dangerous mainly because…",
+      "choices": [
+        "It's thicker than normal ice",
+        "It's a thin coating that's hard to see, so drivers don't slow for it",
+        "It only forms at night",
+        "It melts instantly under tires"
+      ],
+      "answer": 1,
+      "explanation": "Near or below freezing, assume it's there even if you can't see it."
+    },
+    {
+      "id": "c6_007",
+      "ch": 6,
+      "difficulty": 2,
+      "guide_ref": "DG 5.6",
+      "tags": [],
+      "prompt": "Temperatures rise from well below freezing to near freezing. The road becomes…",
+      "choices": [
+        "Safer, since ice is melting",
+        "More slippery — melting ice becomes a wet layer on top of ice",
+        "Dry within minutes",
+        "Unaffected"
+      ],
+      "answer": 1,
+      "explanation": "Wet ice is worse than dry ice."
+    },
+    {
+      "id": "c6_008",
+      "ch": 6,
+      "difficulty": 1,
+      "guide_ref": "DG 5.6",
+      "tags": [
+        "story"
+      ],
+      "in_world_trigger": "waypoint.reach:chainup",
+      "prompt": "Snoqualmie: the sign reads CHAINS REQUIRED. Tuna told you. Mom told you. Deac told you. What does the sign mean?",
+      "choices": [
+        "Chains recommended for trucks",
+        "Chains (or approved traction tires where allowed) must be used past this point",
+        "Slow to 25",
+        "Carry chains in the trunk"
+      ],
+      "answer": 1,
+      "explanation": "Use chains or studded/traction tires when required. Sign says chains, sign means chains."
+    },
+    {
+      "id": "c6_009",
+      "ch": 6,
+      "difficulty": 1,
+      "guide_ref": "DG 5.6",
+      "tags": [],
+      "prompt": "Snowy roads call for…",
+      "choices": [
+        "Normal speed, closer following",
+        "A larger following distance and a dramatically reduced speed",
+        "High beams at all times",
+        "Cruise control for steadiness"
+      ],
+      "answer": 1,
+      "explanation": "Space and slowness are the only traction you can add for free."
+    },
+    {
+      "id": "c6_010",
+      "ch": 6,
+      "difficulty": 2,
+      "guide_ref": "DG 5.7",
+      "tags": [
+        "quiet"
+      ],
+      "in_world_trigger": "tire.blowout",
+      "prompt": "BANG — a front tire lets go at 55 on I-90, a hundred yards from a dormant cluster. You…",
+      "choices": [
+        "Brake hard immediately",
+        "Grip the wheel firmly, keep it straight, ease off the gas, let the car slow itself, then pull off safely",
+        "Steer hard onto the shoulder",
+        "Shift to neutral and stop in the lane"
+      ],
+      "answer": 1,
+      "explanation": "Don't brake unless gently and necessary. If you can't reach a safe spot to change it, hazards on and call for help."
+    },
+    {
+      "id": "c6_011",
+      "ch": 6,
+      "difficulty": 2,
+      "guide_ref": "DG 5.7",
+      "tags": [
+        "story"
+      ],
+      "in_world_trigger": "engine.stall",
+      "prompt": "Jonah's engine dies at speed. The wheel gets heavy. He should…",
+      "choices": [
+        "Slam the brakes",
+        "Keep a strong grip — it's hard to turn but it turns — brake with steady pressure, and pull off; then try to restart, raise the hood, hazards on",
+        "Coast in the lane and wait",
+        "Turn the key off and on repeatedly"
+      ],
+      "answer": 1,
+      "explanation": "No hard braking. Look for an escape path first."
+    },
+    {
+      "id": "c6_012",
+      "ch": 6,
+      "difficulty": 1,
+      "guide_ref": "DG 5.7",
+      "tags": [],
+      "prompt": "The accelerator sticks and the car keeps speeding up. First action?",
+      "choices": [
+        "Turn off the engine at speed",
+        "Shift to neutral, keep your eyes on the road, pull off when safe, then turn off the engine",
+        "Pump the gas pedal",
+        "Pull the parking brake hard"
+      ],
+      "answer": 1,
+      "explanation": "Neutral kills the drive without killing the power steering."
+    },
+    {
+      "id": "c6_013",
+      "ch": 6,
+      "difficulty": 1,
+      "guide_ref": "DG 5.7",
+      "tags": [],
+      "prompt": "Your headlights suddenly go out at night. You…",
+      "choices": [
+        "Keep driving by moonlight to the next exit",
+        "Turn on hazards, turn signals, or fog lights if you have them, and pull off as soon as possible",
+        "Stop dead in the lane",
+        "Flash the dome light"
+      ],
+      "answer": 1,
+      "explanation": "Any light beats no light. Get off the road."
+    },
+    {
+      "id": "c6_014",
+      "ch": 6,
+      "difficulty": 2,
+      "guide_ref": "DG 5.7",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "The Beetle is dead on the shoulder. Emergency flares should be placed…",
+      "choices": [
+        "Right behind the bumper",
+        "200 to 300 feet behind the vehicle",
+        "In front of the vehicle",
+        "Only on freeways"
+      ],
+      "answer": 1,
+      "explanation": "Also: hazards and headlights on, hood up or a white cloth on the antenna or mirror, and don't stand in traffic."
+    },
+    {
+      "id": "c6_015",
+      "ch": 6,
+      "difficulty": 3,
+      "guide_ref": "DG 5.9",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "A gust drops a power line across the Beetle's roof on the Vantage bridge. Nothing's burning. You…",
+      "choices": [
+        "Get out quickly and run",
+        "Stay inside, turn off the engine, call 911, and keep others at least 35 feet away — assume the line is live",
+        "Push the line off with a lightstick",
+        "Drive forward to slide out from under it"
+      ],
+      "answer": 1,
+      "explanation": "Only if a fire starts do you jump clear — feet together, don't touch the car, shuffle 35 feet away."
+    },
+    {
+      "id": "c6_016",
+      "ch": 6,
+      "difficulty": 1,
+      "guide_ref": "DG 5.6",
+      "tags": [],
+      "prompt": "An oncoming driver won't dim their high beams. You should…",
+      "choices": [
+        "Flash yours back",
+        "Look toward the right edge of the road and use it as a steering guide until they pass",
+        "Close your eyes briefly",
+        "Stop in the lane"
+      ],
+      "answer": 1,
+      "explanation": "Never stare into the glare. Slow down, add following distance."
+    },
+    {
+      "id": "c6_017",
+      "ch": 6,
+      "difficulty": 1,
+      "guide_ref": "DG 5.6",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Vex's signature tinted shades look great in the fancam. Wearing tinted or colored lenses to drive at night or on an overcast day is…",
+      "choices": [
+        "Fine if prescription",
+        "A bad idea — they reduce your vision",
+        "Required for glare",
+        "Fine on freeways"
+      ],
+      "answer": 1,
+      "explanation": "No sunglasses or tinted lenses after dark."
+    },
+    {
+      "id": "c6_018",
+      "ch": 6,
+      "difficulty": 2,
+      "guide_ref": "DG 4.4",
+      "tags": [],
+      "prompt": "Following an Authority snowplow closely on the pass is risky mainly because…",
+      "choices": [
+        "Plows brake without warning",
+        "Plows throw snow up and off the road, creating blizzard-like visibility for anyone too close",
+        "Plows drive too fast",
+        "Plows use the left lane"
+      ],
+      "answer": 1,
+      "explanation": "Hang back and let them work."
+    },
+    {
+      "id": "c6_019",
+      "ch": 6,
+      "difficulty": 1,
+      "guide_ref": "DG 2.5",
+      "tags": [],
+      "prompt": "Washington law requires headlights on from ___ until ___.",
+      "choices": [
+        "Sunset / sunrise",
+        "A half hour after sunset / a half hour before sunrise",
+        "9 p.m. / 6 a.m.",
+        "Only when it rains"
+      ],
+      "answer": 1,
+      "explanation": "Also any time it's rainy, snowy, foggy, or smoky. Daytime running lights don't turn on your taillights."
+    },
+    {
+      "id": "c6_020",
+      "ch": 6,
+      "difficulty": 2,
+      "guide_ref": "DG 5.9",
+      "tags": [],
+      "prompt": "After a crash someone is bleeding but conscious. The guide's order is…",
+      "choices": [
+        "Give them water, then bandage",
+        "Call 911; don't move them unless there's fire or immediate danger; check breathing, then bleeding — pressure, bandage, tourniquet; keep them warm; no drinks",
+        "Move them to the shoulder first",
+        "Drive them to the hospital yourself"
+      ],
+      "answer": 1,
+      "explanation": "Nothing to drink, not even water. Cover them against shock."
+    },
+    {
+      "id": "c6_021",
+      "ch": 6,
+      "difficulty": 1,
+      "guide_ref": "DG 5.9",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "Backing out of a tight Harbor lot, you tap a parked van. Nobody's around and you can't find the owner. You must…",
+      "choices": [
+        "Drive away — no damage, no report",
+        "Leave a visible note with the date, time, and your contact information",
+        "Wait one hour, then leave",
+        "Call the Relay and log it"
+      ],
+      "answer": 1,
+      "explanation": "Try to find the owner first. Leaving is hit-and-run."
+    },
+    {
+      "id": "c6_022",
+      "ch": 6,
+      "difficulty": 2,
+      "guide_ref": "DG 5.9",
+      "tags": [],
+      "prompt": "A law enforcement officer doesn't respond to your crash. You must file a collision report within…",
+      "choices": [
+        "24 hours",
+        "4 days",
+        "10 days",
+        "30 days"
+      ],
+      "answer": 1,
+      "explanation": "4 days, required by state law. Exchange names, licenses, insurance, and photograph damage."
+    },
+    {
+      "id": "c6_023",
+      "ch": 6,
+      "difficulty": 1,
+      "guide_ref": "DG 5.9",
+      "tags": [],
+      "prompt": "At a crash scene the guide says don't smoke because…",
+      "choices": [
+        "It's a distraction",
+        "Fuel may have spilled and fire is a real danger",
+        "It's rude to responders",
+        "Smoke attracts attention"
+      ],
+      "answer": 1,
+      "explanation": "Turn off wrecked vehicles, stay out of traffic lanes, use flares or warning devices."
+    },
+    {
+      "id": "c6_024",
+      "ch": 6,
+      "difficulty": 1,
+      "guide_ref": "DG 5.9",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Which of these is NOT on the guide's emergency-kit list?",
+      "choices": [
+        "First aid kit and flashlight",
+        "Jumper cables and a backup phone charger",
+        "Reflective triangles or flares",
+        "A spare set of photocards"
+      ],
+      "answer": 3,
+      "explanation": "Also: blanket, water, tool kit, spare tire and jack, and a paper list of important phone numbers."
+    },
+    {
+      "id": "c7_001",
+      "ch": 7,
+      "difficulty": 1,
+      "guide_ref": "DG 4.4",
+      "tags": [
+        "story"
+      ],
+      "in_world_trigger": "nozone.enter:",
+      "prompt": "'Pink Bug, if I can't see you in my mirror…' Hank's rule from the guide is: if you can't see a large vehicle's mirrors…",
+      "choices": [
+        "Flash your lights",
+        "The driver can't see you — you're in a blind zone",
+        "Honk once",
+        "Pass immediately on the right"
+      ],
+      "answer": 1,
+      "explanation": "Big rigs have 'No-Zones' on every side, largest on the right. Don't linger there."
+    },
+    {
+      "id": "c7_002",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 4.4",
+      "tags": [],
+      "in_world_trigger": "wide_turn.approach",
+      "prompt": "Hank signals right, then swings LEFT before turning. Why, and what do you do?",
+      "choices": [
+        "He's lost — pass on the right",
+        "Large vehicles may need more than one lane to turn; never pass a truck while it's turning — wait behind",
+        "He's letting you by on the inside",
+        "Honk so he corrects"
+      ],
+      "answer": 1,
+      "explanation": "Passing a turning truck is a frequent cause of collisions. The inside of the turn is a trap."
+    },
+    {
+      "id": "c7_003",
+      "ch": 7,
+      "difficulty": 1,
+      "guide_ref": "DG 4.4",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "A tanker in the convoy carries hazardous-materials placards. The guide says…",
+      "choices": [
+        "Follow closely for protection",
+        "Avoid driving near it when possible",
+        "Pass it quickly on the left",
+        "Match its speed exactly"
+      ],
+      "answer": 1,
+      "explanation": "Give hazmat loads room."
+    },
+    {
+      "id": "c7_004",
+      "ch": 7,
+      "difficulty": 1,
+      "guide_ref": "DG 4.4",
+      "tags": [],
+      "prompt": "On a long steep grade, expect large vehicles to…",
+      "choices": [
+        "Speed up going down",
+        "Travel slowly, usually in the right lane",
+        "Use the left lane",
+        "Stop at the summit"
+      ],
+      "answer": 1,
+      "explanation": "Be ready for slow trucks uphill and down."
+    },
+    {
+      "id": "c7_005",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 4.5",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "A courier on a motorcycle rides the far right edge of a wide lane. Jae suggests there's room to share it. May you move alongside in the same lane?",
+      "choices": [
+        "Yes, if the lane is wide",
+        "No — motorcyclists are entitled to the full lane width; never move into the same lane beside one",
+        "Yes, at low speed",
+        "Only to pass"
+      ],
+      "answer": 1,
+      "explanation": "Riders shift position within the lane to see, be seen, and avoid debris."
+    },
+    {
+      "id": "c7_006",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 4.5",
+      "tags": [],
+      "prompt": "The motorcycle ahead slows without its brake light coming on. Likely because…",
+      "choices": [
+        "The bulb is out",
+        "Riders often slow by rolling off the throttle, not braking — allow extra following room",
+        "It's a hand signal",
+        "Motorcycles don't have brake lights"
+      ],
+      "answer": 1,
+      "explanation": "Also, some bike turn signals don't cancel automatically. Stay alert around them."
+    },
+    {
+      "id": "c7_007",
+      "ch": 7,
+      "difficulty": 1,
+      "guide_ref": "DG 4.5",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "Before a right turn, the guide's look pattern for hidden motorcycles and bikes is…",
+      "choices": [
+        "Right, then go",
+        "Left, right, then left again",
+        "Mirror only",
+        "Right, left, right"
+      ],
+      "answer": 1,
+      "explanation": "'Looking twice can save a life.' Plus an over-the-shoulder check for the blind zone."
+    },
+    {
+      "id": "c7_008",
+      "ch": 7,
+      "difficulty": 1,
+      "guide_ref": "DG 4.6",
+      "tags": [],
+      "prompt": "Bicyclists on the road have…",
+      "choices": [
+        "Fewer rights than cars",
+        "The same rights, duties, and responsibilities as a vehicle driver",
+        "Right-of-way at all times",
+        "No right to use a full lane"
+      ],
+      "answer": 1,
+      "explanation": "They may legally use the full lane. Leave at least 3 feet when following or passing."
+    },
+    {
+      "id": "c7_009",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 4.6",
+      "tags": [],
+      "prompt": "You may drive in a bike lane only when…",
+      "choices": [
+        "Traffic is heavy",
+        "Turning, or crossing it to park at the curb",
+        "It's empty",
+        "Passing a slow car"
+      ],
+      "answer": 1,
+      "explanation": "And look for cyclists before you open your door after parking."
+    },
+    {
+      "id": "c7_010",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 4.2",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "A school bus ahead in your direction flashes red and extends its stop arm. Kids still ride to the Harbor school. You…",
+      "choices": [
+        "Pass slowly on the left",
+        "Stop and stay stopped until the lights stop flashing and the arm retracts — then keep watching for children",
+        "Stop only if kids are visible",
+        "Use the center turn lane to get around"
+      ],
+      "answer": 1,
+      "explanation": "Everyone in your direction stops, including all turn lanes. Fines are doubled for passing a stopped school bus."
+    },
+    {
+      "id": "c7_011",
+      "ch": 7,
+      "difficulty": 3,
+      "guide_ref": "DG 4.2",
+      "tags": [],
+      "prompt": "School bus stopped with red lights on the OTHER side of a road. When do you, traveling the opposite direction, NOT have to stop?",
+      "choices": [
+        "Never — always stop",
+        "When the road has three or more lanes, or the directions are separated by a median or barrier",
+        "When you're going under 25",
+        "When no children are visible"
+      ],
+      "answer": 1,
+      "explanation": "On a two-lane road, both directions stop."
+    },
+    {
+      "id": "c7_012",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 4.17",
+      "tags": [
+        "story"
+      ],
+      "in_world_trigger": "patrol.lights",
+      "prompt": "An Authority tow truck sits on the right shoulder with lights flashing — an emergency zone. You must either move over a lane or…",
+      "choices": [
+        "Honk as you pass",
+        "Slow to at least 10 mph below the limit, and never over 50 in the zone",
+        "Slow to 5 mph",
+        "Stop behind it"
+      ],
+      "answer": 1,
+      "explanation": "Over or slow, never nothing. Applies to tow trucks, utility, waste, maintenance, police, fire, ambulance."
+    },
+    {
+      "id": "c7_013",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 4.12, 4.17",
+      "tags": [],
+      "prompt": "In a work zone you must yield to…",
+      "choices": [
+        "Only flaggers",
+        "Highway construction personnel, vehicles with flashing yellow lights, and equipment inside the zone",
+        "Trucks only",
+        "Nobody; it's a normal road"
+      ],
+      "answer": 1,
+      "explanation": "Fines double when workers are present. Slow down even when you don't see them — narrow lanes and rough pavement are the hazard."
+    },
+    {
+      "id": "c7_014",
+      "ch": 7,
+      "difficulty": 1,
+      "guide_ref": "DG 4.8",
+      "tags": [],
+      "prompt": "An orange triangle emblem on the back of a vehicle means…",
+      "choices": [
+        "Hazardous cargo",
+        "A slow-moving vehicle designed for 25 mph or less",
+        "Student driver",
+        "Oversize load"
+      ],
+      "answer": 1,
+      "explanation": "Be patient; pass with a full lane where there are two, or at least 3 feet where there's one."
+    },
+    {
+      "id": "c7_015",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 4.7",
+      "tags": [
+        "quiet"
+      ],
+      "in_world_trigger": "zone.rail.enter",
+      "prompt": "Railroad lights flash, bells ring, the gate hasn't dropped yet, and the noise is pulling every Quiet on the block toward the crossing. You stop…",
+      "choices": [
+        "On the tracks to see better",
+        "Between 15 and 50 feet from the nearest rail, outside the gates — whether the gate is down or not",
+        "Just short of the gate arm",
+        "You don't; the gate is still up"
+      ],
+      "answer": 1,
+      "explanation": "Never drive around a gate. Trains can be closer, quieter, and faster than they look."
+    },
+    {
+      "id": "c7_016",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 4.7",
+      "tags": [
+        "story"
+      ],
+      "prompt": "The Beetle stalls ON the tracks. You…",
+      "choices": [
+        "Keep cranking the starter",
+        "Get everyone (cats included) out immediately and away from the tracks, then call the number on the blue-and-white Emergency Notification sign with the crossing ID — or 911",
+        "Push the car with the plow",
+        "Wait inside for help"
+      ],
+      "answer": 1,
+      "explanation": "People first. The ENS sign is how dispatch stops the train."
+    },
+    {
+      "id": "c7_017",
+      "ch": 7,
+      "difficulty": 1,
+      "guide_ref": "DG 4.7",
+      "tags": [],
+      "prompt": "Driving near Link light rail, keep at least ___ between you and a train.",
+      "choices": [
+        "10 feet",
+        "One car length or more",
+        "Half a block",
+        "No minimum"
+      ],
+      "answer": 1,
+      "explanation": "And never stop, park, or leave your car on the tracks."
+    },
+    {
+      "id": "c7_018",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 4.1",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Outside the venue: fans with their backs to you, fans under umbrellas, fans filming with headphones in. Per the guide, these people are dangerous because they…",
+      "choices": [
+        "Are breaking the law",
+        "Can't see you or are distracted — you have to see for them",
+        "Have the right-of-way only if they look",
+        "Should be honked at"
+      ],
+      "answer": 1,
+      "explanation": "Look for people who can't see you, are distracted, or may be confused (tourists, map-readers)."
+    },
+    {
+      "id": "c7_019",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 3.1",
+      "tags": [
+        "kpop",
+        "quiet"
+      ],
+      "prompt": "A sasaeng-type car is tailgating you, flashing lights, weaving. They're loud enough to wake the whole street. As the target of road rage you should…",
+      "choices": [
+        "Brake-check them",
+        "Take a breath, move out of the way, avoid gestures, and if followed drive to a populated area with open businesses; call 911 if needed",
+        "Speed up to lose them",
+        "Pull over and confront them"
+      ],
+      "answer": 1,
+      "explanation": "Distance yourself physically and mentally. Road rage is a criminal offense; aggressive driving is a traffic offense."
+    },
+    {
+      "id": "c7_020",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 3.1",
+      "tags": [],
+      "prompt": "Reporting an aggressive driver to 911, the guide wants you to give…",
+      "choices": [
+        "Your opinion of their driving",
+        "Location last seen, plate if known, direction of travel, road, vehicle colors, weapons if any, what happened, and whether you were a victim or witness",
+        "Only the plate",
+        "A video"
+      ],
+      "answer": 1,
+      "explanation": "Report in-progress incidents immediately."
+    },
+    {
+      "id": "c7_021",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 3.1",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Jonah wants to race a courier van 'for the fancam.' Street racing penalties can include…",
+      "choices": [
+        "A warning letter",
+        "Fines, jail, and vehicle impound — for drivers and anyone who instigates or assists",
+        "Points only",
+        "Nothing if no one is hurt"
+      ],
+      "answer": 1,
+      "explanation": "Racing and unauthorized street demonstrations are among the ways you lose your license."
+    },
+    {
+      "id": "c7_022",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 3.1",
+      "tags": [],
+      "prompt": "Which of these is a listed sign that YOU may be experiencing road rage?",
+      "choices": [
+        "Signaling early",
+        "Speeding up to beat a light, using the horn excessively, or braking to stop someone from following too closely",
+        "Leaving extra space",
+        "Counting following seconds"
+      ],
+      "answer": 1,
+      "explanation": "Allow plenty of time, create space margins, and show grace."
+    },
+    {
+      "id": "c7_023",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 4.4",
+      "tags": [],
+      "prompt": "When following a large vehicle, adjust your following distance so that…",
+      "choices": [
+        "You're in its slipstream",
+        "You have a wide view of the roadway ahead",
+        "You can read its plate",
+        "Its driver can't see you"
+      ],
+      "answer": 1,
+      "explanation": "You can't react to what the truck is hiding."
+    },
+    {
+      "id": "c8_001",
+      "ch": 8,
+      "difficulty": 1,
+      "guide_ref": "DG 3.4",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Weverse buzzes at a red light — a new HUSH teaser. Holding your phone to look is…",
+      "choices": [
+        "Fine while stopped",
+        "Illegal for every driver — you can't hold any electronic device while driving; hands-free is permitted",
+        "Fine under 10 seconds",
+        "Fine for navigation"
+      ],
+      "answer": 1,
+      "explanation": "Applies to phones, tablets, gaming devices. Fines after a first violation can double."
+    },
+    {
+      "id": "c8_002",
+      "ch": 8,
+      "difficulty": 2,
+      "guide_ref": "DG 3.0",
+      "tags": [
+        "kpop",
+        "quiet"
+      ],
+      "prompt": "You want the fanchant in your ears without waking the block. Driving with earbuds or noise-canceling headphones in both ears is…",
+      "choices": [
+        "Fine at low volume",
+        "Against the law; one hands-free earpiece in one ear is allowed if it complies with the WAC",
+        "Fine on freeways",
+        "Required to reduce distraction"
+      ],
+      "answer": 1,
+      "explanation": "Horns, sirens, and screeching tires are information. Keep an ear open."
+    },
+    {
+      "id": "c8_003",
+      "ch": 8,
+      "difficulty": 1,
+      "guide_ref": "DG 3.1",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "Ellensburg to Vantage, midnight, and you can't remember the last few miles. The guide says…",
+      "choices": [
+        "Turn the music up",
+        "Pull off the road and take a 20-minute nap",
+        "Open the window and push on",
+        "Drink coffee and keep going"
+      ],
+      "answer": 1,
+      "explanation": "Fatigue is quiet. It gets you before they do."
+    },
+    {
+      "id": "c8_004",
+      "ch": 8,
+      "difficulty": 1,
+      "guide_ref": "DG 3.1",
+      "tags": [],
+      "prompt": "On a long trip, plan a stop about every…",
+      "choices": [
+        "30 miles",
+        "100 miles or 2 hours",
+        "300 miles",
+        "Tank of gas"
+      ],
+      "answer": 1,
+      "explanation": "Walk, fresh air, water. Most people need 7–9 hours of sleep to stay alert."
+    },
+    {
+      "id": "c8_005",
+      "ch": 8,
+      "difficulty": 2,
+      "guide_ref": "DG 3.1",
+      "tags": [],
+      "in_world_trigger": "fatigue.yellow",
+      "prompt": "Which is NOT a listed sign of driver fatigue?",
+      "choices": [
+        "Hitting rumble strips or drifting from your lane",
+        "Missing exits or signs",
+        "Feeling irritable or restless",
+        "Checking mirrors every few seconds"
+      ],
+      "answer": 3,
+      "explanation": "Frequent mirror checks are a good habit, not a warning sign."
+    },
+    {
+      "id": "c8_006",
+      "ch": 8,
+      "difficulty": 2,
+      "guide_ref": "DG 3.1",
+      "tags": [],
+      "prompt": "The most common impairing substance in impaired-driving crashes is ___; the most common impairment in FATAL crashes is ___.",
+      "choices": [
+        "Cannabis / alcohol",
+        "Alcohol / polydrug use (mixing substances)",
+        "Prescription drugs / alcohol",
+        "Fatigue / cannabis"
+      ],
+      "answer": 1,
+      "explanation": "Mixing alcohol, cannabis, and other drugs multiplies effects."
+    },
+    {
+      "id": "c8_007",
+      "ch": 8,
+      "difficulty": 1,
+      "guide_ref": "DG 3.1",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "A 22-year-old crew member legally uses a cannabis edible at the afterparty, then wants to drive the van. The guide's position on cannabis and driving is…",
+      "choices": [
+        "Fine after two hours",
+        "There is no safe amount — driving after any cannabis use is illegal at every age",
+        "Fine under 5 ng for adults",
+        "Fine if it's an edible"
+      ],
+      "answer": 1,
+      "explanation": "Legal to possess at 21+, never legal to drive on."
+    },
+    {
+      "id": "c8_008",
+      "ch": 8,
+      "difficulty": 2,
+      "guide_ref": "DG 3.1",
+      "tags": [],
+      "prompt": "Your new allergy medicine says 'may cause drowsiness; do not operate heavy machinery.' That warning…",
+      "choices": [
+        "Doesn't apply to cars",
+        "Includes driving — don't drive on a new prescription or higher dose until you know how it affects you",
+        "Only applies with alcohol",
+        "Applies to trucks only"
+      ],
+      "answer": 1,
+      "explanation": "Legal doesn't mean safe. Impaired driving is criminal regardless of the drug's source."
+    },
+    {
+      "id": "c8_009",
+      "ch": 8,
+      "difficulty": 2,
+      "guide_ref": "DG 1.15",
+      "tags": [],
+      "prompt": "You've been drinking, so you sit in the parked car with the keys to 'sleep it off' in the driver's seat. DUI law…",
+      "choices": [
+        "Doesn't apply — the car isn't moving",
+        "Can still apply, because being in physical control of the vehicle counts",
+        "Only applies on public roads",
+        "Applies only if the engine is running"
+      ],
+      "answer": 1,
+      "explanation": "If you can take control of the engine or operation, you're in physical control."
+    },
+    {
+      "id": "c8_010",
+      "ch": 8,
+      "difficulty": 1,
+      "guide_ref": "DG 1.15",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "The band's manager has an open bottle from the wrap party. Where may open alcohol or cannabis be transported?",
+      "choices": [
+        "In the back seat, capped",
+        "Only in the trunk or truck bed — not in any compartment the driver can reach",
+        "In the glove box",
+        "Anywhere if the driver is sober"
+      ],
+      "answer": 1,
+      "explanation": "Open-container violations apply to passengers too."
+    },
+    {
+      "id": "c8_011",
+      "ch": 8,
+      "difficulty": 2,
+      "guide_ref": "DG 4.19",
+      "tags": [
+        "story"
+      ],
+      "prompt": "Gracie escapes her carrier and climbs into your lap while you drive. The guide classifies a loose animal as…",
+      "choices": [
+        "Fine if it's small",
+        "A potential distraction; it's illegal to do anything that takes your focus off driving",
+        "Only a problem at highway speed",
+        "A passenger, subject to seat-belt law"
+      ],
+      "answer": 1,
+      "explanation": "Animals outside the cab (truck beds) need a harness or enclosure; transporting them unsafely is a misdemeanor."
+    },
+    {
+      "id": "c8_012",
+      "ch": 8,
+      "difficulty": 2,
+      "guide_ref": "DG 3.4",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Replaying the comeback stage in your head while the road goes by is which type of distraction?",
+      "choices": [
+        "Inside the vehicle",
+        "Outside the vehicle",
+        "Physical",
+        "Mental"
+      ],
+      "answer": 3,
+      "explanation": "Daydreaming, worrying, and strong emotions are mental distractions. Billboards are outside; phones are inside; fatigue is physical."
+    },
+    {
+      "id": "c8_013",
+      "ch": 8,
+      "difficulty": 2,
+      "guide_ref": "DG 3.5",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Talking to the maknae while steering and watching mirrors is which kind of attention?",
+      "choices": [
+        "Focused",
+        "Divided",
+        "Sustained",
+        "Switching"
+      ],
+      "answer": 1,
+      "explanation": "Divided = several things at once. The guide's advice: resist multitasking behind the wheel and limit passengers."
+    },
+    {
+      "id": "c8_014",
+      "ch": 8,
+      "difficulty": 1,
+      "guide_ref": "DG 3.1",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "Before leaving the Harbor lot you're wound up about a photocard trade gone wrong. A calming technique the guide suggests for a parked car is…",
+      "choices": [
+        "Rev the engine",
+        "Breathe in through your nose and exhale like you're cooling hot soup, or count backward from 100 by threes",
+        "Blast the fanchant",
+        "Text about it first"
+      ],
+      "answer": 1,
+      "explanation": "Anxious drivers get heavy on the accelerator. Notice the feeling, then drive."
+    },
+    {
+      "id": "c8_015",
+      "ch": 8,
+      "difficulty": 1,
+      "guide_ref": "DG 2.6",
+      "tags": [
+        "story"
+      ],
+      "prompt": "Bea's 12-year-old nephew calls shotgun. Children under ___ should never ride in the front seat because of airbags.",
+      "choices": [
+        "8",
+        "10",
+        "13",
+        "16"
+      ],
+      "answer": 2,
+      "explanation": "Airbags can seriously injure or kill children. Back seat until 13."
+    },
+    {
+      "id": "c8_016",
+      "ch": 8,
+      "difficulty": 1,
+      "guide_ref": "DG 2.6",
+      "tags": [],
+      "prompt": "The shoulder belt is annoying so you tuck it under your arm. That's…",
+      "choices": [
+        "Fine on short trips",
+        "Never — the belt goes across the middle of the chest and shoulder, lap belt snug on the hips, never behind the back or under the arm",
+        "Fine if the lap belt is tight",
+        "Recommended for comfort"
+      ],
+      "answer": 1,
+      "explanation": "Buckling correctly is the single most effective thing you can do."
+    },
+    {
+      "id": "c8_017",
+      "ch": 8,
+      "difficulty": 2,
+      "guide_ref": "DG 2.6",
+      "tags": [],
+      "prompt": "A 6-year-old who is 4 feet tall rides in…",
+      "choices": [
+        "A regular seat belt",
+        "A booster or car seat — required until the belt fits properly, typically 4'9\" (ages 8–12)",
+        "The front seat",
+        "A rear-facing seat"
+      ],
+      "answer": 1,
+      "explanation": "Rear-facing to 2; harness 2–4; booster from 4 until the belt fits."
+    },
+    {
+      "id": "c8_018",
+      "ch": 8,
+      "difficulty": 2,
+      "guide_ref": "DG 2.5",
+      "tags": [],
+      "prompt": "Adjusting the driver's seat: your chest should be at least ___ from the steering wheel, and the headrest even with your ___.",
+      "choices": [
+        "6 inches / shoulders",
+        "10 inches / ears",
+        "14 inches / neck",
+        "As close as comfortable / crown"
+      ],
+      "answer": 1,
+      "explanation": "10 inches leaves room for the airbag; headrest at ear height protects against whiplash."
+    },
+    {
+      "id": "c8_019",
+      "ch": 8,
+      "difficulty": 2,
+      "guide_ref": "DG 2.13, 3.0",
+      "tags": [
+        "story"
+      ],
+      "prompt": "The guide's 'before you go' checklist ends with checking in with yourself. Which question is on it?",
+      "choices": [
+        "Is the playlist queued?",
+        "Are your emotions under control so you can make wise choices behind the wheel?",
+        "Is the plow armed?",
+        "Did you post the fancam?"
+      ],
+      "answer": 1,
+      "explanation": "Also: healthy and clear-headed? Ready to focus? If not, let someone else drive."
+    },
+    {
+      "id": "c8_020",
+      "ch": 8,
+      "difficulty": 2,
+      "guide_ref": "DG 4.19, 3.6",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "The van's roof is stacked with unsecured lightstick crates for the Harbor show. Driving with an unsecured load is…",
+      "choices": [
+        "Fine under 35 mph",
+        "Illegal and dangerous — tie everything down; you and your passengers are responsible for items that fall or blow out",
+        "Fine if it's light",
+        "Only a problem on freeways"
+      ],
+      "answer": 1,
+      "explanation": "Litter and debris cause crashes; Washington's littering fines are severe."
+    },
+    {
+      "id": "c8_021",
+      "ch": 8,
+      "difficulty": 1,
+      "guide_ref": "DG 3.6",
+      "tags": [
+        "quiet"
+      ],
+      "prompt": "You idle the Beetle in the closed Valley garage to stay warm while sorting photocards. The guide warns that…",
+      "choices": [
+        "It wastes fuel only",
+        "Idling in a garage can release lethal carbon monoxide",
+        "It attracts the Quiet only",
+        "It's fine with the door cracked"
+      ],
+      "answer": 1,
+      "explanation": "Turn the engine off when parked for a while."
+    },
+    {
+      "id": "c8_022",
+      "ch": 8,
+      "difficulty": 2,
+      "guide_ref": "PG p.4, 9",
+      "tags": [
+        "kpop"
+      ],
+      "prompt": "According to the Parent Guide, why are extra teen passengers such a risk for a new driver — even quiet ones?",
+      "choices": [
+        "They add weight",
+        "Teen crash rates rise with each teen passenger; they distract and can encourage speeding or showing off",
+        "Insurance doesn't cover them",
+        "They block the mirrors"
+      ],
+      "answer": 1,
+      "explanation": "It's why the intermediate license limits passengers under 20 for the first year."
+    },
+    {
+      "id": "c8_023",
+      "ch": 8,
+      "difficulty": 2,
+      "guide_ref": "PG p.3",
+      "tags": [],
+      "prompt": "The Parent Guide notes the brain region that inhibits risky behavior isn't fully developed until about age…",
+      "choices": [
+        "16",
+        "18",
+        "21",
+        "25"
+      ],
+      "answer": 3,
+      "explanation": "Reaction time and coordination peak in the teens; judgment lags. Practice and rules bridge the gap."
+    },
+    {
+      "id": "c8_024",
+      "ch": 8,
+      "difficulty": 1,
+      "guide_ref": "DG 3.6",
+      "tags": [
+        "story"
+      ],
+      "prompt": "Deac's end-of-run debrief matches the guide's self-evaluation. Which question is on it?",
+      "choices": [
+        "How fast did you go?",
+        "Did anything surprise me, and did I surprise anyone?",
+        "How many photocards did you find?",
+        "Was the radio on?"
+      ],
+      "answer": 1,
+      "explanation": "Also: Was my driving legal, proficient, and smooth? What do I change next time?"
+    }
+  ]
+}

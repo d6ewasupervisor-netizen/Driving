@@ -1,0 +1,1328 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "game": "Quiet Roads",
+    "bank": "v3_routines",
+    "supplements": [
+      "questions_v1.json",
+      "questions_v2_weak.json"
+    ],
+    "locale": "en-US",
+    "sources": {
+      "DG": "Washington Driver Guide (text-only, 2025) — section numbers",
+      "PG": "Washington Parent Guide to Teen Driving — page numbers"
+    },
+    "focus": "Work-zone specifics (Ch2/7); OODA and Plan-Communicate-Check-Execute-Evaluate as scenario questions (Ch5); the parked-vehicle scanning list as the guide-side of the Mya early-warning mechanic (Ch5, tag mya).",
+    "difficulty_scale": {
+      "1": "recall",
+      "2": "apply",
+      "3": "judge / multi-step"
+    },
+    "verify_against_guide": [
+      "v3_c5_scan_001 — the '12 to 15 seconds ahead' figure; if your edition says 10–15, change the answer text, not the index.",
+      "v3_c7_wz_009 — 60-day suspension for reckless endangerment of roadway workers (RCW 46.61.527); confirm the guide states it.",
+      "v3_c2_wz_010 — 'work zone speed limits are enforceable when no workers are present; fines double when they are' — confirm exact wording."
+    ]
+  },
+  "questions": [
+    {
+      "id": "v3_c2_wz_001",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.12, 4.17",
+      "tags": [
+        "workzone",
+        "kpop"
+      ],
+      "in_world_trigger": "workzone.enter",
+      "prompt": "The Weverse Terminal shows a clear route into the Fandom Harbor, but an orange diamond sign reads ROAD WORK AHEAD. What does the sign require of you right now?",
+      "choices": [
+        "Nothing until you see a worker",
+        "Slow down and get ready for lane shifts, rough pavement, and stopped traffic — even if no workers are visible",
+        "Turn around; the road is closed",
+        "Speed up to clear the zone quickly"
+      ],
+      "answer": 1,
+      "explanation": "Orange = work zone. The hazards are narrow lanes, sudden stops, and equipment — they're there whether or not you can see a person in a vest."
+    },
+    {
+      "id": "v3_c2_wz_002",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.12",
+      "tags": [
+        "workzone"
+      ],
+      "in_world_trigger": "sign.prompt:flagger_ahead",
+      "prompt": "An orange sign shows a stick figure holding a flag. That means…",
+      "choices": [
+        "Pedestrian crossing",
+        "A flagger is ahead — be prepared to stop and follow their directions",
+        "School zone",
+        "Parade route"
+      ],
+      "answer": 1,
+      "explanation": "Flagger-ahead symbol. Their paddle or flag overrides everything else you see."
+    },
+    {
+      "id": "v3_c2_wz_003",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.10, 4.17",
+      "tags": [
+        "workzone",
+        "quiet"
+      ],
+      "in_world_trigger": "flagger.stop",
+      "prompt": "An Authority flagger turns her paddle to the red octagon side: STOP. Twenty of the Quiet stand in the median behind her, and you'd rather not idle here. You…",
+      "choices": [
+        "Creep forward so she knows you're waiting",
+        "Stop and stay stopped until she turns the paddle or waves you on",
+        "Pass on the shoulder if it's clear",
+        "Tap the horn once so she hurries"
+      ],
+      "answer": 1,
+      "explanation": "STOP means stopped. A flagger is authorized to direct traffic; her paddle carries the weight of a sign or signal."
+    },
+    {
+      "id": "v3_c2_wz_004",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.17",
+      "tags": [
+        "workzone"
+      ],
+      "in_world_trigger": "flagger.slow",
+      "prompt": "The flagger's paddle now shows the orange diamond side: SLOW. You…",
+      "choices": [
+        "Stop anyway to be safe",
+        "Proceed slowly, watching for workers and equipment, ready to stop",
+        "Resume the posted limit",
+        "Wait for a green light"
+      ],
+      "answer": 1,
+      "explanation": "SLOW is permission to move, not permission to speed. Workers may be inches from your lane."
+    },
+    {
+      "id": "v3_c2_wz_005",
+      "ch": 2,
+      "difficulty": 2,
+      "guide_ref": "DG 4.17",
+      "tags": [
+        "workzone"
+      ],
+      "prompt": "A flagger with a red flag holds it out horizontally across your lane and stands still. That signal means…",
+      "choices": [
+        "Slow down",
+        "Stop",
+        "Proceed with caution",
+        "Merge left"
+      ],
+      "answer": 1,
+      "explanation": "Flag held still across the lane = stop. A flag waved up and down = slow down. Same meanings as the paddle."
+    },
+    {
+      "id": "v3_c2_wz_006",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.17",
+      "tags": [
+        "workzone",
+        "kpop"
+      ],
+      "in_world_trigger": "arrow_board.left",
+      "prompt": "A lighted arrow board ahead flashes a big arrow pointing left — Lumi-green on a black panel. That tells you to…",
+      "choices": [
+        "Turn left at the next street",
+        "Merge into the lane to your left; your lane is closing",
+        "Keep right",
+        "Stop for a flagger"
+      ],
+      "answer": 1,
+      "explanation": "Flashing arrow = merge that direction, as early and smoothly as you safely can."
+    },
+    {
+      "id": "v3_c2_wz_007",
+      "ch": 2,
+      "difficulty": 2,
+      "guide_ref": "DG 4.17",
+      "tags": [
+        "workzone"
+      ],
+      "prompt": "Another arrow board is lit, but only its four corner lights (or a flashing bar) are blinking — no arrow. That means…",
+      "choices": [
+        "Merge left",
+        "Merge right",
+        "Caution — proceed carefully; no lane change is required",
+        "The board is broken; ignore it"
+      ],
+      "answer": 2,
+      "explanation": "Corners or bar = caution mode. Slow down, stay in your lane, expect workers or equipment near the road."
+    },
+    {
+      "id": "v3_c2_wz_008",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.17",
+      "tags": [
+        "workzone",
+        "kpop"
+      ],
+      "prompt": "Orange cones and striped drums pinch the corridor down to one lane. Jae says there's room to slip between two drums for a shortcut. Channelizing devices exist to…",
+      "choices": [
+        "Mark where you may stop",
+        "Guide you along the open path — stay between them and don't drive over or around them",
+        "Mark photo spots for the fancam",
+        "Show where the shoulder begins"
+      ],
+      "answer": 1,
+      "explanation": "Cones, drums, barricades, and vertical panels define the only lane that's yours. Everything outside them may be a trench, equipment, or a worker."
+    },
+    {
+      "id": "v3_c2_wz_009",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.12, 4.17",
+      "tags": [
+        "workzone"
+      ],
+      "prompt": "An orange sign reads END ROAD WORK. You may…",
+      "choices": [
+        "Immediately accelerate to the previous posted limit",
+        "Resume normal driving once it's safe — while still watching for work trucks re-entering traffic",
+        "Change lanes freely inside the zone behind you",
+        "Ignore any remaining cones"
+      ],
+      "answer": 1,
+      "explanation": "Restrictions end at the sign, but trucks and equipment often exit the zone right there. Check mirrors before you speed up."
+    },
+    {
+      "id": "v3_c2_wz_010",
+      "ch": 2,
+      "difficulty": 2,
+      "guide_ref": "DG 4.12, 4.17",
+      "tags": [
+        "workzone",
+        "quiet"
+      ],
+      "prompt": "A white regulatory sign in the work zone reads SPEED LIMIT 45 under an orange WORK ZONE plaque. It's 2 a.m., no workers anywhere, and the Quiet on the shoulder are dormant. Is the 45 enforceable?",
+      "choices": [
+        "No — work-zone limits only apply when workers are present",
+        "Yes — the posted work-zone limit applies whenever it's signed; fines double when workers ARE present",
+        "Only during daylight",
+        "Only if a flagger is out"
+      ],
+      "answer": 1,
+      "explanation": "The lower limit is the law while the signs are up. Workers present makes it a doubled fine, not a different rule."
+    },
+    {
+      "id": "v3_c2_wz_011",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.17",
+      "tags": [
+        "workzone"
+      ],
+      "prompt": "Orange signs: ONE LANE ROAD AHEAD, then BE PREPARED TO STOP. Expect…",
+      "choices": [
+        "A toll booth",
+        "A flagger or pilot car controlling alternating traffic",
+        "A school crossing",
+        "A ramp meter"
+      ],
+      "answer": 1,
+      "explanation": "One lane shared by both directions is run by flaggers, a pilot car, or a temporary signal. Get in line and wait your turn."
+    },
+    {
+      "id": "v3_c2_wz_012",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.12, 4.17",
+      "tags": [
+        "workzone",
+        "kpop"
+      ],
+      "prompt": "An orange DETOUR sign with an arrow points right. The Weverse Terminal insists the venue is straight ahead. You follow…",
+      "choices": [
+        "The Terminal — it has live traffic",
+        "The detour sign — signs and markings override the app",
+        "Whichever is shorter",
+        "The car in front of you"
+      ],
+      "answer": 1,
+      "explanation": "The app doesn't know about the trench. Signs do."
+    },
+    {
+      "id": "v3_c2_wz_013",
+      "ch": 2,
+      "difficulty": 2,
+      "guide_ref": "DG 4.10, 4.17",
+      "tags": [
+        "workzone"
+      ],
+      "prompt": "The traffic signal at a work-zone intersection shows green, but the flagger standing in the crosswalk holds up STOP. You obey…",
+      "choices": [
+        "The signal — it's the law",
+        "The flagger — people authorized to direct traffic override signs and signals",
+        "Neither; proceed slowly",
+        "Whoever changed most recently"
+      ],
+      "answer": 1,
+      "explanation": "Flaggers, officers, and crossing guards outrank the signal. The signal doesn't know a loader is backing across the lane."
+    },
+    {
+      "id": "v3_c2_wz_014",
+      "ch": 2,
+      "difficulty": 2,
+      "guide_ref": "DG 4.17",
+      "tags": [
+        "workzone",
+        "quiet"
+      ],
+      "prompt": "Inside the zone the lane jogs left and the edge line has been ground off. The only guide to where your lane is comes from…",
+      "choices": [
+        "Your memory of the road",
+        "The temporary markings and channelizing devices — follow them even where they contradict old paint",
+        "The tire tracks of the car ahead",
+        "The Terminal's lane overlay"
+      ],
+      "answer": 1,
+      "explanation": "Old lines are often left behind in work zones. Temporary markings and cones are the current truth."
+    },
+    {
+      "id": "v3_c2_wz_015",
+      "ch": 2,
+      "difficulty": 1,
+      "guide_ref": "DG 4.12",
+      "tags": [
+        "workzone"
+      ],
+      "prompt": "Which sign color tells you that people are working on or near the road?",
+      "choices": [
+        "Yellow",
+        "Orange",
+        "Fluorescent yellow-green",
+        "Blue"
+      ],
+      "answer": 1,
+      "explanation": "Orange = work zone. Yellow = general warning. Yellow-green = pedestrians/school/bikes. Blue = services."
+    },
+    {
+      "id": "v3_c7_wz_001",
+      "ch": 7,
+      "difficulty": 1,
+      "guide_ref": "DG 4.17",
+      "tags": [
+        "workzone"
+      ],
+      "in_world_trigger": "pilot_car.follow",
+      "prompt": "A truck with a FOLLOW ME / PILOT CAR sign pulls onto the one-lane pass road ahead of the convoy. You…",
+      "choices": [
+        "Pass it as soon as the lane is clear",
+        "Stay behind it at its speed until it pulls off at the far end of the zone",
+        "Follow only if it's going the limit",
+        "Flash your lights to be released early"
+      ],
+      "answer": 1,
+      "explanation": "The pilot car is the only thing keeping opposing traffic from meeting you head-on in one lane. Its pace is your pace."
+    },
+    {
+      "id": "v3_c7_wz_002",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 4.17, 5.2",
+      "tags": [
+        "workzone",
+        "story"
+      ],
+      "prompt": "Convoy in a work zone: Hank's rig ahead, uneven pavement, cones inches from the lane. Your following distance should be…",
+      "choices": [
+        "Closer, so nobody cuts in",
+        "Longer than normal — work zones bring sudden stops, and there's no room to swerve",
+        "The same 2 seconds",
+        "Whatever keeps the ㄷㄷ gauge green"
+      ],
+      "answer": 1,
+      "explanation": "Four seconds behind a truck already; add more where the lane has no escape route."
+    },
+    {
+      "id": "v3_c7_wz_003",
+      "ch": 7,
+      "difficulty": 1,
+      "guide_ref": "DG 4.17",
+      "tags": [
+        "workzone",
+        "quiet"
+      ],
+      "prompt": "A slow Authority grader eases off the shoulder into your lane inside the zone, amber lights flashing. You must…",
+      "choices": [
+        "Honk so the operator waits",
+        "Yield to it — work vehicles with flashing yellow lights inside the zone have priority",
+        "Pass on the left immediately",
+        "Stop and wait for a flagger"
+      ],
+      "answer": 1,
+      "explanation": "Workers, equipment, and vehicles with flashing yellow lights get the road inside a work zone."
+    },
+    {
+      "id": "v3_c7_wz_004",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 4.17",
+      "tags": [
+        "workzone",
+        "story"
+      ],
+      "prompt": "You're merged and moving through a two-lane work zone when Jonah's van opens a gap in the other lane. Changing lanes inside the zone is…",
+      "choices": [
+        "Fine if you signal",
+        "Something to avoid — merge where directed before the zone, then hold your lane through it",
+        "Required to keep traffic flowing",
+        "Only allowed for trucks"
+      ],
+      "answer": 1,
+      "explanation": "Lane changes in a work zone put you in a worker's blind spot with no shoulder. Get in the right lane early and stay there."
+    },
+    {
+      "id": "v3_c7_wz_005",
+      "ch": 7,
+      "difficulty": 1,
+      "guide_ref": "DG 4.17, 5.9",
+      "tags": [
+        "workzone",
+        "kpop"
+      ],
+      "prompt": "Crews are pouring a barrier wall and the maknae wants a slow drive-by for content. Slowing to watch work — or stopping to film it — is…",
+      "choices": [
+        "Fine if you stay in your lane",
+        "Dangerous and causes rear-end crashes — keep pace with traffic and keep your eyes on your driving",
+        "Allowed on the shoulder",
+        "Fine with hazards on"
+      ],
+      "answer": 1,
+      "explanation": "Rubbernecking is how the car behind you ends up in your trunk."
+    },
+    {
+      "id": "v3_c7_wz_006",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 4.17",
+      "tags": [
+        "workzone"
+      ],
+      "in_world_trigger": "patrol.lights",
+      "prompt": "A utility truck sits on the shoulder with amber lights flashing while a lineman works the pole. No cones, no signs — but the law treats this as…",
+      "choices": [
+        "A normal shoulder stop",
+        "An emergency zone — move over a lane if you safely can, or slow to at least 10 mph below the limit",
+        "A work zone only if a flagger appears",
+        "Nothing unless it's an ambulance"
+      ],
+      "answer": 1,
+      "explanation": "Tow, utility, maintenance, waste, police, fire, ambulance — stopped with lights means over or slow."
+    },
+    {
+      "id": "v3_c7_wz_007",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 4.17",
+      "tags": [
+        "workzone",
+        "quiet"
+      ],
+      "prompt": "Night work zone on I-90. Portable light towers glare across the lane and a dormant cluster stands just past the cones. Which is the guide-correct response?",
+      "choices": [
+        "Turn on high beams to see through the glare",
+        "Slow down more than you would by day; glare and workers in dark clothing shrink what you can see",
+        "Look directly at the lights to adjust your eyes",
+        "Speed up to get out of the glare faster"
+      ],
+      "answer": 1,
+      "explanation": "Same rule as night driving anywhere: don't outdrive what you can see. Glare makes 'what you can see' shorter."
+    },
+    {
+      "id": "v3_c7_wz_008",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 4.4, 4.17",
+      "tags": [
+        "workzone",
+        "story"
+      ],
+      "prompt": "Hank's rig is threading a narrowed lane between barrier walls. There appears to be room beside him. The guide's advice for big rigs in tight zones is…",
+      "choices": [
+        "Ride alongside so he can see you",
+        "Give large vehicles extra room — don't squeeze beside a truck where the lane narrows",
+        "Pass on the right",
+        "Follow within a car length"
+      ],
+      "answer": 1,
+      "explanation": "Trailers drift in narrow lanes. Beside him is already the worst place; beside him between walls is worse."
+    },
+    {
+      "id": "v3_c7_wz_009",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 4.17",
+      "tags": [
+        "workzone"
+      ],
+      "prompt": "A driver blows through a work zone at speed, forcing a worker to jump clear. Under Washington's reckless endangerment of roadway workers law, that driver faces…",
+      "choices": [
+        "A warning",
+        "A criminal charge and a license suspension — this is more than a speeding ticket",
+        "Points only",
+        "Nothing if nobody was hit"
+      ],
+      "answer": 1,
+      "explanation": "Endangering a worker is its own offense with suspension attached. Work-zone infractions also carry doubled fines when workers are present."
+    },
+    {
+      "id": "v3_c7_wz_010",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 4.1, 4.17",
+      "tags": [
+        "workzone",
+        "kpop"
+      ],
+      "prompt": "The sidewalk outside the Harbor is torn up and fans are walking in the coned-off edge of the road. In a work zone, pedestrians…",
+      "choices": [
+        "Lose the right-of-way",
+        "Still have the right-of-way and may be in the roadway on temporary paths — slow and give them room",
+        "Must wait for a flagger",
+        "Should be honked at to move"
+      ],
+      "answer": 1,
+      "explanation": "Temporary pedestrian routes often run in the street. They're still pedestrians."
+    },
+    {
+      "id": "v3_c7_wz_011",
+      "ch": 7,
+      "difficulty": 2,
+      "guide_ref": "DG 5.3, 4.17",
+      "tags": [
+        "workzone"
+      ],
+      "prompt": "Signs a mile before a work zone read LEFT LANE CLOSED AHEAD, then USE BOTH LANES TO MERGE POINT. The correct behavior is…",
+      "choices": [
+        "Merge right immediately and block anyone who doesn't",
+        "Stay in your lane to the merge point, then take turns — a zipper merge",
+        "Drive on the shoulder",
+        "Stop before the taper"
+      ],
+      "answer": 1,
+      "explanation": "The zipper merge is the guide's answer to lane closures: use both lanes, alternate at the taper, keep speeds matched."
+    },
+    {
+      "id": "v3_c7_wz_012",
+      "ch": 7,
+      "difficulty": 1,
+      "guide_ref": "DG 4.17",
+      "tags": [
+        "workzone",
+        "quiet"
+      ],
+      "prompt": "What must a flagger be wearing for you to trust their signals?",
+      "choices": [
+        "Nothing specific",
+        "High-visibility apparel — orange or yellow-green — and they'll use a paddle or red flag",
+        "An Authority badge",
+        "A lightstick"
+      ],
+      "answer": 1,
+      "explanation": "Vest, paddle or flag. That's who's authorized to stop you."
+    },
+    {
+      "id": "v3_c5_ooda_001",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 3.3",
+      "tags": [
+        "ooda",
+        "story",
+        "mya"
+      ],
+      "in_world_trigger": "mya.wake",
+      "prompt": "Pass road, whiteout. Mya sits up in her carrier. You notice a darker shape along the right shoulder. In the OODA Loop, noticing these things is the ___ step.",
+      "choices": [
+        "Orient",
+        "Observe",
+        "Decide",
+        "Act"
+      ],
+      "answer": 1,
+      "explanation": "Observe = gather what's happening: the cat, the shape, the conditions. Nothing's been interpreted yet."
+    },
+    {
+      "id": "v3_c5_ooda_002",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 3.3",
+      "tags": [
+        "ooda",
+        "quiet"
+      ],
+      "prompt": "Same moment. You think: ice patches for the last mile, I'm at 35, the shape is about 60 meters out, and my stopping distance on snow is most of that. Which step is this?",
+      "choices": [
+        "Observe",
+        "Orient",
+        "Decide",
+        "Act"
+      ],
+      "answer": 1,
+      "explanation": "Orient = how the observation relates to you: your speed, traction, position, abilities, and what the cue probably means."
+    },
+    {
+      "id": "v3_c5_ooda_003",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 3.3",
+      "tags": [
+        "ooda"
+      ],
+      "prompt": "You settle on easing off the throttle now and drifting toward the left side of your lane to add space. Which step?",
+      "choices": [
+        "Observe",
+        "Orient",
+        "Decide",
+        "Act"
+      ],
+      "answer": 2,
+      "explanation": "Decide = choosing the response. Notice it was made before the shape resolved into anything — that's the point."
+    },
+    {
+      "id": "v3_c5_ooda_004",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 3.3",
+      "tags": [
+        "ooda",
+        "quiet"
+      ],
+      "prompt": "Your foot comes off the gas gently; your hands make a small correction left. Nothing squeals. Which step?",
+      "choices": [
+        "Observe",
+        "Orient",
+        "Decide",
+        "Act"
+      ],
+      "answer": 3,
+      "explanation": "Act = executing the decision — smoothly, because sudden inputs on snow are noise."
+    },
+    {
+      "id": "v3_c5_ooda_005",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 3.3",
+      "tags": [
+        "ooda"
+      ],
+      "prompt": "You've acted. The shape turns out to be a dormant cluster and you're sliding past at 25 with room to spare. What does the OODA Loop say you do next?",
+      "choices": [
+        "Nothing — the loop is complete",
+        "Go back to Observe — the situation has changed and feeds the next loop",
+        "Speed back up to 35",
+        "Evaluate and file a report"
+      ],
+      "answer": 1,
+      "explanation": "It's a loop. Every action changes what there is to observe."
+    },
+    {
+      "id": "v3_c5_ooda_006",
+      "ch": 5,
+      "difficulty": 3,
+      "guide_ref": "DG 3.3, 5.6",
+      "tags": [
+        "ooda",
+        "story"
+      ],
+      "prompt": "Jonah sees the same cluster, decides to floor it past them, and skids. He observed and he acted. Which step did he skip?",
+      "choices": [
+        "Observe — he didn't see them",
+        "Orient — he never weighed the ice, his speed, or what noise does out here",
+        "Decide — he made no decision",
+        "Act — he hesitated"
+      ],
+      "answer": 1,
+      "explanation": "Fast drivers usually don't fail to see. They fail to relate what they see to their own situation before choosing."
+    },
+    {
+      "id": "v3_c5_ooda_007",
+      "ch": 5,
+      "difficulty": 3,
+      "guide_ref": "DG 3.3, 5.4",
+      "tags": [
+        "ooda"
+      ],
+      "prompt": "Dry day, you judged a gap for a left turn by counting a car from the tree to your road. Rainy day, same intersection, same count, and you barely make it. Which OODA step failed?",
+      "choices": [
+        "Observe — you didn't see the car",
+        "Orient — you didn't adjust the same observation for wet-road acceleration and traction",
+        "Decide — you chose the wrong turn",
+        "Act — you steered badly"
+      ],
+      "answer": 1,
+      "explanation": "Orienting means re-reading the same data in today's conditions. Yesterday's answer was for yesterday's road."
+    },
+    {
+      "id": "v3_c5_ooda_008",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 3.3, 5.0",
+      "tags": [
+        "ooda",
+        "story"
+      ],
+      "prompt": "Brake lights three cars ahead (Observe). You know Hank's loaded rig is right behind you and needs 450 feet to stop (Orient). What decision does that Orient step push you toward?",
+      "choices": [
+        "Brake hard now to be safe",
+        "Begin slowing early and lightly so the truck behind has time to react",
+        "Change lanes to escape the truck",
+        "Speed up to create space ahead"
+      ],
+      "answer": 1,
+      "explanation": "Orienting to what's behind you changes the decision. Early, light braking protects your rear bumper as much as your front."
+    },
+    {
+      "id": "v3_c5_ooda_009",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 3.3",
+      "tags": [
+        "ooda",
+        "kpop"
+      ],
+      "prompt": "The fancam instinct is 'see it, react.' The guide recommends OODA instead because the Orient and Decide steps…",
+      "choices": [
+        "Slow you down enough to avoid tickets",
+        "Turn a reaction into a chosen response that fits the actual conditions",
+        "Are required for the skills exam",
+        "Make the loop look complete"
+      ],
+      "answer": 1,
+      "explanation": "Reacting is what happens when you skip the middle. Responding is what happens when you don't."
+    },
+    {
+      "id": "v3_c5_pccee_001",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 5.0",
+      "tags": [
+        "pccee"
+      ],
+      "prompt": "Sign: LEFT LANE CLOSED 1 MILE. You start deciding when and where you'll move right and what speed you want to be doing at the taper. In the guide's hazard routine, that's…",
+      "choices": [
+        "Plan",
+        "Communicate",
+        "Check",
+        "Execute"
+      ],
+      "answer": 0,
+      "explanation": "Plan = identify the hazard and decide your response, early, while you still have options."
+    },
+    {
+      "id": "v3_c5_pccee_002",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 5.0, 2.5",
+      "tags": [
+        "pccee",
+        "quiet"
+      ],
+      "prompt": "You flick the right signal on a good 100 feet before you intend to move — for nobody, because nobody's behind you, and you do it anyway. That's the ___ step.",
+      "choices": [
+        "Plan",
+        "Communicate",
+        "Check",
+        "Evaluate"
+      ],
+      "answer": 1,
+      "explanation": "Communicate = tell other road users what you intend: signals, lights, hand signals, and (rarely, out here) the horn."
+    },
+    {
+      "id": "v3_c5_pccee_003",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.0",
+      "tags": [
+        "pccee",
+        "story"
+      ],
+      "in_world_trigger": "lanechange.start",
+      "prompt": "Mirror, shoulder — then you set your position and adjust speed so the lane change will need no more than ___ braking. That's the Check step.",
+      "choices": [
+        "Light",
+        "Medium",
+        "Firm",
+        "Emergency"
+      ],
+      "answer": 1,
+      "explanation": "Check = mirrors, blind zone, and a position/speed that makes the change easy. If it would take firm braking, you're late."
+    },
+    {
+      "id": "v3_c5_pccee_004",
+      "ch": 5,
+      "difficulty": 3,
+      "guide_ref": "DG 5.0",
+      "tags": [
+        "pccee"
+      ],
+      "prompt": "At the Check step you realize the only way to make your planned merge is to brake firmly and squeeze in. The routine says you…",
+      "choices": [
+        "Execute anyway — you signaled",
+        "Go back to Plan: pick a new gap or a new place to merge",
+        "Skip to Evaluate",
+        "Use the horn to make room"
+      ],
+      "answer": 1,
+      "explanation": "Check is a gate, not a formality. Failing it sends you back to the start, not forward."
+    },
+    {
+      "id": "v3_c5_pccee_005",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 5.0, 2.8",
+      "tags": [
+        "pccee",
+        "quiet"
+      ],
+      "prompt": "The Execute step, done the way the Quiet require, means…",
+      "choices": [
+        "Making the change quickly before conditions shift",
+        "Making the change smoothly — steady steering, gentle throttle or brake, no surprises for anyone behind you",
+        "Making the change while re-checking the app",
+        "Making the change with the horn"
+      ],
+      "answer": 1,
+      "explanation": "Execute = carry out the plan. Smooth is safe, and smooth is silent."
+    },
+    {
+      "id": "v3_c5_pccee_006",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 5.0, 3.6",
+      "tags": [
+        "pccee",
+        "story"
+      ],
+      "prompt": "Deac's debrief after every run — 'Did anything surprise you? Did you surprise anyone? What changes next time?' — is which step?",
+      "choices": [
+        "Plan",
+        "Check",
+        "Execute",
+        "Evaluate"
+      ],
+      "answer": 3,
+      "explanation": "Evaluate = did it work, and what do you adjust. Skipping it is how the same mistake happens twice."
+    },
+    {
+      "id": "v3_c5_pccee_007",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.0",
+      "tags": [
+        "pccee"
+      ],
+      "prompt": "Put the hazard routine in the guide's order.",
+      "choices": [
+        "Check, Plan, Communicate, Execute, Evaluate",
+        "Plan, Communicate, Check, Execute, Evaluate",
+        "Plan, Check, Communicate, Execute, Evaluate",
+        "Communicate, Plan, Check, Evaluate, Execute"
+      ],
+      "answer": 1,
+      "explanation": "Plan → Communicate → Check → Execute → Evaluate. Signal before the final check, so your intent is out there while you confirm it's safe."
+    },
+    {
+      "id": "v3_c5_pccee_008",
+      "ch": 5,
+      "difficulty": 3,
+      "guide_ref": "DG 5.0, 4.4",
+      "tags": [
+        "pccee",
+        "story"
+      ],
+      "in_world_trigger": "pass.begin",
+      "prompt": "Passing Hank. Plan: the long straight after the patrol. Communicate: left signal. Which observation belongs to the CHECK step before you return to the right lane?",
+      "choices": [
+        "Hank waved",
+        "Both of his headlights are visible in your rearview mirror",
+        "You've been in the left lane for 3 seconds",
+        "Your speedometer reads the limit"
+      ],
+      "answer": 1,
+      "explanation": "Check is what confirms the maneuver is safe to complete. For a truck, that's both headlights in the mirror."
+    },
+    {
+      "id": "v3_c5_pccee_009",
+      "ch": 5,
+      "difficulty": 3,
+      "guide_ref": "DG 5.0, 5.4",
+      "tags": [
+        "pccee",
+        "kpop"
+      ],
+      "prompt": "Left turn into the Harbor across an oncoming lane. Plan: this driveway. Communicate: signal 100 ft out. Check: you count an oncoming car from the utility pole to your road and get 4 seconds. What does that Check tell you about Execute?",
+      "choices": [
+        "Go now — 4 seconds is plenty",
+        "Wait — 4 seconds isn't enough time to clear a lane and a driveway from a stop; let it pass and re-check the next gap",
+        "Turn while the car brakes for you",
+        "Honk, then go"
+      ],
+      "answer": 1,
+      "explanation": "Better too much time than not enough. Oncoming traffic has the right-of-way; Check protects it."
+    },
+    {
+      "id": "v3_c5_pccee_010",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.0, 5.3",
+      "tags": [
+        "pccee",
+        "story"
+      ],
+      "prompt": "Your ramp merge was slow and Jonah had to brake — loud, and his noise was yours. At the Evaluate step the useful conclusion is…",
+      "choices": [
+        "Jonah follows too close",
+        "Get up to traffic speed on the ramp itself next time; commit to the gap earlier",
+        "Merging is dangerous; use the shoulder",
+        "The ramp was too short"
+      ],
+      "answer": 1,
+      "explanation": "Evaluate looks at your own inputs. 'Next ramp, commit' is an evaluation."
+    },
+    {
+      "id": "v3_c5_pccee_011",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.0, 5.2",
+      "tags": [
+        "pccee",
+        "quiet"
+      ],
+      "prompt": "Part of a good Plan, per the guide, is leaving yourself an 'out.' On a two-lane road beside a dormant cluster, that means…",
+      "choices": [
+        "Knowing which lane you'd pass in",
+        "Keeping space around your vehicle and a path you could steer into if something ahead stops or steps out",
+        "Having the horn ready",
+        "Planning to accelerate through trouble"
+      ],
+      "answer": 1,
+      "explanation": "Space is options. When there's no space there's no plan, only reaction."
+    },
+    {
+      "id": "v3_c5_pccee_012",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.0, 5.8",
+      "tags": [
+        "pccee",
+        "story"
+      ],
+      "prompt": "Deac: 'The horn is for when you've already decided to run.' The guide's Communicate step includes the horn when…",
+      "choices": [
+        "Someone is slow to start at a green",
+        "It's needed to warn another road user of danger — a thoughtful, situation-dependent tool",
+        "A friend passes in another car",
+        "You're annoyed"
+      ],
+      "answer": 1,
+      "explanation": "Lights, signals, hand signals, and horn all communicate. Out here the horn's price is higher; its purpose is the same."
+    },
+    {
+      "id": "v3_c5_scan_001",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 5.4",
+      "tags": [
+        "scan"
+      ],
+      "prompt": "How far ahead should you be scanning while you drive?",
+      "choices": [
+        "The car directly ahead",
+        "About 12 to 15 seconds — roughly a block in town, about a quarter mile on the highway",
+        "As far as the headlights reach",
+        "Two car lengths"
+      ],
+      "answer": 1,
+      "explanation": "Far enough that a hazard has time to become a plan instead of an emergency. Eyes near and far, always moving."
+    },
+    {
+      "id": "v3_c5_scan_002",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 5.4",
+      "tags": [
+        "scan",
+        "mya",
+        "quiet"
+      ],
+      "in_world_trigger": "parked_car.cue:exhaust",
+      "prompt": "Kent side street, parked cars both sides, Mya sits up. You spot exhaust curling from a parked sedan's tailpipe. That tells you…",
+      "choices": [
+        "The car is cold",
+        "The engine is running — the car may pull out; slow and be ready",
+        "It's a Sasaeng nest",
+        "Nothing — engines run for heat"
+      ],
+      "answer": 1,
+      "explanation": "The guide's list of parked-vehicle cues: exhaust, lights, turned wheels, a driver in the seat, feet, shadows, movement. Each one means 'this thing may move.'"
+    },
+    {
+      "id": "v3_c5_scan_003",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 5.4",
+      "tags": [
+        "scan",
+        "mya"
+      ],
+      "in_world_trigger": "parked_car.cue:wheels",
+      "prompt": "A parked pickup's front wheels are turned toward the street. Per the guide, you read that as…",
+      "choices": [
+        "Bad parking",
+        "It's about to pull out — give it room and cover the brake",
+        "The driver is inside sleeping",
+        "Nothing; wheels don't indicate intent"
+      ],
+      "answer": 1,
+      "explanation": "Turned wheels are the most reliable 'leaving' cue there is. Slow, move left in your lane if safe."
+    },
+    {
+      "id": "v3_c5_scan_004",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 5.4",
+      "tags": [
+        "scan",
+        "mya",
+        "quiet"
+      ],
+      "in_world_trigger": "parked_car.cue:feet",
+      "prompt": "Between two parked vans you catch a pair of feet visible beneath the bumper. Mya's already up. Meaning?",
+      "choices": [
+        "A mechanic under the car — irrelevant",
+        "Someone is standing behind the van and may step into the street — slow now, before you see the rest of them",
+        "A dropped photocard",
+        "Nothing; feet don't count as a hazard"
+      ],
+      "answer": 1,
+      "explanation": "Feet before faces. The guide wants you responding to the cue, not to the person once they're in your lane."
+    },
+    {
+      "id": "v3_c5_scan_005",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.4",
+      "tags": [
+        "scan",
+        "mya"
+      ],
+      "in_world_trigger": "parked_car.cue:shadow",
+      "prompt": "Low sun. A shadow slides along the pavement from behind a parked box truck you can't see around. You…",
+      "choices": [
+        "Wait to see what casts it",
+        "Treat it as a person or vehicle about to emerge — slow and add space to the truck",
+        "Honk to warn whoever it is",
+        "Speed past before they come out"
+      ],
+      "answer": 1,
+      "explanation": "Shadows and reflections show you what parked vehicles hide. Respond to the shadow; you may never get a better warning."
+    },
+    {
+      "id": "v3_c5_scan_006",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 5.4",
+      "tags": [
+        "scan",
+        "mya"
+      ],
+      "in_world_trigger": "parked_car.cue:lights",
+      "prompt": "A parked car's brake lights come on, then its reverse lights. That's a…",
+      "choices": [
+        "Signal for you to pass",
+        "Vehicle about to move — likely backing out; stop or slow and let it go",
+        "Sign the battery is failing",
+        "Loading-zone indicator"
+      ],
+      "answer": 1,
+      "explanation": "Lights on a parked car mean a driver with intent. Reverse lights mean the intent is toward you."
+    },
+    {
+      "id": "v3_c5_scan_007",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.4, 4.18",
+      "tags": [
+        "scan",
+        "mya",
+        "kpop"
+      ],
+      "in_world_trigger": "parked_car.cue:driver",
+      "prompt": "A fan sits in the driver's seat of a parked car outside the pop-up, door still shut, phone up — filming the Bias Wagon. The guide's concern with 'a person in the seat' of a parked car is…",
+      "choices": [
+        "They might be an anti",
+        "The door may open into your path, or the car may pull out — move left in your lane if safe and slow",
+        "They're blocking the loading zone",
+        "Nothing until the door opens"
+      ],
+      "answer": 1,
+      "explanation": "This is the door zone. Give it a full door's width when you can, and don't be surprised."
+    },
+    {
+      "id": "v3_c5_scan_008",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.4",
+      "tags": [
+        "scan",
+        "mya"
+      ],
+      "prompt": "You can't see behind a parked delivery van, but the shop window across the sidewalk shows a reflection of someone walking toward the curb. Using reflections this way is…",
+      "choices": [
+        "Distracted driving",
+        "Good scanning — reflections in windows and mirrors reveal movement you can't see directly",
+        "Unreliable; ignore it",
+        "Only useful at night"
+      ],
+      "answer": 1,
+      "explanation": "Anything that shows you movement around parked vehicles is information. Use all of it."
+    },
+    {
+      "id": "v3_c5_scan_009",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 5.4, 4.1",
+      "tags": [
+        "scan",
+        "mya",
+        "quiet"
+      ],
+      "in_world_trigger": "parked_car.cue:object",
+      "prompt": "A ball rolls out from between parked cars into the street. Nobody's visible. You…",
+      "choices": [
+        "Swerve around the ball",
+        "Slow or stop — a child usually follows the ball",
+        "Honk to warn the child",
+        "Continue; it's just a ball"
+      ],
+      "answer": 1,
+      "explanation": "Objects moving into the road are the cue that a person is coming after them. The guide's whole scanning list is about acting on cues, not confirmations."
+    },
+    {
+      "id": "v3_c5_scan_010",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.4",
+      "tags": [
+        "scan",
+        "mya",
+        "kpop"
+      ],
+      "prompt": "Which of these is NOT one of the guide's cues that a parked vehicle or someone near it may enter your path?",
+      "choices": [
+        "Feet visible under a vehicle",
+        "Front wheels turned toward the road",
+        "A HUSH poka on the dashboard",
+        "Exhaust from the tailpipe"
+      ],
+      "answer": 2,
+      "explanation": "Feet, wheels, shadows, movement, exhaust, lights, a person in the seat. Photocards tell you about the driver's taste, not their intentions."
+    },
+    {
+      "id": "v3_c5_scan_011",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.4, 5.0",
+      "tags": [
+        "scan",
+        "mya",
+        "story"
+      ],
+      "in_world_trigger": "mya.wake",
+      "prompt": "Bea's rule: when Mya wakes up, it's never no reason. The Driver Guide's version of that rule is…",
+      "choices": [
+        "Wait until you can identify the hazard before slowing",
+        "Respond to the cue itself — slow, cover the brake, add space — and let the hazard confirm or not",
+        "Honk to flush out whatever it is",
+        "Speed up so the hazard is behind you"
+      ],
+      "answer": 1,
+      "explanation": "Proactive beats reactive. The earlier you act on a cue, the smaller the action has to be — and the quieter."
+    },
+    {
+      "id": "v3_c5_scan_012",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 5.4, 2.8",
+      "tags": [
+        "scan",
+        "mya"
+      ],
+      "prompt": "'Cover the brake' — the guide's move when you spot a cue but no hazard yet — means…",
+      "choices": [
+        "Braking lightly",
+        "Moving your foot off the gas and holding it over the brake pedal without pressing, so you're ready",
+        "Pumping the brake to flash your lights",
+        "Pressing the parking brake"
+      ],
+      "answer": 1,
+      "explanation": "Off the gas, over the brake. Costs nothing, saves a full second of reaction if the cue turns into a person."
+    },
+    {
+      "id": "v3_c5_scan_013",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.4",
+      "tags": [
+        "scan",
+        "quiet"
+      ],
+      "prompt": "You've locked your eyes on the cluster at the corner for the last five seconds. The guide's problem with that is…",
+      "choices": [
+        "Nothing — the biggest hazard deserves the most attention",
+        "A fixed stare stops you scanning; keep your eyes moving between near, far, sides, and mirrors so the next hazard doesn't arrive unseen",
+        "You'll wake them",
+        "You should be watching the app"
+      ],
+      "answer": 1,
+      "explanation": "Scan, don't stare. The Quiet you're watching aren't the ones that will surprise you."
+    },
+    {
+      "id": "v3_c5_scan_014",
+      "ch": 5,
+      "difficulty": 1,
+      "guide_ref": "DG 5.4, 2.12",
+      "tags": [
+        "scan"
+      ],
+      "prompt": "Beyond checking mirrors frequently, when MUST you check your mirrors?",
+      "choices": [
+        "Only when changing lanes",
+        "Before slowing, stopping, turning, changing lanes, or backing — any time your speed or position is about to change",
+        "Every time a song ends",
+        "Only on freeways"
+      ],
+      "answer": 1,
+      "explanation": "What's behind you decides how you can slow. Mirror before brake, always."
+    },
+    {
+      "id": "v3_c5_scan_015",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.4, 5.6",
+      "tags": [
+        "scan",
+        "quiet"
+      ],
+      "prompt": "Cresting a hill on the pass, your 12–15-second view drops to almost nothing. The guide's response to shrinking sight distance is…",
+      "choices": [
+        "Maintain speed; the road continues",
+        "Slow down — you can't stop for what you can't see, and hills and curves hide hazards",
+        "Move to the center of the road for a better view",
+        "Turn on high beams by day"
+      ],
+      "answer": 1,
+      "explanation": "Speed must match sight distance. That's the whole logic behind curves, hills, fog, and headlights."
+    },
+    {
+      "id": "v3_c5_scan_016",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.4, 4.13",
+      "tags": [
+        "scan",
+        "quiet"
+      ],
+      "in_world_trigger": "intersection.approach",
+      "prompt": "Approaching an intersection on Sprague, the scanning pattern the guide wants before you enter is…",
+      "choices": [
+        "Straight ahead only — that's where you're going",
+        "Left, right, then left again — and watch for drivers who may not stop for their sign or signal",
+        "Right, then go",
+        "Mirrors only"
+      ],
+      "answer": 1,
+      "explanation": "Left twice because that's the lane that hits you first. Assume the other driver hasn't seen the sign."
+    },
+    {
+      "id": "v3_c5_scan_017",
+      "ch": 5,
+      "difficulty": 3,
+      "guide_ref": "DG 5.4, 5.2",
+      "tags": [
+        "scan",
+        "mya",
+        "story"
+      ],
+      "prompt": "Mya sits up; you slow. Nothing appears for five seconds and Gracie is unimpressed. Per the guide, was slowing wrong?",
+      "choices": [
+        "Yes — you should wait for a real hazard",
+        "No — responding early to a cue costs a few seconds; failing to respond to a real one costs everything. False alarms are the price of scanning",
+        "Yes — slowing without a reason is a hazard to others",
+        "Only if someone honked"
+      ],
+      "answer": 1,
+      "explanation": "Slowing for a cue that turns out to be nothing is the system working. It's how you get to be old."
+    },
+    {
+      "id": "v3_c5_scan_018",
+      "ch": 5,
+      "difficulty": 2,
+      "guide_ref": "DG 5.4, 4.6",
+      "tags": [
+        "scan"
+      ],
+      "prompt": "Before opening your door after parallel parking, and before pulling out, the scanning habit the guide wants is…",
+      "choices": [
+        "Check the app for traffic",
+        "Look for cyclists and pedestrians approaching from behind — mirror and shoulder — because you're about to enter their path",
+        "Honk once",
+        "Turn on hazards"
+      ],
+      "answer": 1,
+      "explanation": "The parked car that pulls out or opens a door without looking is the hazard you've been scanning for all chapter. Don't become it."
+    },
+    {
+      "id": "v3_c8_mya_001",
+      "ch": 8,
+      "difficulty": 2,
+      "guide_ref": "DG 3.4, 4.19",
+      "tags": [
+        "mya",
+        "scan",
+        "story"
+      ],
+      "prompt": "Mya in her carrier on the seat, asleep — until she isn't. Gracie loose on the dash, batting the wiper stalk. Per the guide, which cat is a distraction?",
+      "choices": [
+        "Both — animals in cars are always distractions",
+        "Gracie — an unrestrained animal in reach of the driver takes focus off driving; a secured, calm animal does not",
+        "Mya — her waking up pulls your eyes off the road",
+        "Neither"
+      ],
+      "answer": 1,
+      "explanation": "Secure your animals. A cue you notice in your fringe vision is scanning; a cat on the steering column is a hazard."
+    },
+    {
+      "id": "v3_c8_mya_002",
+      "ch": 8,
+      "difficulty": 2,
+      "guide_ref": "DG 3.4, 3.5",
+      "tags": [
+        "mya",
+        "kpop"
+      ],
+      "prompt": "The maknae in the passenger seat says 'kid on the right, behind the blue car.' Using a passenger as a second set of eyes is…",
+      "choices": [
+        "A distraction — passengers should be silent",
+        "Helpful, as long as they call out hazards and you keep your own eyes moving; you're still the one scanning and deciding",
+        "Only allowed with a permit",
+        "Illegal for intermediate license holders"
+      ],
+      "answer": 1,
+      "explanation": "A good passenger reads the map and spots the kid. A bad passenger hands you their phone. Guide-wise: their eyes help, their hands on your controls or devices don't."
+    }
+  ]
+}

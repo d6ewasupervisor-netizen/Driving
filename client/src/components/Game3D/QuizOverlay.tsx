@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useGameStore } from '@/stores/gameStore';
 import { useGameProgress } from '@/hooks/useGameProgress';
 import { AudioManager } from '@/systems/AudioManager';
+import { QuietRoads } from '@/systems/QuietRoadsBridge';
 
 function shuffleArray<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -43,6 +44,7 @@ export function QuizOverlay() {
       setSelected(answer);
       const res = answerQuiz(answer);
       setResult(res);
+      if (currentQuestion.source === 'quietroads') QuietRoads.onQuizAnswered(currentQuestion.id, answer, res.correct);
 
       // Audio feedback
       if (res.correct) {
@@ -64,10 +66,11 @@ export function QuizOverlay() {
   );
 
   const handleContinue = useCallback(() => {
+    if (currentQuestion?.source === 'quietroads') QuietRoads.onQuizClosed();
     setPhase('driving');
     setSelected(null);
     setResult(null);
-  }, [setPhase]);
+  }, [setPhase, currentQuestion]);
 
   if (phase !== 'quiz' || !currentQuestion) return null;
 

@@ -1,0 +1,2752 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "game": "Quiet Roads",
+    "acts": [
+      2
+    ],
+    "locale": "en-US",
+    "placeholders": {
+      "MOM": "Mom",
+      "RAY": "Ray",
+      "GRANDMA": "Grandma",
+      "GRANDMA_NAME": "June",
+      "GRANDMA_INITIALS": "G.J.",
+      "PLAYER": "Ali",
+      "PLAYER_FULL": "Alison"
+    }
+  },
+  "variables": {
+    "respect": {
+      "type": "int",
+      "default": 0,
+      "min": 0,
+      "max": 100,
+      "hidden": true
+    },
+    "calm": {
+      "type": "int",
+      "default": 50,
+      "min": 0,
+      "max": 100
+    },
+    "trade_points": {
+      "type": "int",
+      "default": 0,
+      "min": 0
+    }
+  },
+  "flags": {
+    "met_tuna": false,
+    "met_deac": false,
+    "rolled_stop_act1": false,
+    "delivery_1_done": false,
+    "delivery_2_done": false,
+    "delivery_3_done": false,
+    "delivery_4_done": false,
+    "jonah_scene_loud": false,
+    "met_jonah": false,
+    "has_gracie_toy": false,
+    "has_gracie_collar": false,
+    "has_chains": false,
+    "has_quiet_muffler": false,
+    "has_sori_card": false,
+    "heard_hush_pitch": false,
+    "act2_complete": false
+  },
+  "characters": {
+    "ALI": {
+      "name": "Ali",
+      "color": "#F28DB2",
+      "portrait_dir": "res://portraits/ali",
+      "default_volume": "whisper"
+    },
+    "MYA": {
+      "name": "Mya",
+      "color": "#8B6B4A",
+      "portrait_dir": "res://portraits/mya",
+      "speaks": false
+    },
+    "GRACIE": {
+      "name": "Gracie",
+      "color": "#F2A63B",
+      "portrait_dir": "res://portraits/gracie",
+      "speaks": false
+    },
+    "DEAC": {
+      "name": "Deac",
+      "color": "#B0B0B0",
+      "portrait_dir": "res://portraits/deac",
+      "default_volume": "low"
+    },
+    "TUNA": {
+      "name": "Tuna",
+      "color": "#D9A066",
+      "portrait_dir": "res://portraits/tuna",
+      "default_volume": "low"
+    },
+    "BEA": {
+      "name": "Auntie Bea",
+      "color": "#C39BD3",
+      "portrait_dir": "res://portraits/bea",
+      "default_volume": "low"
+    },
+    "PRIYA": {
+      "name": "Priya",
+      "color": "#F7DC6F",
+      "portrait_dir": "res://portraits/priya",
+      "default_volume": "low"
+    },
+    "JONAH": {
+      "name": "Jonah",
+      "color": "#5DADE2",
+      "portrait_dir": "res://portraits/jonah",
+      "voice_bed": "cb_radio",
+      "default_volume": "normal"
+    }
+  },
+  "scenes": {
+    "2.1": {
+      "id": "2.1",
+      "act": 2,
+      "title": "Arrival",
+      "type": "still",
+      "location": "kent_valley_warehouse_bay",
+      "background": "res://backgrounds/warehouse_bay_tarps.png",
+      "ambience": "res://audio/amb/warehouse_drip.ogg",
+      "entry": "2.1.1",
+      "nodes": {
+        "2.1.1": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "low",
+          "anim": "tuna.under_van",
+          "text": "Pink Beetle. Plow. Armored doors I did with scrap from a filing cabinet.",
+          "next": "2.1.2"
+        },
+        "2.1.2": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "tense",
+          "volume": "low",
+          "anim": "tuna.slide_out",
+          "text": "Please tell me {GRANDMA_NAME}'s okay.",
+          "next": "2.1.3"
+        },
+        "2.1.3": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Got on the bus. Cats couldn't.",
+          "next": "2.1.4"
+        },
+        "2.1.4": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "So you stayed for the cats.",
+          "next": "2.1.5"
+        },
+        "2.1.5": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tired",
+          "volume": "whisper",
+          "text": "…Yeah.",
+          "next": "2.1.beat"
+        },
+        "2.1.beat": {
+          "type": "direction",
+          "text": "Beat.",
+          "auto_ms": 900,
+          "next": "2.1.6"
+        },
+        "2.1.6": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "Deac's gonna like that. Don't tell her I said so.",
+          "next": "2.1.7"
+        },
+        "2.1.7": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Who's Deac?",
+          "next": "2.1.8"
+        },
+        "2.1.8": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "low",
+          "text": "The reason you're not in trouble. Probably. Office is in the back. Knock. She hates it when people don't knock.",
+          "next": "2.1.9"
+        },
+        "2.1.9": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "whisper",
+          "anim": "tuna.pat_hood",
+          "text": "Hey, girl. Missed you. She's been feeding you the cheap stuff, hasn't she.",
+          "next": "2.1.end"
+        },
+        "2.1.end": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "met_tuna": true
+            },
+            "checkpoint": "act2_arrival",
+            "log": "scene.complete:2.1"
+          },
+          "next_scene": "2.2"
+        }
+      }
+    },
+    "2.2": {
+      "id": "2.2",
+      "act": 2,
+      "title": "Deac",
+      "type": "still",
+      "location": "warehouse_office",
+      "background": "res://backgrounds/deac_office_radiator.png",
+      "music": "res://audio/music/deac_theme_low.ogg",
+      "entry": "2.2.1",
+      "nodes": {
+        "2.2.1": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tense",
+          "volume": "whisper",
+          "anim": "ali.see_carrier",
+          "text": "That's my cat.",
+          "next": "2.2.2"
+        },
+        "2.2.2": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "That's a cat I pulled out of a building you left it in.",
+          "next": "2.2.3"
+        },
+        "2.2.3": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "angry",
+          "volume": "low",
+          "text": "I didn't leave her —",
+          "next": "2.2.4"
+        },
+        "2.2.4": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "You made noise. You ran. You took the loud one and forgot the quiet one.",
+          "next": "2.2.honk_branch"
+        },
+        "2.2.honk_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "dol_honked",
+                "is": true
+              },
+              "next": "2.2.4b"
+            },
+            {
+              "next": "2.2.5"
+            }
+          ]
+        },
+        "2.2.4b": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Then you honked. Every one of them for three blocks. That lot's gone now. Nobody's getting back in there.",
+          "next": "2.2.5"
+        },
+        "2.2.5": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "That's not a judgment. That's a report.",
+          "next": "2.2.6"
+        },
+        "2.2.6": {
+          "type": "direction",
+          "text": "Silence.",
+          "auto_ms": 1800,
+          "next": "2.2.7"
+        },
+        "2.2.7": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "You were there?",
+          "next": "2.2.8"
+        },
+        "2.2.8": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "I was on the roof across the lot. We watch that building. People still think it works.",
+          "next": "2.2.stop_branch"
+        },
+        "2.2.stop_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "rolled_stop_act1",
+                "is": true
+              },
+              "next": "2.2.9"
+            },
+            {
+              "next": "2.2.9x"
+            }
+          ]
+        },
+        "2.2.9": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "You stopped at every stop sign on Central.",
+          "next": "2.2.9b"
+        },
+        "2.2.9b": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Rolled the one on Titus.",
+          "next": "2.2.10"
+        },
+        "2.2.10": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "…Nobody was coming.",
+          "next": "2.2.11"
+        },
+        "2.2.11": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Nobody's ever coming. That's not the point.",
+          "next": "2.2.12"
+        },
+        "2.2.9x": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "You stopped at every stop sign on Central. Every one.",
+          "next": "2.2.9y"
+        },
+        "2.2.9y": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Nobody does that anymore. Nobody was coming and you did it anyway. Remember what that felt like.",
+          "effects": {
+            "respect": 2,
+            "log": "deac.noticed_full_stops"
+          },
+          "next": "2.2.12"
+        },
+        "2.2.12": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "You want fuel, you need a permit. You want a permit, I'm the only one who can give you one this side of the mountains. And I don't sign for people I haven't watched drive.",
+          "next": "2.2.13"
+        },
+        "2.2.13": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "And the cat?",
+          "next": "2.2.14"
+        },
+        "2.2.14": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "The cat's fine. She sleeps eighteen hours a day and eats like a raccoon.",
+          "next": "2.2.15"
+        },
+        "2.2.15": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Run deliveries for me. Show me you can keep a convoy alive. Then we talk about the cat.",
+          "next": "2.2.16"
+        },
+        "2.2.16": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "angry",
+          "volume": "low",
+          "text": "That's blackmail.",
+          "next": "2.2.17"
+        },
+        "2.2.17": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "That's a driving test.",
+          "next": "2.2.18"
+        },
+        "2.2.18": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "What if I just take her.",
+          "next": "2.2.19"
+        },
+        "2.2.19": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Then you've got two cats, no fuel, and a very nice car parked in Kent forever.",
+          "next": "2.2.20"
+        },
+        "2.2.20": {
+          "type": "direction",
+          "text": "Mya opens one eye. Looks at Ali. Closes it.",
+          "anim": "mya.one_eye",
+          "auto_ms": 2400,
+          "next": "2.2.21"
+        },
+        "2.2.21": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "sad",
+          "volume": "whisper",
+          "text": "…She's not even going to —",
+          "next": "2.2.22"
+        },
+        "2.2.22": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "No. She's not. Tuna's got a bay for you. Be here at six.",
+          "next": "2.2.end"
+        },
+        "2.2.end": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "met_deac": true
+            },
+            "unlock": [
+              "mission.delivery_1"
+            ],
+            "checkpoint": "met_deac",
+            "log": "scene.complete:2.2"
+          },
+          "next_scene": "2.3a"
+        }
+      }
+    },
+    "2.3a": {
+      "id": "2.3a",
+      "act": 2,
+      "title": "Delivery 1 — Insulin (Deac rides along)",
+      "type": "gameplay",
+      "location": "kent_valley_to_pharmacy",
+      "guide_refs": [
+        "Right-of-Way: Four-Way Stops",
+        "Right-of-Way: Uncontrolled Intersections",
+        "Smooth Braking"
+      ],
+      "entry": "2.3a.brief",
+      "nodes": {
+        "2.3a.brief": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Insulin. Pharmacy safehouse on Meeker. I'm riding.",
+          "next": "2.3.1"
+        },
+        "2.3.1": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Seatbelt.",
+          "next": "2.3.2"
+        },
+        "2.3.2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "I was —",
+          "next": "2.3.3"
+        },
+        "2.3.3": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "I know. I say it anyway. Go.",
+          "next": "2.3a.go"
+        },
+        "2.3a.go": {
+          "type": "end",
+          "effects": {
+            "start_gameplay": "mission_delivery_1_insulin",
+            "log": "mission.begin:delivery_1"
+          }
+        },
+        "2.3.4": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Four-way stop. Who goes?",
+          "next": "2.3a.Q1"
+        },
+        "2.3a.Q1": {
+          "type": "choice",
+          "choices": [
+            {
+              "id": "first",
+              "text": "Whoever got there first.",
+              "next": "2.3.5",
+              "tracked": true,
+              "effects": {
+                "tp": 10,
+                "log": "quiz.fourway.first:correct"
+              }
+            },
+            {
+              "id": "bigger_road",
+              "text": "Whoever's on the bigger road.",
+              "next": "2.3a.Q1.w1",
+              "tracked": true,
+              "effects": {
+                "log": "quiz.fourway.first:wrong_road"
+              }
+            },
+            {
+              "id": "bigger_car",
+              "text": "Whoever's in the bigger car.",
+              "next": "2.3a.Q1.w2",
+              "tracked": true,
+              "effects": {
+                "log": "quiz.fourway.first:wrong_car"
+              }
+            }
+          ]
+        },
+        "2.3a.Q1.w1": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "That's a highway. This is a stop sign. First to stop, first to go. Again.",
+          "next": "2.3a.Q1"
+        },
+        "2.3a.Q1.w2": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "You're in a Beetle with a plow. Think about what you just said. Again.",
+          "next": "2.3a.Q1"
+        },
+        "2.3.5": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Whoever got there first.",
+          "next": "2.3.6"
+        },
+        "2.3.6": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Same time?",
+          "next": "2.3a.Q2"
+        },
+        "2.3a.Q2": {
+          "type": "choice",
+          "choices": [
+            {
+              "id": "right",
+              "text": "Person on the right.",
+              "next": "2.3.7",
+              "tracked": true,
+              "effects": {
+                "tp": 10,
+                "log": "quiz.fourway.tie:correct"
+              }
+            },
+            {
+              "id": "left",
+              "text": "Person on the left.",
+              "next": "2.3a.Q2.w1",
+              "tracked": true,
+              "effects": {
+                "log": "quiz.fourway.tie:wrong_left"
+              }
+            },
+            {
+              "id": "wave",
+              "text": "Whoever waves first.",
+              "next": "2.3a.Q2.w2",
+              "tracked": true,
+              "effects": {
+                "log": "quiz.fourway.tie:wrong_wave"
+              }
+            }
+          ]
+        },
+        "2.3a.Q2.w1": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Left. Sure. Go trade paint with the other person who thought left. Again.",
+          "next": "2.3a.Q2"
+        },
+        "2.3a.Q2.w2": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Nobody's waving. Nobody's ever waving again. Again.",
+          "next": "2.3a.Q2"
+        },
+        "2.3.7": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "…Right goes first?",
+          "next": "2.3.8"
+        },
+        "2.3.8": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Person on the right. Out here nobody's coming, but you do it anyway. Habits are the only thing that outlive you."
+        },
+        "2.3.9": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "No sign. What do you do.",
+          "next": "2.3a.Q3"
+        },
+        "2.3a.Q3": {
+          "type": "choice",
+          "choices": [
+            {
+              "id": "slow_look_yield",
+              "text": "Slow down. Look. Yield to the right.",
+              "next": "2.3.10",
+              "tracked": true,
+              "effects": {
+                "tp": 10,
+                "log": "quiz.uncontrolled:correct"
+              }
+            },
+            {
+              "id": "speed_up",
+              "text": "Speed up. Get through it.",
+              "next": "2.3a.Q3.w1",
+              "tracked": true,
+              "effects": {
+                "log": "quiz.uncontrolled:wrong_speed"
+              }
+            },
+            {
+              "id": "stop_wait",
+              "text": "Stop and wait for someone to wave you through.",
+              "next": "2.3a.Q3.w2",
+              "tracked": true,
+              "effects": {
+                "log": "quiz.uncontrolled:wrong_wait"
+              }
+            }
+          ]
+        },
+        "2.3a.Q3.w1": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Get through it. Into what. Again.",
+          "next": "2.3a.Q3"
+        },
+        "2.3a.Q3.w2": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "You'll be sitting there a long time. It's not a stop sign. It's a look-both-ways sign that nobody bothered to put up. Again.",
+          "next": "2.3a.Q3"
+        },
+        "2.3.10": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Slow down. Look. Yield to the right.",
+          "next": "2.3.11"
+        },
+        "2.3.11": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Good. You've read the book.",
+          "next": "2.3.12"
+        },
+        "2.3.12": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "My grandma quizzed me.",
+          "next": "2.3.13"
+        },
+        "2.3.13": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "wry",
+          "volume": "low",
+          "text": "{GRANDMA_NAME}. She failed her renewal vision test in '09 and argued with me for forty minutes.",
+          "next": "2.3.14"
+        },
+        "2.3.14": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "amused",
+          "volume": "whisper",
+          "text": "Did she win?",
+          "next": "2.3.15"
+        },
+        "2.3.15": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "She got glasses."
+        },
+        "2.3.16": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 2800,
+          "text": "That's it. Squeeze it. They don't care about you. They care about the car.",
+          "effects": {
+            "respect": 2
+          }
+        },
+        "2.3.17": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "low",
+          "auto_ms": 1200,
+          "text": "Too much foot.",
+          "next": "2.3.18"
+        },
+        "2.3.18": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 1800,
+          "text": "Ease. Ease. There."
+        },
+        "2.3a.red": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "tense",
+          "volume": "low",
+          "auto_ms": 2400,
+          "text": "Stop. Foot off everything. Let them forget.",
+          "effects": {
+            "respect": -2
+          }
+        },
+        "2.3.19": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Pharmacy. Insulin goes to the woman with the clipboard. Don't slam the door.",
+          "next": "2.3.20"
+        },
+        "2.3.20": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "I wasn't going to slam —",
+          "next": "2.3.21"
+        },
+        "2.3.21": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "I know.",
+          "next": "2.3a.dropoff"
+        },
+        "2.3a.dropoff": {
+          "type": "end",
+          "effects": {
+            "start_gameplay": "dropoff_pharmacy"
+          }
+        },
+        "2.3.22": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "auto_ms": 2400,
+          "text": "She says \"I know\" like it's a threat.",
+          "effects": {
+            "respect": 1,
+            "log": "door.soft"
+          }
+        },
+        "2.3a.slam": {
+          "type": "direction",
+          "text": "The door slams. Across the lot, heads turn.",
+          "sfx": [
+            "car_door_slam"
+          ],
+          "effects": {
+            "noise_db": 65,
+            "respect": -2,
+            "log": "door.slam"
+          },
+          "auto_ms": 1600,
+          "next": "2.3a.slam2"
+        },
+        "2.3a.slam2": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "…I know.",
+          "next": "2.3a.slam3"
+        },
+        "2.3a.slam3": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "You said that already.",
+          "next": "2.3a.slam4"
+        },
+        "2.3a.slam4": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "low",
+          "auto_ms": 1800,
+          "text": "It's still true."
+        },
+        "2.3a.done": {
+          "type": "end",
+          "effects": {
+            "tp": 40,
+            "set_flags": {
+              "delivery_1_done": true
+            },
+            "unlock": [
+              "mission.delivery_2"
+            ],
+            "checkpoint": "delivery_1_done",
+            "log": "mission.complete:delivery_1"
+          },
+          "next_scene": "2.3b"
+        },
+        "2.3a.swarm": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Off. Everybody off. We walk.",
+          "next": "2.3a.swarm2"
+        },
+        "2.3a.swarm2": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "G",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "That's not a failure. That's a Tuesday. Warehouse. We go again.",
+          "next": "2.3a.swarm_end"
+        },
+        "2.3a.swarm_end": {
+          "type": "end",
+          "effects": {
+            "log": "mission.fail:delivery_1"
+          },
+          "next_scene": "2.3a"
+        }
+      },
+      "triggers": [
+        {
+          "event": "intersection.fourway.approach",
+          "node": "2.3.4",
+          "once": true,
+          "priority": 10,
+          "interrupt": true
+        },
+        {
+          "event": "intersection.uncontrolled.approach",
+          "node": "2.3.9",
+          "once": true,
+          "priority": 10,
+          "interrupt": true
+        },
+        {
+          "event": "brake.smooth_near_quiet",
+          "node": "2.3.16",
+          "once": true
+        },
+        {
+          "event": "noise.yellow",
+          "node": "2.3.17",
+          "cooldown_ms": 8000
+        },
+        {
+          "event": "noise.red",
+          "node": "2.3a.red",
+          "cooldown_ms": 12000,
+          "priority": 5,
+          "interrupt": true
+        },
+        {
+          "event": "waypoint.reach:pharmacy",
+          "node": "2.3.19",
+          "once": true,
+          "priority": 10,
+          "interrupt": true
+        },
+        {
+          "event": "door.close.soft",
+          "node": "2.3.22",
+          "once": true,
+          "priority": 4
+        },
+        {
+          "event": "door.slam",
+          "node": "2.3a.slam",
+          "once": true,
+          "priority": 4
+        },
+        {
+          "event": "delivery.complete",
+          "node": "2.3a.done",
+          "once": true,
+          "priority": 20,
+          "interrupt": true
+        },
+        {
+          "event": "mission.fail.swarm",
+          "node": "2.3a.swarm",
+          "priority": 20,
+          "interrupt": true
+        }
+      ]
+    },
+    "2.3b": {
+      "id": "2.3b",
+      "act": 2,
+      "title": "Delivery 2 — Cat Food to Auntie Bea",
+      "type": "gameplay",
+      "location": "kent_valley_to_sanctuary",
+      "guide_refs": [
+        "Backing Up",
+        "Mirrors and Blind Spots"
+      ],
+      "entry": "2.3b.brief",
+      "nodes": {
+        "2.3b.brief": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Cat food. Bea. The dock's tight — you'll be backing in. Nobody watches you back up. Do it like they are.",
+          "next": "2.3b.go"
+        },
+        "2.3b.go": {
+          "type": "end",
+          "effects": {
+            "start_gameplay": "mission_delivery_2_catfood",
+            "log": "mission.begin:delivery_2"
+          }
+        },
+        "2.3.23": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Mirrors. Check both. Check over the shoulder. The mirrors lie about how much room there is."
+        },
+        "2.3.24": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "emotion": "tense",
+          "volume": "whisper",
+          "auto_ms": 2600,
+          "text": "Slow. Slower than that. Backing is the only time everyone forgives you for going slow."
+        },
+        "2.3b.bump": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "panicked",
+          "volume": "whisper",
+          "auto_ms": 2600,
+          "text": "— that's a dumpster. That was a dumpster. Okay. Fading. Mirrors, Ali.",
+          "effects": {
+            "respect": -1,
+            "log": "backing.bump"
+          }
+        },
+        "2.3b.clean": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "proud",
+          "volume": "whisper",
+          "text": "Straight. Nobody heard. Bea heard. Bea's allowed.",
+          "effects": {
+            "respect": 2,
+            "tp": 15,
+            "log": "park.back_in.clean"
+          },
+          "next": "2.3.25"
+        },
+        "2.3b.crooked": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "Crooked. But quiet. Quiet counts.",
+          "effects": {
+            "tp": 5,
+            "log": "park.back_in.crooked"
+          },
+          "next": "2.3.25"
+        },
+        "2.3.25": {
+          "type": "line",
+          "speaker": "BEA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "Oh, you're the Beetle girl. Deac's been impossible about you.",
+          "next": "2.3.26"
+        },
+        "2.3.26": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Impossible how?",
+          "next": "2.3.27"
+        },
+        "2.3.27": {
+          "type": "line",
+          "speaker": "BEA",
+          "delivery": "S",
+          "emotion": "amused",
+          "volume": "low",
+          "anim": "pickles.doorway",
+          "text": "She hasn't said a word. That's how I know. Come in, come in, mind the door, Pickles is right there.",
+          "next": "2.3.28"
+        },
+        "2.3.28": {
+          "type": "line",
+          "speaker": "BEA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "This is the sanctuary. Eleven cats. Twelve if you count the one that lives in the ceiling, and I do.",
+          "next": "2.3.29"
+        },
+        "2.3.29": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Why cats?",
+          "next": "2.3.30"
+        },
+        "2.3.30": {
+          "type": "line",
+          "speaker": "BEA",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Silent. Hear the Quiet before you do. Ever notice your fat one wake up for no reason?",
+          "next": "2.3.31"
+        },
+        "2.3.31": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "…Yeah.",
+          "next": "2.3.32"
+        },
+        "2.3.32": {
+          "type": "line",
+          "speaker": "BEA",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "It's never no reason. Now. That orange one of yours.",
+          "next": "2.3.33"
+        },
+        "2.3.33": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "text": "Gracie.",
+          "next": "2.3.34"
+        },
+        "2.3.34": {
+          "type": "line",
+          "speaker": "BEA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "I have a collar. No bell. Soft clip. And I have toys, which is what she actually needs. A busy cat is a quiet cat. Trade Points, sweetheart. Nothing's free but advice.",
+          "next": "2.3b.unlock"
+        },
+        "2.3b.unlock": {
+          "type": "effects",
+          "effects": {
+            "tp": 40,
+            "set_flags": {
+              "delivery_2_done": true
+            },
+            "unlock": [
+              "shop.cats",
+              "mission.delivery_3"
+            ],
+            "checkpoint": "delivery_2_done",
+            "log": "mission.complete:delivery_2"
+          },
+          "next": "2.3b.C"
+        },
+        "2.3b.C": {
+          "type": "choice",
+          "choices": [
+            {
+              "id": "shop",
+              "text": "Let me see the collar.",
+              "next": "2.3b.shop"
+            },
+            {
+              "id": "later",
+              "text": "Later, Bea. Deac's waiting.",
+              "next": "2.3b.end"
+            }
+          ]
+        },
+        "2.3b.shop": {
+          "type": "jump",
+          "scene": "2.6"
+        },
+        "2.3b.end": {
+          "type": "end",
+          "next_scene": "2.3c"
+        }
+      },
+      "triggers": [
+        {
+          "event": "backing.start",
+          "node": "2.3.23",
+          "once": true
+        },
+        {
+          "event": "backing.too_fast",
+          "node": "2.3.24",
+          "cooldown_ms": 6000
+        },
+        {
+          "event": "backing.bump",
+          "node": "2.3b.bump",
+          "cooldown_ms": 6000,
+          "priority": 3
+        },
+        {
+          "event": "park.back_in.clean",
+          "node": "2.3b.clean",
+          "once": true,
+          "priority": 10,
+          "interrupt": true
+        },
+        {
+          "event": "park.back_in.crooked",
+          "node": "2.3b.crooked",
+          "once": true,
+          "priority": 10,
+          "interrupt": true
+        },
+        {
+          "event": "qte.gracie.start",
+          "node": "pool:gracie_qte_start",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.success",
+          "node": "pool:gracie_qte_success",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.fail",
+          "node": "pool:gracie_qte_fail",
+          "cooldown_ms": 3000,
+          "priority": 3
+        },
+        {
+          "event": "noise.yellow",
+          "node": "pool:noise_yellow",
+          "cooldown_ms": 8000
+        },
+        {
+          "event": "noise.red",
+          "node": "pool:noise_red",
+          "cooldown_ms": 12000,
+          "priority": 5,
+          "interrupt": true
+        },
+        {
+          "event": "mission.fail.swarm",
+          "node": "pool:mission_fail_swarm",
+          "priority": 20,
+          "interrupt": true
+        }
+      ]
+    },
+    "2.3c": {
+      "id": "2.3c",
+      "act": 2,
+      "title": "Delivery 3 — Radio Parts to Priya",
+      "type": "gameplay",
+      "location": "kent_central_ave",
+      "guide_refs": [
+        "Lane Changes",
+        "Signaling",
+        "Lane Use"
+      ],
+      "entry": "2.3c.brief",
+      "nodes": {
+        "2.3c.brief": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Radio parts to Priya. Central Avenue. Three lanes, all of them empty. Signal anyway.",
+          "next": "2.3c.go"
+        },
+        "2.3c.go": {
+          "type": "end",
+          "effects": {
+            "start_gameplay": "mission_delivery_3_radio",
+            "log": "mission.begin:delivery_3"
+          }
+        },
+        "2.3.35": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Signal first. Then mirror. Then shoulder. Then move. Signal early enough that if there were anyone alive to see it, they'd have time to care."
+        },
+        "2.3c.nosig": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "wry",
+          "volume": "whisper",
+          "auto_ms": 2400,
+          "text": "No signal. Nobody saw. Doesn't matter. Habits.",
+          "effects": {
+            "respect": -1,
+            "log": "lanechange.no_signal"
+          }
+        },
+        "2.3.36": {
+          "type": "line",
+          "speaker": "PRIYA",
+          "delivery": "S",
+          "emotion": "tense",
+          "volume": "low",
+          "text": "Are those the capacitors? Tell me those are the capacitors.",
+          "next": "2.3.37"
+        },
+        "2.3.37": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "text": "Box says \"capacitors.\"",
+          "next": "2.3.38"
+        },
+        "2.3.38": {
+          "type": "line",
+          "speaker": "PRIYA",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "low",
+          "text": "Box could be lying.",
+          "next": "2.3.38b"
+        },
+        "2.3.38b": {
+          "type": "direction",
+          "text": "She opens it.",
+          "anim": "priya.open_box",
+          "sfx": [
+            "cardboard_soft"
+          ],
+          "auto_ms": 1200,
+          "next": "2.3.38c"
+        },
+        "2.3.38c": {
+          "type": "line",
+          "speaker": "PRIYA",
+          "delivery": "S",
+          "emotion": "relieved",
+          "volume": "low",
+          "text": "Box is not lying. You're my favorite person today. Don't tell Jonah, he gets weird.",
+          "next": "2.3.39"
+        },
+        "2.3.39": {
+          "type": "line",
+          "speaker": "PRIYA",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "You listen to HUSH?",
+          "next": "2.3.40"
+        },
+        "2.3.40": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "I don't know what that is.",
+          "next": "2.3.41"
+        },
+        "2.3.41": {
+          "type": "line",
+          "speaker": "PRIYA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "Oh, honey. Four idols in the Tacoma Dome bunker. They broadcast at nine p.m. on 91.3. Everything's whisper-level — they had to, it's the rule — and it turned into this whole thing. Whole bunker sings along under their breath. You've never heard anything like it.",
+          "next": "2.3.42"
+        },
+        "2.3.42": {
+          "type": "line",
+          "speaker": "PRIYA",
+          "delivery": "S",
+          "emotion": "amused",
+          "volume": "low",
+          "text": "I trade photocards. Radio skins for your dash. Lightbar colors. Sori's the rare pull, don't let anyone tell you different. Trade Points. Come back at nine and I'll tune you in.",
+          "next": "2.3c.unlock"
+        },
+        "2.3c.unlock": {
+          "type": "effects",
+          "effects": {
+            "tp": 40,
+            "set_flags": {
+              "delivery_3_done": true,
+              "heard_hush_pitch": true
+            },
+            "unlock": [
+              "shop.kpop",
+              "radio.hush_913",
+              "mission.delivery_4"
+            ],
+            "checkpoint": "delivery_3_done",
+            "log": "mission.complete:delivery_3"
+          },
+          "next": "2.3c.C"
+        },
+        "2.3c.C": {
+          "type": "choice",
+          "choices": [
+            {
+              "id": "shop",
+              "text": "Show me the photocards.",
+              "next": "2.3c.shop"
+            },
+            {
+              "id": "later",
+              "text": "Nine p.m. I'll be here.",
+              "next": "2.3c.end"
+            }
+          ]
+        },
+        "2.3c.shop": {
+          "type": "jump",
+          "scene": "2.7"
+        },
+        "2.3c.end": {
+          "type": "end",
+          "next_scene": "2.3d"
+        }
+      },
+      "triggers": [
+        {
+          "event": "lanechange.start",
+          "node": "2.3.35",
+          "once": true
+        },
+        {
+          "event": "lanechange.clean",
+          "node": "pool:lanechange_clean",
+          "cooldown_ms": 5000
+        },
+        {
+          "event": "lanechange.no_signal",
+          "node": "2.3c.nosig",
+          "cooldown_ms": 5000,
+          "priority": 3
+        },
+        {
+          "event": "waypoint.reach:priya_radio_shack",
+          "node": "2.3.36",
+          "once": true,
+          "priority": 10,
+          "interrupt": true
+        },
+        {
+          "event": "qte.gracie.start",
+          "node": "pool:gracie_qte_start",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.success",
+          "node": "pool:gracie_qte_success",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.fail",
+          "node": "pool:gracie_qte_fail",
+          "cooldown_ms": 3000,
+          "priority": 3
+        },
+        {
+          "event": "noise.yellow",
+          "node": "pool:noise_yellow",
+          "cooldown_ms": 8000
+        },
+        {
+          "event": "noise.red",
+          "node": "pool:noise_red",
+          "cooldown_ms": 12000,
+          "priority": 5,
+          "interrupt": true
+        },
+        {
+          "event": "mission.fail.swarm",
+          "node": "pool:mission_fail_swarm",
+          "priority": 20,
+          "interrupt": true
+        }
+      ]
+    },
+    "2.3d": {
+      "id": "2.3d",
+      "act": 2,
+      "title": "Delivery 4 — Fuel Filters to Tuna",
+      "type": "gameplay",
+      "location": "kent_valley_tuna_dock",
+      "guide_refs": [
+        "Parallel Parking"
+      ],
+      "entry": "2.3d.brief",
+      "nodes": {
+        "2.3d.brief": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Filters to Tuna. His dock. Parallel.",
+          "next": "2.3d.brief2"
+        },
+        "2.3d.brief2": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "{GRANDMA_NAME} taught you. Show me.",
+          "next": "2.3d.go"
+        },
+        "2.3d.go": {
+          "type": "end",
+          "effects": {
+            "start_gameplay": "mission_delivery_4_filters",
+            "log": "mission.begin:delivery_4"
+          }
+        },
+        "2.3.43": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Pull up alongside. Back until the mirror lines up. Cut the wheel. Straighten when the front clears. {GRANDMA} made me do this in the Fred Meyer lot forty times."
+        },
+        "2.3.44": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "G",
+          "emotion": "warm",
+          "volume": "low",
+          "auto_ms": 2400,
+          "text": "Little tighter — no, you got it. You got it."
+        },
+        "2.3d.curb": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "G",
+          "emotion": "wry",
+          "volume": "low",
+          "auto_ms": 2800,
+          "text": "Curb. Everybody heard that. Again. Slow. She'll wait.",
+          "effects": {
+            "respect": -1,
+            "log": "park.parallel.curb"
+          }
+        },
+        "2.3d.clean": {
+          "type": "direction",
+          "text": "The Beetle settles against the dock. Nothing squeals.",
+          "auto_ms": 1400,
+          "effects": {
+            "respect": 2,
+            "tp": 15,
+            "log": "park.parallel.clean"
+          },
+          "next": "2.3.45"
+        },
+        "2.3.45": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "{GRANDMA_NAME} taught you that.",
+          "next": "2.3.46"
+        },
+        "2.3.46": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Fred Meyer parking lot.",
+          "next": "2.3.47"
+        },
+        "2.3.47": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "Every Sunday. I watched her teach half of Kent in that lot.",
+          "next": "2.3.48"
+        },
+        "2.3.48": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Okay. Shop's open. Quieter muffler — that's ten decibels you never have to worry about again. Better rubber for the pass. Lights for the dark. Chains. You'll need chains. Everybody thinks they don't need chains.",
+          "next": "2.3.49"
+        },
+        "2.3.49": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "And I can tune the plow. Right now it's a wall. I can make it a wedge. Still loud. Always loud. It's a last-resort tool, kid. Not a strategy.",
+          "next": "2.3d.unlock"
+        },
+        "2.3d.unlock": {
+          "type": "effects",
+          "effects": {
+            "tp": 40,
+            "set_flags": {
+              "delivery_4_done": true
+            },
+            "unlock": [
+              "shop.upgrades",
+              "mission.jonah"
+            ],
+            "checkpoint": "delivery_4_done",
+            "log": "mission.complete:delivery_4"
+          },
+          "next": "2.3d.C"
+        },
+        "2.3d.C": {
+          "type": "choice",
+          "choices": [
+            {
+              "id": "shop",
+              "text": "Tell me about the muffler.",
+              "next": "2.3d.shop"
+            },
+            {
+              "id": "later",
+              "text": "Later. She's fine for now.",
+              "next": "2.3d.end"
+            }
+          ]
+        },
+        "2.3d.shop": {
+          "type": "jump",
+          "scene": "2.8"
+        },
+        "2.3d.end": {
+          "type": "end",
+          "next_scene": "2.4"
+        }
+      },
+      "triggers": [
+        {
+          "event": "park.parallel.start",
+          "node": "2.3.43",
+          "once": true
+        },
+        {
+          "event": "park.parallel.adjust",
+          "node": "2.3.44",
+          "once": true
+        },
+        {
+          "event": "park.parallel.curb",
+          "node": "2.3d.curb",
+          "cooldown_ms": 5000,
+          "priority": 3
+        },
+        {
+          "event": "park.parallel.clean",
+          "node": "2.3d.clean",
+          "once": true,
+          "priority": 10,
+          "interrupt": true
+        },
+        {
+          "event": "qte.gracie.start",
+          "node": "pool:gracie_qte_start",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.success",
+          "node": "pool:gracie_qte_success",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.fail",
+          "node": "pool:gracie_qte_fail",
+          "cooldown_ms": 3000,
+          "priority": 3
+        },
+        {
+          "event": "noise.yellow",
+          "node": "pool:noise_yellow",
+          "cooldown_ms": 8000
+        },
+        {
+          "event": "noise.red",
+          "node": "pool:noise_red",
+          "cooldown_ms": 12000,
+          "priority": 5,
+          "interrupt": true
+        },
+        {
+          "event": "mission.fail.swarm",
+          "node": "pool:mission_fail_swarm",
+          "priority": 20,
+          "interrupt": true
+        }
+      ]
+    },
+    "2.4": {
+      "id": "2.4",
+      "act": 2,
+      "title": "Jonah",
+      "type": "gameplay",
+      "location": "kent_valley_intersection",
+      "guide_refs": [
+        "Defensive Driving: Other Drivers' Mistakes",
+        "Smooth Braking"
+      ],
+      "entry": "2.4.brief",
+      "nodes": {
+        "2.4.brief": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Milk run. Pharmacy and back. Jonah's out there somewhere. Don't let him make you do anything.",
+          "next": "2.4.go"
+        },
+        "2.4.go": {
+          "type": "end",
+          "effects": {
+            "start_gameplay": "mission_jonah_intersection",
+            "log": "mission.begin:jonah"
+          }
+        },
+        "2.4.pre": {
+          "type": "direction",
+          "text": "A van blows through the intersection ahead, tires squealing. Every one of the Quiet on the corner turns.",
+          "sfx": [
+            "tire_squeal_distant"
+          ],
+          "anim": "quiet.corner_turn",
+          "auto_ms": 2400
+        },
+        "2.4.loud": {
+          "type": "effects",
+          "effects": {
+            "set_flags": {
+              "jonah_scene_loud": true
+            },
+            "log": "jonah.player_loud"
+          }
+        },
+        "2.4.branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "jonah_scene_loud",
+                "is": true
+              },
+              "next": "2.4.alt1"
+            },
+            {
+              "next": "2.4.1"
+            }
+          ]
+        },
+        "2.4.1": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "amused",
+          "volume": "normal",
+          "text": "You drive like my grandma.",
+          "next": "2.4.2"
+        },
+        "2.4.2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "text": "My grandma drove this car for forty years and never woke anybody up.",
+          "next": "2.4.3"
+        },
+        "2.4.3": {
+          "type": "direction",
+          "text": "Radio silence.",
+          "sfx": [
+            "cb_static_soft"
+          ],
+          "auto_ms": 1800,
+          "next": "2.4.4"
+        },
+        "2.4.4": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "wry",
+          "volume": "normal",
+          "text": "Okay that was good.",
+          "next": "2.4.5"
+        },
+        "2.4.5": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "proud",
+          "volume": "normal",
+          "text": "I'm Jonah. I'm the fast one.",
+          "next": "2.4.6"
+        },
+        "2.4.6": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "text": "I noticed.",
+          "next": "2.4.7"
+        },
+        "2.4.7": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "wry",
+          "volume": "normal",
+          "text": "Deac says you're the careful one. She says it like it's a compliment. She doesn't say anything about me like it's a compliment.",
+          "next": "2.4.8"
+        },
+        "2.4.8": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "text": "Maybe stop squealing your tires.",
+          "next": "2.4.9"
+        },
+        "2.4.9": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "amused",
+          "volume": "normal",
+          "text": "Maybe stop being right. See you at the warehouse, Grandma.",
+          "next": "2.4.respect"
+        },
+        "2.4.respect": {
+          "type": "effects",
+          "effects": {
+            "respect": 5,
+            "set_flags": {
+              "met_jonah": true
+            },
+            "log": "jonah.no_retaliation"
+          },
+          "next": "2.4.wait"
+        },
+        "2.4.wait": {
+          "type": "wait",
+          "wait_for": "waypoint.reach:warehouse",
+          "next": "2.4.10"
+        },
+        "2.4.10": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "anim": "deac.hallway_pass",
+          "text": "Heard you on the radio.",
+          "next": "2.4.11"
+        },
+        "2.4.11": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "Was I —",
+          "next": "2.4.12"
+        },
+        "2.4.12": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "You were fine.",
+          "next": "2.4.13"
+        },
+        "2.4.13": {
+          "type": "direction",
+          "text": "She keeps walking.",
+          "anim": "deac.exit_hall",
+          "auto_ms": 1600,
+          "next": "2.4.14"
+        },
+        "2.4.14": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "I think that was a compliment. I think that was the whole compliment.",
+          "next": "2.4.end"
+        },
+        "2.4.alt1": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "amused",
+          "volume": "normal",
+          "text": "Oh, you woke 'em up too. Nice. We're twins.",
+          "next": "2.4.alt2"
+        },
+        "2.4.alt2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "angry",
+          "volume": "whisper",
+          "text": "You started it.",
+          "next": "2.4.alt3"
+        },
+        "2.4.alt3": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "wry",
+          "volume": "normal",
+          "text": "I start a lot of things. Name's Jonah. I'm the fast one.",
+          "next": "2.4.alt4"
+        },
+        "2.4.alt4": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "whisper",
+          "text": "I noticed.",
+          "next": "2.4.alt5"
+        },
+        "2.4.alt5": {
+          "type": "line",
+          "speaker": "JONAH",
+          "delivery": "R",
+          "emotion": "amused",
+          "volume": "normal",
+          "text": "See you at the warehouse. Try not to bring the whole corner with you.",
+          "next": "2.4.alt_fx"
+        },
+        "2.4.alt_fx": {
+          "type": "effects",
+          "effects": {
+            "set_flags": {
+              "met_jonah": true
+            },
+            "log": "jonah.retaliated_or_loud"
+          },
+          "next": "2.4.alt_wait"
+        },
+        "2.4.alt_wait": {
+          "type": "wait",
+          "wait_for": "waypoint.reach:warehouse",
+          "next": "2.4.alt10"
+        },
+        "2.4.alt10": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "anim": "deac.hallway_pass",
+          "text": "Heard you on the radio.",
+          "next": "2.4.alt11"
+        },
+        "2.4.alt11": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "Was I —",
+          "next": "2.4.alt12"
+        },
+        "2.4.alt12": {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "You were loud.",
+          "next": "2.4.alt13"
+        },
+        "2.4.alt13": {
+          "type": "direction",
+          "text": "She keeps walking.",
+          "anim": "deac.exit_hall",
+          "auto_ms": 1600,
+          "next": "2.4.alt14"
+        },
+        "2.4.alt14": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tired",
+          "volume": "whisper",
+          "text": "…That was not a compliment. That was the whole not-compliment.",
+          "next": "2.4.end"
+        },
+        "2.4.end": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "act2_complete": true
+            },
+            "unlock": [
+              "region.i90",
+              "mission.convoy_issaquah"
+            ],
+            "checkpoint": "act2_complete",
+            "log": "act.complete:2"
+          },
+          "next_scene": "3.1"
+        }
+      },
+      "triggers": [
+        {
+          "event": "jonah.blowthrough",
+          "node": "2.4.pre",
+          "once": true,
+          "priority": 10,
+          "interrupt": true
+        },
+        {
+          "event": "noise.red",
+          "node": "2.4.loud",
+          "once": true,
+          "priority": 3
+        },
+        {
+          "event": "quiet.settle",
+          "node": "2.4.branch",
+          "once": true,
+          "priority": 10
+        },
+        {
+          "event": "noise.yellow",
+          "node": "pool:noise_yellow",
+          "cooldown_ms": 8000
+        },
+        {
+          "event": "mission.fail.swarm",
+          "node": "pool:mission_fail_swarm",
+          "priority": 20,
+          "interrupt": true
+        }
+      ]
+    },
+    "2.6": {
+      "id": "2.6",
+      "act": 2,
+      "title": "Shop — Auntie Bea (Cats)",
+      "type": "shop",
+      "location": "cat_sanctuary",
+      "background": "res://backgrounds/sanctuary_shop.png",
+      "ambience": "res://audio/amb/cats_purring_room.ogg",
+      "entry": "2.6.greet",
+      "nodes": {
+        "2.6.greet": {
+          "type": "pool",
+          "pool": "bea_greet",
+          "effects": {
+            "start_gameplay": "shop_cats",
+            "log": "shop.open:cats"
+          }
+        },
+        "2.6.buy_toy": {
+          "type": "line",
+          "speaker": "BEA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "auto_ms": 3200,
+          "text": "A busy cat is a quiet cat. She'll hate it for an hour and then it'll be her whole life.",
+          "effects": {
+            "set_flags": {
+              "has_gracie_toy": true
+            },
+            "log": "shop.buy:gracie_toy"
+          }
+        },
+        "2.6.buy_collar": {
+          "type": "line",
+          "speaker": "BEA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "auto_ms": 2800,
+          "text": "No bell. She'll never know it's there. Neither will they.",
+          "effects": {
+            "set_flags": {
+              "has_gracie_collar": true
+            },
+            "log": "shop.buy:gracie_collar"
+          }
+        },
+        "2.6.buy_snacks": {
+          "type": "line",
+          "speaker": "BEA",
+          "delivery": "S",
+          "emotion": "amused",
+          "volume": "low",
+          "auto_ms": 2400,
+          "text": "Oh, she'll get up for these. Briefly.",
+          "effects": {
+            "log": "shop.buy:mya_snacks"
+          }
+        },
+        "2.6.buy_any": {
+          "type": "line",
+          "speaker": "BEA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "auto_ms": 1800,
+          "text": "Good choice. The cats approve. Well — Pickles approves. Pickles approves of everything."
+        },
+        "2.6.cant": {
+          "type": "line",
+          "speaker": "BEA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "auto_ms": 3600,
+          "text": "Sweetheart, I'd give it to you. I would. But then everyone would want it for free and the cats would starve. Come back with points.",
+          "effects": {
+            "log": "shop.cant_afford:cats"
+          }
+        },
+        "2.6.end": {
+          "type": "end",
+          "effects": {
+            "log": "shop.close:cats"
+          }
+        }
+      },
+      "triggers": [
+        {
+          "event": "shop.buy:gracie_toy",
+          "node": "2.6.buy_toy",
+          "priority": 5
+        },
+        {
+          "event": "shop.buy:gracie_collar",
+          "node": "2.6.buy_collar",
+          "priority": 5
+        },
+        {
+          "event": "shop.buy:mya_snacks",
+          "node": "2.6.buy_snacks",
+          "priority": 5
+        },
+        {
+          "event": "shop.buy:",
+          "node": "2.6.buy_any",
+          "priority": 1,
+          "cooldown_ms": 2000
+        },
+        {
+          "event": "shop.cant_afford",
+          "node": "2.6.cant",
+          "cooldown_ms": 6000
+        },
+        {
+          "event": "shop.close",
+          "node": "2.6.end",
+          "priority": 20,
+          "interrupt": true
+        }
+      ]
+    },
+    "2.7": {
+      "id": "2.7",
+      "act": 2,
+      "title": "Shop — Priya (K-pop)",
+      "type": "shop",
+      "location": "priya_radio_shack",
+      "background": "res://backgrounds/priya_shack_photocards.png",
+      "ambience": "res://audio/amb/radio_tuning_bed.ogg",
+      "entry": "2.7.greet",
+      "nodes": {
+        "2.7.greet": {
+          "type": "pool",
+          "pool": "priya_greet",
+          "effects": {
+            "start_gameplay": "shop_kpop",
+            "log": "shop.open:kpop"
+          }
+        },
+        "2.7.buy_common": {
+          "type": "line",
+          "speaker": "PRIYA",
+          "delivery": "S",
+          "emotion": "amused",
+          "volume": "low",
+          "auto_ms": 2400,
+          "text": "Jae! Good pull. Jae's underrated.",
+          "effects": {
+            "log": "shop.buy:photocard_common"
+          }
+        },
+        "2.7.buy_sori": {
+          "type": "line",
+          "speaker": "PRIYA",
+          "delivery": "S",
+          "emotion": "panicked",
+          "volume": "low",
+          "auto_ms": 3200,
+          "text": "Oh my god. Oh my god. Don't tell Jonah. Do not tell Jonah.",
+          "effects": {
+            "set_flags": {
+              "has_sori_card": true
+            },
+            "log": "shop.buy:photocard_sori"
+          }
+        },
+        "2.7.buy_skin": {
+          "type": "line",
+          "speaker": "PRIYA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "auto_ms": 3200,
+          "text": "That dash is going to look so good. Take a picture. Nobody takes pictures anymore.",
+          "effects": {
+            "log": "shop.buy:radio_skin"
+          }
+        },
+        "2.7.buy_lightbar": {
+          "type": "line",
+          "speaker": "PRIYA",
+          "delivery": "S",
+          "emotion": "amused",
+          "volume": "low",
+          "auto_ms": 2800,
+          "text": "Lumi's color. Keep it dim on the road — pretty is fine, bright is a problem.",
+          "effects": {
+            "log": "shop.buy:lightbar"
+          }
+        },
+        "2.7.buy_any": {
+          "type": "line",
+          "speaker": "PRIYA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "auto_ms": 1800,
+          "text": "Yes. Good. Nine p.m. Don't forget."
+        },
+        "2.7.cant": {
+          "type": "line",
+          "speaker": "PRIYA",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "low",
+          "auto_ms": 3000,
+          "text": "I feel that in my soul. Run something for Deac and come back. The cards aren't going anywhere. Well. Sori might.",
+          "effects": {
+            "log": "shop.cant_afford:kpop"
+          }
+        },
+        "2.7.end": {
+          "type": "end",
+          "effects": {
+            "log": "shop.close:kpop"
+          }
+        }
+      },
+      "triggers": [
+        {
+          "event": "shop.buy:photocard_common",
+          "node": "2.7.buy_common",
+          "priority": 5,
+          "cooldown_ms": 1500
+        },
+        {
+          "event": "shop.buy:photocard_sori",
+          "node": "2.7.buy_sori",
+          "priority": 5
+        },
+        {
+          "event": "shop.buy:radio_skin",
+          "node": "2.7.buy_skin",
+          "priority": 5
+        },
+        {
+          "event": "shop.buy:lightbar",
+          "node": "2.7.buy_lightbar",
+          "priority": 5
+        },
+        {
+          "event": "shop.buy:",
+          "node": "2.7.buy_any",
+          "priority": 1,
+          "cooldown_ms": 2000
+        },
+        {
+          "event": "shop.cant_afford",
+          "node": "2.7.cant",
+          "cooldown_ms": 6000
+        },
+        {
+          "event": "shop.close",
+          "node": "2.7.end",
+          "priority": 20,
+          "interrupt": true
+        }
+      ]
+    },
+    "2.8": {
+      "id": "2.8",
+      "act": 2,
+      "title": "Shop — Tuna (Upgrades)",
+      "type": "shop",
+      "location": "tuna_bay",
+      "background": "res://backgrounds/tuna_bay_beetle_lift.png",
+      "ambience": "res://audio/amb/garage_drip_fan.ogg",
+      "entry": "2.8.greet",
+      "nodes": {
+        "2.8.greet": {
+          "type": "pool",
+          "pool": "tuna_greet",
+          "effects": {
+            "start_gameplay": "shop_upgrades",
+            "log": "shop.open:upgrades"
+          }
+        },
+        "2.8.buy_muffler": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "proud",
+          "volume": "low",
+          "auto_ms": 3000,
+          "text": "Ten decibels. That's ten decibels of not-dying. Best money you'll spend.",
+          "effects": {
+            "set_flags": {
+              "has_quiet_muffler": true
+            },
+            "log": "shop.buy:muffler"
+          }
+        },
+        "2.8.buy_chains": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "relieved",
+          "volume": "low",
+          "auto_ms": 2200,
+          "text": "Thank you. Somebody listens.",
+          "effects": {
+            "set_flags": {
+              "has_chains": true
+            },
+            "log": "shop.buy:chains"
+          }
+        },
+        "2.8.buy_tires": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 3000,
+          "text": "Grip's the whole game. Nobody thinks about grip until they don't have it.",
+          "effects": {
+            "log": "shop.buy:tires"
+          }
+        },
+        "2.8.buy_leds": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 3000,
+          "text": "You'll see farther. Doesn't mean you can go faster. Means you can stop in time.",
+          "effects": {
+            "log": "shop.buy:led_lights"
+          }
+        },
+        "2.8.buy_plow": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "auto_ms": 2800,
+          "text": "Wedge, not wall. Still loud. Still last resort. Say it back to me.",
+          "effects": {
+            "log": "shop.buy:plow_tune"
+          }
+        },
+        "2.8.buy_any": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "auto_ms": 1800,
+          "text": "Good. She'll like that. She doesn't say so, but I can tell."
+        },
+        "2.8.cant": {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "auto_ms": 3600,
+          "text": "Run some more deliveries. She'll wait. She's good at waiting. She waited two years under a tarp.",
+          "effects": {
+            "log": "shop.cant_afford:upgrades"
+          }
+        },
+        "2.8.end": {
+          "type": "end",
+          "effects": {
+            "log": "shop.close:upgrades"
+          }
+        }
+      },
+      "triggers": [
+        {
+          "event": "shop.buy:muffler",
+          "node": "2.8.buy_muffler",
+          "priority": 5
+        },
+        {
+          "event": "shop.buy:chains",
+          "node": "2.8.buy_chains",
+          "priority": 5
+        },
+        {
+          "event": "shop.buy:tires",
+          "node": "2.8.buy_tires",
+          "priority": 5
+        },
+        {
+          "event": "shop.buy:led_lights",
+          "node": "2.8.buy_leds",
+          "priority": 5
+        },
+        {
+          "event": "shop.buy:plow_tune",
+          "node": "2.8.buy_plow",
+          "priority": 5
+        },
+        {
+          "event": "shop.buy:",
+          "node": "2.8.buy_any",
+          "priority": 1,
+          "cooldown_ms": 2000
+        },
+        {
+          "event": "shop.cant_afford",
+          "node": "2.8.cant",
+          "cooldown_ms": 6000
+        },
+        {
+          "event": "shop.close",
+          "node": "2.8.end",
+          "priority": 20,
+          "interrupt": true
+        }
+      ]
+    }
+  },
+  "pools": {
+    "bea_greet": {
+      "pick": "random",
+      "no_repeat": true,
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "BEA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "auto_ms": 2200,
+          "text": "Come in, mind the door. Who needs what?"
+        },
+        {
+          "type": "line",
+          "speaker": "BEA",
+          "delivery": "S",
+          "emotion": "amused",
+          "volume": "low",
+          "auto_ms": 2400,
+          "text": "How's the orange one? Still a menace? Good. Means she's healthy."
+        },
+        {
+          "type": "line",
+          "speaker": "BEA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "auto_ms": 2200,
+          "text": "Pickles has been asking about you. Well. Sitting near the door. Same thing."
+        }
+      ]
+    },
+    "priya_greet": {
+      "pick": "random",
+      "no_repeat": true,
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "PRIYA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "auto_ms": 2200,
+          "text": "Nine p.m. Don't forget. Ninety-one point three."
+        },
+        {
+          "type": "line",
+          "speaker": "PRIYA",
+          "delivery": "S",
+          "emotion": "amused",
+          "volume": "low",
+          "auto_ms": 2400,
+          "text": "New cards came in with the Tacoma run. I haven't looked. I'm being strong."
+        },
+        {
+          "type": "line",
+          "speaker": "PRIYA",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "low",
+          "auto_ms": 2200,
+          "text": "Jonah was in here asking about Sori. I said nothing. I said so much nothing."
+        }
+      ]
+    },
+    "tuna_greet": {
+      "pick": "random",
+      "no_repeat": true,
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "low",
+          "auto_ms": 2400,
+          "text": "How's she running? Don't lie, I can hear her."
+        },
+        {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 2400,
+          "text": "Chains. I'm going to say chains every time you walk in until you buy chains."
+        },
+        {
+          "type": "line",
+          "speaker": "TUNA",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "auto_ms": 2200,
+          "text": "Hey, kid. Hey, girl. (That second one was the car.)"
+        }
+      ]
+    },
+    "lanechange_clean": {
+      "pick": "random",
+      "no_repeat": true,
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1600,
+          "text": "Signal. Mirror. Shoulder. Go.",
+          "effects": {
+            "tp": 2
+          }
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "wry",
+          "volume": "whisper",
+          "auto_ms": 2000,
+          "text": "Signaled to nobody. Felt great. Doing it again.",
+          "effects": {
+            "tp": 2
+          }
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1400,
+          "text": "Clean.",
+          "effects": {
+            "tp": 2
+          }
+        }
+      ]
+    },
+    "mission_fail_swarm": {
+      "pick": "sequential",
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 1800,
+          "text": "You're walking. Cats?"
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "tired",
+          "volume": "whisper",
+          "auto_ms": 1400,
+          "text": "Got both."
+        },
+        {
+          "type": "line",
+          "speaker": "DEAC",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 2600,
+          "text": "Then you didn't lose anything that matters. Warehouse. Try again."
+        }
+      ]
+    }
+  }
+}

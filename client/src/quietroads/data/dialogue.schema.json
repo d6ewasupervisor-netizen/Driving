@@ -1,0 +1,738 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://quietroads.game/schemas/dialogue.schema.json",
+  "title": "Quiet Roads Dialogue File (1.3.0)",
+  "type": "object",
+  "required": [
+    "meta",
+    "characters",
+    "scenes"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "acts",
+        "locale"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "game": {
+          "type": "string"
+        },
+        "acts": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "locale": {
+          "type": "string"
+        },
+        "placeholders": {
+          "type": "object",
+          "description": "Token -> replacement. Text uses {TOKEN}.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "variables": {
+      "type": "object",
+      "description": "Numeric game variables the dialogue may read/modify.",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "type",
+          "default"
+        ],
+        "properties": {
+          "type": {
+            "enum": [
+              "int",
+              "float"
+            ]
+          },
+          "default": {
+            "type": "number"
+          },
+          "min": {
+            "type": "number"
+          },
+          "max": {
+            "type": "number"
+          },
+          "hidden": {
+            "type": "boolean",
+            "description": "Not shown to player (e.g. respect)."
+          }
+        }
+      }
+    },
+    "flags": {
+      "type": "object",
+      "description": "Boolean story flags with defaults.",
+      "additionalProperties": {
+        "type": "boolean"
+      }
+    },
+    "characters": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/character"
+      }
+    },
+    "scenes": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/scene"
+      }
+    },
+    "pools": {
+      "type": "object",
+      "description": "Reusable bark pools referenced by pool nodes.",
+      "additionalProperties": {
+        "$ref": "#/$defs/pool"
+      }
+    }
+  },
+  "$defs": {
+    "character": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "portrait_dir": {
+          "type": "string"
+        },
+        "speaks": {
+          "type": "boolean",
+          "default": true
+        },
+        "voice_bed": {
+          "enum": [
+            "none",
+            "radio_static",
+            "cb_radio",
+            "phone"
+          ],
+          "default": "none"
+        },
+        "default_volume": {
+          "$ref": "#/$defs/volume"
+        }
+      }
+    },
+    "volume": {
+      "enum": [
+        "whisper",
+        "low",
+        "normal",
+        "raised",
+        "shout"
+      ],
+      "description": "raised/shout emit noise; see node.noise_db override."
+    },
+    "emotion": {
+      "enum": [
+        "neutral",
+        "deadpan",
+        "wry",
+        "warm",
+        "tense",
+        "panicked",
+        "relieved",
+        "sad",
+        "tired",
+        "angry",
+        "amused",
+        "scared",
+        "proud",
+        "reading"
+      ]
+    },
+    "delivery": {
+      "enum": [
+        "V",
+        "S",
+        "R",
+        "G",
+        "SYS"
+      ],
+      "description": "V video cutscene, S still+box, R radio, G gameplay bark, SYS tutorial-in-voice"
+    },
+    "condition": {
+      "type": "object",
+      "oneOf": [
+        {
+          "required": [
+            "flag",
+            "is"
+          ],
+          "properties": {
+            "flag": {
+              "type": "string"
+            },
+            "is": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "required": [
+            "var"
+          ],
+          "properties": {
+            "var": {
+              "type": "string"
+            },
+            "eq": {
+              "type": "number"
+            },
+            "gte": {
+              "type": "number"
+            },
+            "lte": {
+              "type": "number"
+            },
+            "gt": {
+              "type": "number"
+            },
+            "lt": {
+              "type": "number"
+            }
+          }
+        },
+        {
+          "required": [
+            "has_item"
+          ],
+          "properties": {
+            "has_item": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "required": [
+            "all"
+          ],
+          "properties": {
+            "all": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/condition"
+              }
+            }
+          }
+        },
+        {
+          "required": [
+            "any"
+          ],
+          "properties": {
+            "any": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/condition"
+              }
+            }
+          }
+        },
+        {
+          "required": [
+            "not"
+          ],
+          "properties": {
+            "not": {
+              "$ref": "#/$defs/condition"
+            }
+          }
+        }
+      ]
+    },
+    "effects": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "respect": {
+          "type": "integer",
+          "description": "Hidden Respect delta."
+        },
+        "calm": {
+          "type": "integer"
+        },
+        "tp": {
+          "type": "integer",
+          "description": "Trade Points delta."
+        },
+        "noise_db": {
+          "type": "number",
+          "description": "Emit noise at player position."
+        },
+        "set_flags": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "set_vars": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "give_items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "unlock": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "e.g. shop.cats, passive.mya, region.i90"
+        },
+        "start_gameplay": {
+          "type": "string",
+          "description": "Hand control to a mission/tutorial by id."
+        },
+        "checkpoint": {
+          "type": "string",
+          "description": "Autosave label."
+        },
+        "log": {
+          "type": "string",
+          "description": "Event name pushed to sessions table for the dashboard."
+        },
+        "add_vars": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          },
+          "description": "Relative deltas; set_vars is absolute."
+        },
+        "noise_marker": {
+          "type": "string",
+          "description": "Attribute a noise to a non-player source (e.g. 'sign') so the Quiet look there."
+        }
+      }
+    },
+    "choice_option": {
+      "type": "object",
+      "required": [
+        "id",
+        "text",
+        "next"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "next": {
+          "type": "string"
+        },
+        "condition": {
+          "$ref": "#/$defs/condition"
+        },
+        "effects": {
+          "$ref": "#/$defs/effects"
+        },
+        "tracked": {
+          "type": "boolean",
+          "description": "Store in choices table for dashboard."
+        }
+      }
+    },
+    "branch": {
+      "type": "object",
+      "required": [
+        "next"
+      ],
+      "properties": {
+        "condition": {
+          "$ref": "#/$defs/condition",
+          "description": "Omit for the default branch."
+        },
+        "next": {
+          "type": "string"
+        }
+      }
+    },
+    "node": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "line",
+            "direction",
+            "choice",
+            "branch",
+            "wait",
+            "effects",
+            "pool",
+            "jump",
+            "end"
+          ]
+        },
+        "speaker": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "text_key": {
+          "type": "string",
+          "description": "Optional localization key."
+        },
+        "emotion": {
+          "$ref": "#/$defs/emotion"
+        },
+        "volume": {
+          "$ref": "#/$defs/volume"
+        },
+        "noise_db": {
+          "type": "number",
+          "description": "Override noise emitted by this line."
+        },
+        "delivery": {
+          "$ref": "#/$defs/delivery"
+        },
+        "portrait": {
+          "type": "string"
+        },
+        "anim": {
+          "type": "string",
+          "description": "Animation cue, e.g. mya.sleep_twitch"
+        },
+        "sfx": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "auto_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Auto-advance after N ms; omit = wait for tap."
+        },
+        "effects": {
+          "$ref": "#/$defs/effects"
+        },
+        "condition": {
+          "$ref": "#/$defs/condition",
+          "description": "Skip node (go to next) if false."
+        },
+        "next": {
+          "type": "string"
+        },
+        "next_scene": {
+          "type": "string",
+          "description": "end nodes only"
+        },
+        "choices": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/choice_option"
+          }
+        },
+        "timeout_ms": {
+          "type": "integer"
+        },
+        "default_option": {
+          "type": "string"
+        },
+        "branches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/branch"
+          }
+        },
+        "wait_for": {
+          "type": "string",
+          "description": "Event name that resumes a wait node."
+        },
+        "pool": {
+          "type": "string",
+          "description": "Pool id for pool nodes."
+        },
+        "scene": {
+          "type": "string",
+          "description": "jump nodes: target scene id"
+        },
+        "voice_bed": {
+          "enum": [
+            "none",
+            "radio_static",
+            "cb_radio",
+            "phone"
+          ],
+          "description": "Per-line override of the speaker's voice_bed."
+        },
+        "music": {
+          "type": "string"
+        },
+        "background": {
+          "type": "string"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "line"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "speaker",
+              "text"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "direction"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "text"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "choice"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "choices"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "branch"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "branches"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "wait"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "wait_for",
+              "next"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "pool"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "pool"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "jump"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "scene"
+            ]
+          }
+        }
+      ]
+    },
+    "trigger": {
+      "type": "object",
+      "required": [
+        "event",
+        "node"
+      ],
+      "properties": {
+        "event": {
+          "type": "string",
+          "description": "Exact name, or prefix ending in ':' + id."
+        },
+        "node": {
+          "type": "string"
+        },
+        "condition": {
+          "$ref": "#/$defs/condition"
+        },
+        "once": {
+          "type": "boolean",
+          "default": false
+        },
+        "cooldown_ms": {
+          "type": "integer",
+          "default": 0
+        },
+        "priority": {
+          "type": "integer",
+          "default": 0
+        },
+        "interrupt": {
+          "type": "boolean",
+          "default": false,
+          "description": "May cut off a currently-playing bark."
+        }
+      }
+    },
+    "scene": {
+      "type": "object",
+      "required": [
+        "id",
+        "act",
+        "title",
+        "type",
+        "entry",
+        "nodes"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+[a-z]?$"
+        },
+        "act": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "video",
+            "still",
+            "radio",
+            "gameplay",
+            "shop",
+            "exam"
+          ]
+        },
+        "location": {
+          "type": "string"
+        },
+        "video": {
+          "type": "string"
+        },
+        "background": {
+          "type": "string"
+        },
+        "music": {
+          "type": "string"
+        },
+        "ambience": {
+          "type": "string"
+        },
+        "entry": {
+          "type": "string"
+        },
+        "nodes": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/node"
+          }
+        },
+        "triggers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/trigger"
+          }
+        },
+        "guide_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "WA Driver Guide sections this scene teaches (dashboard uses this)."
+        }
+      }
+    },
+    "pool": {
+      "type": "object",
+      "required": [
+        "lines"
+      ],
+      "properties": {
+        "pick": {
+          "enum": [
+            "random",
+            "sequential"
+          ],
+          "default": "random"
+        },
+        "no_repeat": {
+          "type": "boolean",
+          "default": true
+        },
+        "lines": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/node"
+          }
+        }
+      }
+    }
+  }
+}

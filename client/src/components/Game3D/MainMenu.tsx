@@ -3,6 +3,8 @@
  */
 import { useCallback } from 'react';
 import { useGameStore } from '@/stores/gameStore';
+import { useQRStore } from '@/stores/qrStore';
+import { QuietRoads } from '@/systems/QuietRoadsBridge';
 
 const BIOME_LABEL: Record<string, string> = {
   city: 'New York',
@@ -19,12 +21,19 @@ export function MainMenu({ onExit }: { onExit?: () => void }) {
 
   const handleNewGame = useCallback(() => {
     resetProgress();
+    useGameStore.getState().setWorldMode('highway');
     setPhase('driving');
   }, [resetProgress, setPhase]);
 
   const handleContinue = useCallback(() => {
+    useGameStore.getState().setWorldMode('highway');
     setPhase('driving');
   }, [setPhase]);
+
+  const qrCheckpoint = useQRStore((s) => s.checkpoint);
+  const qrScene = useQRStore((s) => s.sceneId);
+  const handleQuietRoadsNew = useCallback(() => { QuietRoads.start(true); }, []);
+  const handleQuietRoadsContinue = useCallback(() => { QuietRoads.start(false); }, []);
 
   if (phase !== 'menu') return null;
 
@@ -43,8 +52,18 @@ export function MainMenu({ onExit }: { onExit?: () => void }) {
         </p>
 
         <div style={styles.btnStack}>
+          <button style={{ ...styles.btn, ...styles.btnQuiet }} onClick={handleQuietRoadsNew}>
+            🐈 QUIET ROADS — ACT 0
+            <span style={styles.saveSummary}>Kent. Grandma's Beetle. Don't wake anybody.</span>
+          </button>
+          {qrCheckpoint && (
+            <button style={{ ...styles.btn, ...styles.btnContinue }} onClick={handleQuietRoadsContinue}>
+              ▶ CONTINUE QUIET ROADS
+              <span style={styles.saveSummary}>Scene {qrScene} · {qrCheckpoint.replace(/_/g, ' ')}</span>
+            </button>
+          )}
           <button style={{ ...styles.btn, ...styles.btnNew }} onClick={handleNewGame}>
-            🚀 NEW GAME
+            🚀 ROAD TRIP (NYC → Spokane)
           </button>
 
           {hasSave && (
@@ -144,6 +163,13 @@ const styles: Record<string, React.CSSProperties> = {
     boxShadow: '0 0 20px rgba(255,0,255,0.4)',
     fontSize: '18px',
     letterSpacing: '0.05em',
+  },
+  btnQuiet: {
+    background: 'linear-gradient(90deg, #F28DB2, #b95f88)',
+    color: '#1a0a12',
+    boxShadow: '0 0 20px rgba(242,141,178,0.4)',
+    fontSize: '17px',
+    letterSpacing: '0.04em',
   },
   btnContinue: {
     background: 'linear-gradient(90deg, #1a4a1a, #2d7a2d)',

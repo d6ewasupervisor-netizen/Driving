@@ -1,0 +1,1789 @@
+{
+  "meta": {
+    "schema_version": "1.2.0",
+    "game": "Quiet Roads",
+    "acts": [
+      7
+    ],
+    "locale": "en-US",
+    "placeholders": {
+      "MOM": "Mom",
+      "RAY": "Ray",
+      "GRANDMA": "Grandma",
+      "GRANDMA_NAME": "June",
+      "PLAYER": "Ali",
+      "PLAYER_FULL": "Alison"
+    }
+  },
+  "variables": {
+    "respect": {
+      "type": "int",
+      "default": 0,
+      "min": 0,
+      "max": 100,
+      "hidden": true
+    },
+    "calm": {
+      "type": "int",
+      "default": 50,
+      "min": 0,
+      "max": 100
+    },
+    "trade_points": {
+      "type": "int",
+      "default": 0,
+      "min": 0
+    },
+    "escort_incidents": {
+      "type": "int",
+      "default": 0,
+      "min": 0
+    },
+    "ritzville_discount": {
+      "type": "int",
+      "default": 0,
+      "min": 0,
+      "max": 100
+    }
+  },
+  "flags": {
+    "convoy_retry": false,
+    "nozone_tutorial_done": false,
+    "wide_turn_held": false,
+    "wide_turn_inside": false,
+    "moveover_lane": false,
+    "moveover_slow": false,
+    "moveover_none": false,
+    "hank_report_clean": false,
+    "has_quiet_muffler": false,
+    "bought_led_lights": false,
+    "bought_anything_ritzville": false,
+    "ritzville_short": false,
+    "mya_passive": false,
+    "act7_complete": false,
+    "muffler_from_ritzville": false
+  },
+  "characters": {
+    "ALI": {
+      "name": "Ali",
+      "color": "#F28DB2",
+      "portrait_dir": "res://portraits/ali",
+      "default_volume": "whisper"
+    },
+    "MYA": {
+      "name": "Mya",
+      "color": "#8B6B4A",
+      "portrait_dir": "res://portraits/mya",
+      "speaks": false
+    },
+    "GRACIE": {
+      "name": "Gracie",
+      "color": "#F2A63B",
+      "portrait_dir": "res://portraits/gracie",
+      "speaks": false
+    },
+    "HANK": {
+      "name": "Hank",
+      "color": "#C9A66B",
+      "portrait_dir": "res://portraits/hank",
+      "voice_bed": "cb_radio",
+      "default_volume": "normal"
+    },
+    "DISPATCH": {
+      "name": "Authority Dispatch",
+      "color": "#9AA5B1",
+      "portrait_dir": "res://portraits/dispatch",
+      "voice_bed": "cb_radio",
+      "default_volume": "low"
+    },
+    "VENDOR": {
+      "name": "Ritzville Vendor",
+      "color": "#A68A64",
+      "portrait_dir": "res://portraits/vendor",
+      "default_volume": "low"
+    },
+    "MOM": {
+      "name": "{MOM}",
+      "color": "#7FB3D5",
+      "portrait_dir": "res://portraits/mom",
+      "voice_bed": "radio_static",
+      "default_volume": "low"
+    },
+    "RAY": {
+      "name": "{RAY}",
+      "color": "#6C8E7F",
+      "portrait_dir": "res://portraits/ray",
+      "voice_bed": "radio_static",
+      "default_volume": "low"
+    }
+  },
+  "scenes": {
+    "7.1": {
+      "id": "7.1",
+      "act": 7,
+      "title": "The Ritzville Run",
+      "type": "gameplay",
+      "location": "i90_moses_lake_to_ritzville",
+      "background": "res://backgrounds/moses_lake_depot_dawn_trucks.png",
+      "ambience": "res://audio/amb/diesel_idle_wind.ogg",
+      "music": "res://audio/music/big_rigs.ogg",
+      "guide_refs": [
+        "Sharing the Road: Large Trucks and No-Zones",
+        "Following Distance Behind Large Vehicles",
+        "Trucks: Wide Right Turns",
+        "Passing Large Vehicles",
+        "Emergency Zones: Move-Over Law"
+      ],
+      "entry": "7.1.entry",
+      "nodes": {
+        "7.1.entry": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "convoy_retry",
+                "is": true
+              },
+              "next": "7.1.retry"
+            },
+            {
+              "next": "7.1.0"
+            }
+          ]
+        },
+        "7.1.0": {
+          "type": "direction",
+          "text": "Moses Lake. Dawn. Four Authority grain trucks idling at the depot, tall as houses. The Beetle looks like something one of them coughed up.",
+          "anim": "depot.trucks_idle",
+          "auto_ms": 3400,
+          "next": "7.1.1"
+        },
+        "7.1.1": {
+          "type": "line",
+          "speaker": "DISPATCH",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Pink Bug, you're cleared to escort. Fall in behind Hank. Do what he says. He's been driving that truck since before you were born.",
+          "effects": {
+            "log": "escort.cleared"
+          },
+          "next": "7.1.2"
+        },
+        "7.1.2": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "normal",
+          "text": "Way before.",
+          "next": "7.1.2b"
+        },
+        "7.1.2b": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "Copy. …Do people still say copy?",
+          "next": "7.1.2c"
+        },
+        "7.1.2c": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "amused",
+          "volume": "normal",
+          "text": "They do now. Four seconds behind me, Bug. Not three. I'm not a Beetle.",
+          "next": "7.1.go"
+        },
+        "7.1.retry": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "text": "Back again. Good. Convoy waited. Convoys wait for people who come back.",
+          "next": "7.1.go"
+        },
+        "7.1.go": {
+          "type": "effects",
+          "effects": {
+            "set_vars": {
+              "escort_incidents": 0
+            },
+            "set_flags": {
+              "convoy_retry": false,
+              "wide_turn_held": false,
+              "wide_turn_inside": false,
+              "moveover_lane": false,
+              "moveover_slow": false,
+              "moveover_none": false
+            },
+            "start_gameplay": "escort_ritzville",
+            "checkpoint": "escort_begin",
+            "log": "mission.begin:escort"
+          }
+        },
+        "7.1.3": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "text": "Pink Bug, you're in my blind spot. If I can't see you in my mirror, I can't see you.",
+          "next": "7.1.4"
+        },
+        "7.1.4": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Dropping back.",
+          "next": "7.1.5"
+        },
+        "7.1.5": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "normal",
+          "text": "Attagirl. Deac said you were quiet. Didn't say you were polite.",
+          "effects": {
+            "set_flags": {
+              "nozone_tutorial_done": true
+            },
+            "unlock": [
+              "hud.nozone_overlay"
+            ],
+            "log": "nozone.tutorial"
+          },
+          "next": "7.1.5b"
+        },
+        "7.1.5b": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "SYS",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 3600,
+          "anim": "hud.nozone_fade_in",
+          "text": "Red. The red around his truck is everywhere he can't see. Front, back, both sides — the right side's huge. If I'm in the red, I don't exist. Stay out of the red."
+        },
+        "7.1.nz_right": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "normal",
+          "auto_ms": 3000,
+          "text": "Right side again. That's the big one. Two whole lanes of me not knowing you're there.",
+          "effects": {
+            "respect": -1,
+            "add_vars": {
+              "escort_incidents": 1
+            },
+            "log": "nozone.right"
+          }
+        },
+        "7.1.nz_left": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "auto_ms": 3000,
+          "text": "Left side. Smaller hole. Still a hole. Pass me or drop back — don't live there.",
+          "effects": {
+            "respect": -1,
+            "add_vars": {
+              "escort_incidents": 1
+            },
+            "log": "nozone.left"
+          }
+        },
+        "7.1.nz_front": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "normal",
+          "auto_ms": 3600,
+          "text": "You cut in that close, you'd better be doing my speed plus five. I need a football field to stop this thing. You don't. Do the math.",
+          "effects": {
+            "respect": -2,
+            "add_vars": {
+              "escort_incidents": 1
+            },
+            "log": "nozone.front"
+          }
+        },
+        "7.1.6": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "text": "You see my mirrors?",
+          "next": "7.1.7"
+        },
+        "7.1.7": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "…No.",
+          "next": "7.1.8"
+        },
+        "7.1.8": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "normal",
+          "auto_ms": 2200,
+          "text": "Then I don't see you. Back it up.",
+          "effects": {
+            "respect": -1,
+            "add_vars": {
+              "escort_incidents": 1
+            },
+            "log": "nozone.rear"
+          }
+        },
+        "7.1.follow_ok": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "auto_ms": 2600,
+          "text": "That's the gap. Both mirrors, both your headlights. We can see each other. Stay right there.",
+          "effects": {
+            "tp": 15,
+            "respect": 1,
+            "log": "follow.green.truck"
+          }
+        },
+        "7.1.9": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "text": "Right turn ahead. I'm gonna swing wide. Don't get inside me. People used to do that. Didn't end good.",
+          "next": "7.1.10"
+        },
+        "7.1.10": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1800,
+          "text": "Holding back."
+        },
+        "7.1.11": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "normal",
+          "auto_ms": 2400,
+          "anim": "truck.wide_turn_clear",
+          "text": "See, that's the polite part.",
+          "effects": {
+            "tp": 30,
+            "respect": 2,
+            "set_flags": {
+              "wide_turn_held": true
+            },
+            "log": "wide_turn.held"
+          }
+        },
+        "7.1.inside": {
+          "type": "direction",
+          "text": "The trailer swings left, then the whole rig comes right. The gap on the inside closes like a door. Ali stands on the brake. The tires chirp.",
+          "anim": "truck.wide_turn_closes",
+          "sfx": [
+            "tire_chirp_short"
+          ],
+          "effects": {
+            "noise_db": 68,
+            "calm": -15,
+            "respect": -3,
+            "add_vars": {
+              "escort_incidents": 1
+            },
+            "set_flags": {
+              "wide_turn_inside": true
+            },
+            "log": "wide_turn.inside"
+          },
+          "auto_ms": 2800,
+          "next": "7.1.inside2"
+        },
+        "7.1.inside2": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "raised",
+          "text": "THAT. That's the thing. I said didn't end good.",
+          "next": "7.1.inside3"
+        },
+        "7.1.inside3": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "scared",
+          "volume": "whisper",
+          "text": "…I'm okay. I'm okay.",
+          "next": "7.1.inside4"
+        },
+        "7.1.inside4": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "normal",
+          "text": "I know you're okay. I'm asking the Bug.",
+          "next": "7.1.inside5"
+        },
+        "7.1.inside5": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "tired",
+          "volume": "whisper",
+          "text": "She's okay.",
+          "next": "7.1.inside6"
+        },
+        "7.1.inside6": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "auto_ms": 2600,
+          "text": "Then we don't do that again. Wide means wide. It means the inside isn't a lane. It's a trap with a lane painted on it."
+        },
+        "7.1.12": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "auto_ms": 3400,
+          "anim": "patrol.lights_on_shoulder",
+          "text": "Patrol on the right. Lights. Everybody over a lane. If you can't get over, slow way down.",
+          "effects": {
+            "log": "patrol.lights"
+          }
+        },
+        "7.1.13": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Moving over.",
+          "next": "7.1.14"
+        },
+        "7.1.14": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "normal",
+          "auto_ms": 2600,
+          "text": "Good. That's the one rule that never changed.",
+          "effects": {
+            "tp": 30,
+            "respect": 2,
+            "set_flags": {
+              "moveover_lane": true
+            },
+            "log": "moveover.lane"
+          }
+        },
+        "7.1.mo_slow": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "Can't get over — you're in the lane. Slowing.",
+          "next": "7.1.mo_slow2"
+        },
+        "7.1.mo_slow2": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "auto_ms": 3000,
+          "text": "That's the backup. Backup counts. Slow means slow, though — not a little slow.",
+          "effects": {
+            "tp": 20,
+            "respect": 1,
+            "set_flags": {
+              "moveover_slow": true
+            },
+            "log": "moveover.slow"
+          }
+        },
+        "7.1.mo_none": {
+          "type": "direction",
+          "text": "The Beetle passes the patrol truck at speed. The man in the orange vest doesn't flinch. He writes something down.",
+          "anim": "patrol.writes",
+          "auto_ms": 2600,
+          "effects": {
+            "respect": -3,
+            "add_vars": {
+              "escort_incidents": 1
+            },
+            "set_flags": {
+              "moveover_none": true
+            },
+            "log": "moveover.none"
+          },
+          "next": "7.1.mo_none2"
+        },
+        "7.1.mo_none2": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "normal",
+          "text": "You just blew past a guy standing next to the road with his lights on.",
+          "next": "7.1.mo_none3"
+        },
+        "7.1.mo_none3": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "I — there wasn't room to —",
+          "next": "7.1.mo_none4"
+        },
+        "7.1.mo_none4": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "auto_ms": 3400,
+          "text": "Then you slow down. Over or slow. Never nothing. That rule's older than me, and Dispatch heard it too."
+        },
+        "7.1.15": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "text": "You passing me?",
+          "next": "7.1.16"
+        },
+        "7.1.16": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "Should I not?",
+          "next": "7.1.17"
+        },
+        "7.1.17": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "auto_ms": 3400,
+          "text": "Nah, go on. Just go. Don't hang out beside me. Beside me's the worst place there is.",
+          "effects": {
+            "log": "pass.begin"
+          }
+        },
+        "7.1.linger": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "normal",
+          "auto_ms": 2200,
+          "text": "You're hanging out. Commit or come back.",
+          "effects": {
+            "respect": -1,
+            "add_vars": {
+              "escort_incidents": 1
+            },
+            "log": "pass.linger"
+          }
+        },
+        "7.1.pass_done": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "text": "You see both my headlights in your mirror?",
+          "next": "7.1.pass_done2"
+        },
+        "7.1.pass_done2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Yeah.",
+          "next": "7.1.pass_done3"
+        },
+        "7.1.pass_done3": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "auto_ms": 2600,
+          "text": "Then you can come over. Not before. Never before.",
+          "effects": {
+            "tp": 25,
+            "respect": 1,
+            "log": "pass.complete"
+          }
+        },
+        "7.1.chat1": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "text": "Deac tell you the mirrors thing?",
+          "next": "7.1.chat2"
+        },
+        "7.1.chat2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "If I can't see the mirrors —",
+          "next": "7.1.chat3"
+        },
+        "7.1.chat3": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "amused",
+          "volume": "normal",
+          "text": "— the truck can't see you. She got that from me. Oh-four. Ellensburg truck stop. She wrote it down on a napkin.",
+          "next": "7.1.chat4"
+        },
+        "7.1.chat4": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "It's in the book.",
+          "next": "7.1.chat5"
+        },
+        "7.1.chat5": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "normal",
+          "text": "Course it's in the book. Everything's in the book. Nobody reads the book.",
+          "next": "7.1.chat6"
+        },
+        "7.1.chat6": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "I read the book.",
+          "next": "7.1.chat7"
+        },
+        "7.1.chat7": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "normal",
+          "auto_ms": 2200,
+          "text": "…Yeah. I heard.",
+          "effects": {
+            "calm": 5,
+            "log": "hank.chat"
+          }
+        },
+        "7.1.arrive": {
+          "type": "direction",
+          "text": "Ritzville. Grain elevators against a gray sky. A gate, a desk, a lamp. The trucks peel off toward the silos one by one.",
+          "anim": "ritzville.arrival",
+          "auto_ms": 3200,
+          "next": "7.1.report_branch"
+        },
+        "7.1.report_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "var": "escort_incidents",
+                "eq": 0
+              },
+              "next": "7.1.18"
+            },
+            {
+              "condition": {
+                "var": "escort_incidents",
+                "lte": 2
+              },
+              "next": "7.1.18b"
+            },
+            {
+              "next": "7.1.18c"
+            }
+          ]
+        },
+        "7.1.18": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "normal",
+          "text": "Voucher's at the desk. Tell 'em Hank said you didn't do anything stupid. That's a rare thing for me to say.",
+          "effects": {
+            "tp": 100,
+            "respect": 5,
+            "set_flags": {
+              "hank_report_clean": true
+            },
+            "unlock": [
+              "swag.bigrigs"
+            ],
+            "log": "hank.report:clean"
+          },
+          "next": "7.1.19"
+        },
+        "7.1.18b": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "text": "Voucher's at the desk. Tell 'em Hank said you did one stupid thing and didn't do it twice. That's rarer than never.",
+          "effects": {
+            "tp": 70,
+            "respect": 2,
+            "log": "hank.report:learned"
+          },
+          "next": "7.1.19"
+        },
+        "7.1.18c": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "text": "Voucher's at the desk. Tell 'em Hank said you got here. That's the part that counts. The rest we can work on.",
+          "effects": {
+            "tp": 50,
+            "log": "hank.report:rough"
+          },
+          "next": "7.1.19"
+        },
+        "7.1.19": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "whisper",
+          "text": "Thanks, Hank.",
+          "next": "7.1.20"
+        },
+        "7.1.20": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "text": "Two hours to Spokane. Don't rush the last two hours. That's when everybody rushes.",
+          "next": "7.1.end"
+        },
+        "7.1.end": {
+          "type": "end",
+          "effects": {
+            "unlock": [
+              "fuel.voucher_spokane",
+              "fieldnotes.7"
+            ],
+            "checkpoint": "ritzville",
+            "log": "scene.complete:7.1"
+          },
+          "next_scene": "7.2"
+        },
+        "7.1.red_fx": {
+          "type": "effects",
+          "effects": {
+            "add_vars": {
+              "escort_incidents": 1
+            }
+          },
+          "next": "pool:noise_red"
+        },
+        "7.1.swarm": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "normal",
+          "text": "Pink Bug, you're lit up. Behind you, both shoulders. Pull off at the crossing. Convoy holds at the next marker.",
+          "next": "7.1.swarm2"
+        },
+        "7.1.swarm2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "scared",
+          "volume": "whisper",
+          "text": "Cats — got both. Got both. Pulling off.",
+          "next": "7.1.swarm3"
+        },
+        "7.1.swarm3": {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "text": "We wait for people who come back. Come back.",
+          "next": "7.1.swarm_end"
+        },
+        "7.1.swarm_end": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "convoy_retry": true
+            },
+            "respect": -2,
+            "log": "mission.fail:escort"
+          },
+          "next_scene": "7.1"
+        }
+      },
+      "triggers": [
+        {
+          "event": "nozone.enter:",
+          "node": "7.1.3",
+          "once": true,
+          "priority": 10,
+          "interrupt": true
+        },
+        {
+          "event": "nozone.enter:right",
+          "node": "7.1.nz_right",
+          "cooldown_ms": 10000,
+          "priority": 5,
+          "condition": {
+            "flag": "nozone_tutorial_done",
+            "is": true
+          }
+        },
+        {
+          "event": "nozone.enter:left",
+          "node": "7.1.nz_left",
+          "cooldown_ms": 10000,
+          "priority": 5,
+          "condition": {
+            "flag": "nozone_tutorial_done",
+            "is": true
+          }
+        },
+        {
+          "event": "nozone.enter:front",
+          "node": "7.1.nz_front",
+          "cooldown_ms": 10000,
+          "priority": 6,
+          "interrupt": true,
+          "condition": {
+            "flag": "nozone_tutorial_done",
+            "is": true
+          }
+        },
+        {
+          "event": "nozone.enter:rear",
+          "node": "7.1.6",
+          "cooldown_ms": 12000,
+          "priority": 5,
+          "condition": {
+            "flag": "nozone_tutorial_done",
+            "is": true
+          }
+        },
+        {
+          "event": "nozone.enter:",
+          "node": "pool:hank_nozone_generic",
+          "cooldown_ms": 10000,
+          "priority": 1,
+          "condition": {
+            "flag": "nozone_tutorial_done",
+            "is": true
+          }
+        },
+        {
+          "event": "nozone.exit",
+          "node": "pool:hank_nozone_exit",
+          "cooldown_ms": 8000,
+          "priority": 2,
+          "condition": {
+            "flag": "nozone_tutorial_done",
+            "is": true
+          }
+        },
+        {
+          "event": "follow.green.truck",
+          "node": "7.1.follow_ok",
+          "once": true,
+          "priority": 2
+        },
+        {
+          "event": "wide_turn.approach",
+          "node": "7.1.9",
+          "once": true,
+          "priority": 10,
+          "interrupt": true
+        },
+        {
+          "event": "wide_turn.held",
+          "node": "7.1.11",
+          "once": true,
+          "priority": 10
+        },
+        {
+          "event": "wide_turn.inside",
+          "node": "7.1.inside",
+          "once": true,
+          "priority": 15,
+          "interrupt": true
+        },
+        {
+          "event": "patrol.lights",
+          "node": "7.1.12",
+          "once": true,
+          "priority": 10,
+          "interrupt": true
+        },
+        {
+          "event": "moveover.lane",
+          "node": "7.1.13",
+          "once": true,
+          "priority": 12,
+          "interrupt": true
+        },
+        {
+          "event": "moveover.slow",
+          "node": "7.1.mo_slow",
+          "once": true,
+          "priority": 12,
+          "interrupt": true
+        },
+        {
+          "event": "moveover.none",
+          "node": "7.1.mo_none",
+          "once": true,
+          "priority": 12,
+          "interrupt": true
+        },
+        {
+          "event": "pass.begin",
+          "node": "7.1.15",
+          "once": true,
+          "priority": 8,
+          "interrupt": true
+        },
+        {
+          "event": "pass.linger",
+          "node": "7.1.linger",
+          "cooldown_ms": 6000,
+          "priority": 6
+        },
+        {
+          "event": "pass.complete",
+          "node": "7.1.pass_done",
+          "once": true,
+          "priority": 8
+        },
+        {
+          "event": "cruise.idle.escort",
+          "node": "7.1.chat1",
+          "once": true,
+          "priority": 1
+        },
+        {
+          "event": "waypoint.reach:ritzville",
+          "node": "7.1.arrive",
+          "once": true,
+          "priority": 20,
+          "interrupt": true
+        },
+        {
+          "event": "qte.gracie.start",
+          "node": "pool:gracie_qte_start",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.success",
+          "node": "pool:gracie_qte_success",
+          "cooldown_ms": 3000
+        },
+        {
+          "event": "qte.gracie.fail",
+          "node": "pool:gracie_qte_fail",
+          "cooldown_ms": 3000,
+          "priority": 3
+        },
+        {
+          "event": "mya.wake",
+          "node": "pool:mya_wake",
+          "cooldown_ms": 20000,
+          "priority": 4,
+          "condition": {
+            "flag": "mya_passive",
+            "is": true
+          }
+        },
+        {
+          "event": "noise.yellow",
+          "node": "pool:noise_yellow",
+          "cooldown_ms": 8000
+        },
+        {
+          "event": "noise.red",
+          "node": "7.1.red_fx",
+          "cooldown_ms": 12000,
+          "priority": 5,
+          "interrupt": true
+        },
+        {
+          "event": "mission.fail.swarm",
+          "node": "7.1.swarm",
+          "priority": 25,
+          "interrupt": true
+        }
+      ]
+    },
+    "7.2": {
+      "id": "7.2",
+      "act": 7,
+      "title": "Barter at Ritzville",
+      "type": "shop",
+      "location": "ritzville_trading_post",
+      "background": "res://backgrounds/ritzville_counter_lamp.png",
+      "ambience": "res://audio/amb/tin_roof_wind.ogg",
+      "music": "res://audio/music/barter_low.ogg",
+      "guide_refs": [
+        "Night Driving: Headlights",
+        "Vehicle Condition and Noise"
+      ],
+      "entry": "7.2.0",
+      "nodes": {
+        "7.2.0": {
+          "type": "direction",
+          "text": "The last shop before Spokane. A tired man behind a counter of everything. A hand-lettered sign taped to the register: PRICES ARE WHAT THEY ARE.",
+          "anim": "vendor.lean_counter",
+          "auto_ms": 3200,
+          "next": "7.2.1"
+        },
+        "7.2.1": {
+          "type": "line",
+          "speaker": "VENDOR",
+          "delivery": "S",
+          "emotion": "tired",
+          "volume": "low",
+          "text": "Prices are what they are. It's the last stop.",
+          "next": "7.2.2"
+        },
+        "7.2.2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "LED lights?",
+          "next": "7.2.3"
+        },
+        "7.2.3": {
+          "type": "line",
+          "speaker": "VENDOR",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Got 'em. Cost you.",
+          "next": "7.2.4"
+        },
+        "7.2.4": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "Quiet muffler?",
+          "next": "7.2.5"
+        },
+        "7.2.5": {
+          "type": "line",
+          "speaker": "VENDOR",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "text": "Also got. Also cost you.",
+          "next": "7.2.owned_branch"
+        },
+        "7.2.owned_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "all": [
+                  {
+                    "has_item": "led_lights"
+                  },
+                  {
+                    "has_item": "muffler"
+                  }
+                ]
+              },
+              "next": "7.2.owned"
+            },
+            {
+              "next": "7.2.tp_branch"
+            }
+          ]
+        },
+        "7.2.owned": {
+          "type": "line",
+          "speaker": "VENDOR",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "low",
+          "anim": "vendor.look_at_beetle",
+          "text": "…You've already got both. That Tuna's work?",
+          "next": "7.2.owned2"
+        },
+        "7.2.owned2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "Filing cabinets.",
+          "next": "7.2.owned3"
+        },
+        "7.2.owned3": {
+          "type": "line",
+          "speaker": "VENDOR",
+          "delivery": "S",
+          "emotion": "tired",
+          "volume": "low",
+          "text": "Figures. Nothing I can sell you but coffee, and the coffee's a crime. Voucher's stamped. Go home.",
+          "effects": {
+            "tp": 20,
+            "log": "ritzville.owned_both"
+          },
+          "next": "7.2.end"
+        },
+        "7.2.tp_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "var": "trade_points",
+                "gte": 400
+              },
+              "next": "7.2.6"
+            },
+            {
+              "condition": {
+                "var": "trade_points",
+                "gte": 180
+              },
+              "next": "7.2.one"
+            },
+            {
+              "next": "7.2.9"
+            }
+          ]
+        },
+        "7.2.6": {
+          "type": "line",
+          "speaker": "VENDOR",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "anim": "vendor.squint",
+          "text": "…You've been running for Deac.",
+          "next": "7.2.7"
+        },
+        "7.2.7": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "How'd you —",
+          "next": "7.2.8"
+        },
+        "7.2.8": {
+          "type": "line",
+          "speaker": "VENDOR",
+          "delivery": "S",
+          "emotion": "wry",
+          "volume": "low",
+          "text": "Nobody else shows up here with money and two cats. Take twenty off. Don't tell Hank, he'll want it too.",
+          "effects": {
+            "set_vars": {
+              "ritzville_discount": 20
+            },
+            "respect": 2,
+            "log": "ritzville.tier:saved"
+          },
+          "next": "7.2.open"
+        },
+        "7.2.one": {
+          "type": "line",
+          "speaker": "VENDOR",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "You can do one. Not both.",
+          "next": "7.2.one2"
+        },
+        "7.2.one2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "Which one?",
+          "next": "7.2.one3"
+        },
+        "7.2.one3": {
+          "type": "line",
+          "speaker": "VENDOR",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "Which two hours scares you more — the dark ones or the loud ones? That's not me being clever. That's the actual question.",
+          "effects": {
+            "log": "ritzville.tier:one"
+          },
+          "next": "7.2.open"
+        },
+        "7.2.9": {
+          "type": "line",
+          "speaker": "VENDOR",
+          "delivery": "S",
+          "emotion": "sad",
+          "volume": "low",
+          "text": "Can't help you, kid. Wish I could. It's a long dark two hours either way.",
+          "effects": {
+            "set_flags": {
+              "ritzville_short": true
+            },
+            "log": "ritzville.tier:short"
+          },
+          "next": "7.2.sori_branch"
+        },
+        "7.2.sori_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "any": [
+                  {
+                    "has_item": "photocard_common"
+                  },
+                  {
+                    "has_item": "radio_skin"
+                  },
+                  {
+                    "has_item": "lightbar"
+                  }
+                ]
+              },
+              "next": "7.2.10"
+            },
+            {
+              "next": "7.2.10b"
+            }
+          ]
+        },
+        "7.2.10": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tired",
+          "volume": "whisper",
+          "anim": "ali.look_at_mya",
+          "text": "I should've bought less photocards.",
+          "next": "7.2.11"
+        },
+        "7.2.11": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "whisper",
+          "anim": "ali.touch_photocard_visor",
+          "text": "…No. No, I shouldn't have. Sori was worth it.",
+          "effects": {
+            "calm": 5,
+            "log": "ritzville.sori_worth_it"
+          },
+          "next": "7.2.short_end"
+        },
+        "7.2.10b": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "tired",
+          "volume": "whisper",
+          "anim": "ali.look_at_mya",
+          "text": "I should've run one more delivery. …Two. Deac would say two.",
+          "effects": {
+            "log": "ritzville.one_more_delivery"
+          },
+          "next": "7.2.short_end"
+        },
+        "7.2.short_end": {
+          "type": "line",
+          "speaker": "VENDOR",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "anim": "vendor.pour_coffee",
+          "text": "Tell you what. Coffee's free. Coffee's terrible, but it's free.",
+          "next": "7.2.short_end2"
+        },
+        "7.2.short_end2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "whisper",
+          "text": "Thanks.",
+          "next": "7.2.end"
+        },
+        "7.2.open": {
+          "type": "effects",
+          "effects": {
+            "start_gameplay": "shop_ritzville",
+            "log": "shop.open:ritzville"
+          }
+        },
+        "7.2.buy_leds": {
+          "type": "line",
+          "speaker": "VENDOR",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 3000,
+          "text": "Aim 'em down a hair. You want to see the road, not the sky. And they don't make you faster. They make you able to stop.",
+          "effects": {
+            "set_flags": {
+              "bought_led_lights": true,
+              "bought_anything_ritzville": true
+            },
+            "log": "shop.buy:led_lights"
+          }
+        },
+        "7.2.buy_muffler": {
+          "type": "line",
+          "speaker": "VENDOR",
+          "delivery": "S",
+          "emotion": "neutral",
+          "volume": "low",
+          "auto_ms": 3000,
+          "text": "That'll take ten off her. You'll hear the cats now. That's the trade.",
+          "effects": {
+            "set_flags": {
+              "has_quiet_muffler": true,
+              "bought_anything_ritzville": true,
+              "muffler_from_ritzville": true
+            },
+            "log": "shop.buy:muffler"
+          }
+        },
+        "7.2.cant": {
+          "type": "line",
+          "speaker": "VENDOR",
+          "delivery": "S",
+          "emotion": "deadpan",
+          "volume": "low",
+          "auto_ms": 2200,
+          "anim": "vendor.tap_sign",
+          "text": "Prices are what they are.",
+          "effects": {
+            "log": "shop.cant_afford:ritzville"
+          }
+        },
+        "7.2.close_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "bought_anything_ritzville",
+                "is": true
+              },
+              "next": "7.2.close_yes"
+            },
+            {
+              "next": "7.2.close_no"
+            }
+          ]
+        },
+        "7.2.close_yes": {
+          "type": "line",
+          "speaker": "VENDOR",
+          "delivery": "S",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "Good. Go home.",
+          "next": "7.2.end"
+        },
+        "7.2.close_no": {
+          "type": "line",
+          "speaker": "VENDOR",
+          "delivery": "S",
+          "emotion": "tired",
+          "volume": "low",
+          "text": "Suit yourself. Long dark two hours.",
+          "next": "7.2.end"
+        },
+        "7.2.end": {
+          "type": "end",
+          "effects": {
+            "checkpoint": "ritzville_shop_done",
+            "log": "scene.complete:7.2"
+          },
+          "next_scene": "7.3"
+        }
+      },
+      "triggers": [
+        {
+          "event": "shop.buy:led_lights",
+          "node": "7.2.buy_leds",
+          "once": true,
+          "priority": 5
+        },
+        {
+          "event": "shop.buy:muffler",
+          "node": "7.2.buy_muffler",
+          "once": true,
+          "priority": 5
+        },
+        {
+          "event": "shop.cant_afford",
+          "node": "7.2.cant",
+          "cooldown_ms": 5000
+        },
+        {
+          "event": "shop.close",
+          "node": "7.2.close_branch",
+          "priority": 20,
+          "interrupt": true
+        }
+      ]
+    },
+    "7.3": {
+      "id": "7.3",
+      "act": 7,
+      "title": "Radio, Ritzville",
+      "type": "radio",
+      "location": "ritzville_lot_dusk",
+      "background": "res://backgrounds/ritzville_beetle_elevators_dusk.png",
+      "ambience": "res://audio/amb/radio_static_bed.ogg",
+      "music": "res://audio/music/two_hours_out.ogg",
+      "entry": "7.3.0",
+      "nodes": {
+        "7.3.0": {
+          "type": "direction",
+          "text": "The lot behind the trading post. The voucher on the dash. The radio warm before Ali touches it.",
+          "sfx": [
+            "radio_click",
+            "static_swell"
+          ],
+          "auto_ms": 2600,
+          "next": "7.3.1"
+        },
+        "7.3.1": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "low",
+          "text": "You're two hours out.",
+          "next": "7.3.2"
+        },
+        "7.3.2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "text": "I know.",
+          "next": "7.3.3"
+        },
+        "7.3.3": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "I'm going to be at the Division Street checkpoint. {RAY}'s bringing the good blanket. The one the cats like.",
+          "next": "7.3.4"
+        },
+        "7.3.4": {
+          "type": "line",
+          "speaker": "RAY",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "normal",
+          "text": "The gray one!",
+          "next": "7.3.5"
+        },
+        "7.3.5": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "amused",
+          "volume": "low",
+          "text": "The gray one.",
+          "next": "7.3.hank_branch"
+        },
+        "7.3.hank_branch": {
+          "type": "branch",
+          "branches": [
+            {
+              "condition": {
+                "flag": "hank_report_clean",
+                "is": true
+              },
+              "next": "7.3.hank"
+            },
+            {
+              "next": "7.3.6"
+            }
+          ]
+        },
+        "7.3.hank": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "proud",
+          "volume": "low",
+          "text": "Dispatch relayed something from a driver named Hank. Said you didn't do anything stupid. Said that like it was a medal.",
+          "next": "7.3.hank2"
+        },
+        "7.3.hank2": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "wry",
+          "volume": "whisper",
+          "text": "From Hank, it is.",
+          "effects": {
+            "log": "hank.report_relayed"
+          },
+          "next": "7.3.6"
+        },
+        "7.3.6": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "tense",
+          "volume": "whisper",
+          "text": "Mom.",
+          "next": "7.3.7"
+        },
+        "7.3.7": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "low",
+          "text": "What.",
+          "next": "7.3.8"
+        },
+        "7.3.8": {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "whisper",
+          "text": "Drive careful.",
+          "next": "7.3.beat"
+        },
+        "7.3.beat": {
+          "type": "direction",
+          "text": "Static. A sound that is either laughing or crying and is both.",
+          "anim": "mom.laugh_cry",
+          "auto_ms": 2200,
+          "next": "7.3.9"
+        },
+        "7.3.9": {
+          "type": "line",
+          "speaker": "MOM",
+          "delivery": "R",
+          "emotion": "warm",
+          "volume": "low",
+          "text": "Get in the car, {PLAYER_FULL}.",
+          "sfx": [
+            "radio_click"
+          ],
+          "next": "7.3.end"
+        },
+        "7.3.end": {
+          "type": "end",
+          "effects": {
+            "set_flags": {
+              "act7_complete": true
+            },
+            "calm": 15,
+            "unlock": [
+              "region.spokane"
+            ],
+            "checkpoint": "act7_complete",
+            "log": "act.complete:7"
+          },
+          "next_scene": "8.1"
+        }
+      }
+    }
+  },
+  "pools": {
+    "hank_nozone_exit": {
+      "pick": "random",
+      "no_repeat": true,
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "auto_ms": 1400,
+          "text": "There you are.",
+          "effects": {
+            "tp": 3,
+            "log": "nozone.exit"
+          }
+        },
+        {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "auto_ms": 1600,
+          "text": "Got you in the glass.",
+          "effects": {
+            "tp": 3,
+            "log": "nozone.exit"
+          }
+        },
+        {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "normal",
+          "auto_ms": 1000,
+          "text": "Good.",
+          "effects": {
+            "tp": 3,
+            "log": "nozone.exit"
+          }
+        }
+      ]
+    },
+    "hank_nozone_generic": {
+      "pick": "random",
+      "no_repeat": true,
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "deadpan",
+          "volume": "normal",
+          "auto_ms": 1800,
+          "text": "Red, Bug.",
+          "effects": {
+            "respect": -1,
+            "add_vars": {
+              "escort_incidents": 1
+            },
+            "log": "nozone.generic"
+          }
+        },
+        {
+          "type": "line",
+          "speaker": "HANK",
+          "delivery": "R",
+          "emotion": "neutral",
+          "volume": "normal",
+          "auto_ms": 2200,
+          "text": "Lost you. Find my mirror.",
+          "effects": {
+            "respect": -1,
+            "add_vars": {
+              "escort_incidents": 1
+            },
+            "log": "nozone.generic"
+          }
+        }
+      ]
+    },
+    "ali_truck_follow": {
+      "pick": "random",
+      "no_repeat": true,
+      "lines": [
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 2000,
+          "text": "Four. One-thousand-one… he said four."
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "wry",
+          "volume": "whisper",
+          "auto_ms": 2200,
+          "text": "Both mirrors. If I can see both, he can see one of me. Math."
+        },
+        {
+          "type": "line",
+          "speaker": "ALI",
+          "delivery": "G",
+          "emotion": "neutral",
+          "volume": "whisper",
+          "auto_ms": 1600,
+          "text": "Out of the red. Stay out of the red."
+        }
+      ]
+    }
+  }
+}

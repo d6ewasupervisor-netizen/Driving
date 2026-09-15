@@ -42,7 +42,17 @@ const MODES: Record<CameraMode, ModeConfig> = {
     lerpRot: 10.0,
     followHeading: false,
   },
+  // Quiet Roads: behind and above, pitched down so the stopping shadow reads on the road
+  // while the block ahead stays visible. lookAt.z is extended with speed (see below).
+  quiet: {
+    offset:  new THREE.Vector3(0, 7.0, 9.0),
+    lookAt:  new THREE.Vector3(0, 0.0, -8),
+    lerpPos: 10.0,
+    lerpRot: 9.0,
+    followHeading: true,
+  },
 };
+const QUIET_LOOKAHEAD_PER_MPH = 0.16; // metres of extra aim per mph
 
 // ─── Screen shake (module-level for easy triggering) ──────────────────────────
 let _shakeIntensity = 0;
@@ -99,11 +109,14 @@ export function GameCamera() {
       );
       _targetPos.set(vx + _rotatedOffset.x, vy + _rotatedOffset.y, vz + _rotatedOffset.z);
 
-      // Rotate lookAt
+      // Rotate lookAt (quiet mode leads the aim with speed so faster = see farther)
+      const lookZ = state.cameraMode === 'quiet'
+        ? mode.lookAt.z - state.velocityMph * QUIET_LOOKAHEAD_PER_MPH
+        : mode.lookAt.z;
       _rotatedOffset.set(
-        mode.lookAt.x * cosH + mode.lookAt.z * sinH,
+        mode.lookAt.x * cosH + lookZ * sinH,
         mode.lookAt.y,
-        -mode.lookAt.x * sinH + mode.lookAt.z * cosH
+        -mode.lookAt.x * sinH + lookZ * cosH
       );
       _targetLook.set(vx + _rotatedOffset.x, vy + _rotatedOffset.y, vz + _rotatedOffset.z);
     } else {

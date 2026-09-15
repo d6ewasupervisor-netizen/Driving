@@ -79,6 +79,54 @@ export function applyCollisionImpact(factor: number): void {
   currentSpeed *= 1 - factor;
 }
 
+// ─── Quiet Roads hooks (read-only observation + teleport; never drives the car) ───
+let _body: RapierRigidBody | null = null;
+
+/** Vehicle.tsx registers its RigidBody so missions can place the car. */
+export function registerVehicleBody(body: RapierRigidBody | null): void {
+  _body = body;
+}
+
+/** Signed forward speed in m/s (negative = reversing). */
+export function getCurrentSpeedMs(): number {
+  return currentSpeed;
+}
+
+/** Bring the car to a dead stop (cutscenes, quizzes). */
+export function haltVehicle(): void {
+  currentSpeed = 0;
+  smoothedAccel = 0;
+  smoothedThrottle = 0;
+  if (_body) {
+    _body.setLinvel({ x: 0, y: 0, z: 0 }, true);
+    _body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+  }
+}
+
+/** Multiply forward speed (collision response from the Quiet / static geometry). */
+export function scaleCurrentSpeed(factor: number): void {
+  currentSpeed *= factor;
+}
+
+/**
+ * Place the car at world (x, z) facing `headingCore` (radians, 0 = +X, measured toward +Z).
+ * Converts to the game's forward = -Z convention.
+ */
+export function teleportVehicle(x: number, z: number, headingCore: number): void {
+  if (!_body) return;
+  resetVehicleController();
+  // forward vector in XZ from core heading
+  const fx = Math.cos(headingCore), fz = Math.sin(headingCore);
+  // Rapier body forward is -Z rotated by yaw: (-sin yaw, -cos yaw) → yaw = atan2(-fx, -fz)
+  const yaw = Math.atan2(-fx, -fz);
+  _body.setTranslation({ x, y: 0.5, z }, true);
+  _body.setRotation({ x: 0, y: Math.sin(yaw / 2), z: 0, w: Math.cos(yaw / 2) }, true);
+  _body.setLinvel({ x: 0, y: 0, z: 0 }, true);
+  _body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+  useGameStore.getState().setVehiclePosition([x, 0.5, z]);
+  useGameStore.getState().setVehicleHeading(yaw);
+}
+
 // ─── Engine helpers ──────────────────────────────────────────────────────────
 
 function getTorqueMultiplier(rpm: number): number {
@@ -300,8 +348,8 @@ export function tickVehicle(
 
   store.setABSActive(brakeInput > 0.5 && Math.abs(currentSpeed) > 8);
 
-  // ── Mileage ────────────────────────────────────────────────────────────
-  if (currentSpeed > 0.5) {
+  // ── Mileage (highway mode only; Kent missions don't count miles) ────────
+  if (store.worldMode === 'highway' && currentSpeed > 0.5) {
     mileageAccumulator += (currentSpeed * dt) / METERS_PER_MILE;
     if (mileageAccumulator >= MILEAGE_BATCH) {
       store.addMileage(mileageAccumulator);
