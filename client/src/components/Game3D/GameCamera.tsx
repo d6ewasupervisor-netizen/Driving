@@ -22,24 +22,24 @@ interface ModeConfig {
 
 const MODES: Record<CameraMode, ModeConfig> = {
   chase: {
-    offset:  new THREE.Vector3(0, 3.2, 8),   // behind and above
-    lookAt:  new THREE.Vector3(0, 0.8, -12),  // look ahead of car
-    lerpPos: 8.0,                              // exponential rate (per second)
-    lerpRot: 10.0,
+    offset:  new THREE.Vector3(0, 2.6, 6.5),  // behind and above (closer in)
+    lookAt:  new THREE.Vector3(0, 0.6, -8),    // look ahead of car
+    lerpPos: 18.0,                              // tight follow — keeps up at top speed
+    lerpRot: 14.0,
     followHeading: true,
   },
   birdseye: {
-    offset:  new THREE.Vector3(0, 10, 3),     // ~10m up
+    offset:  new THREE.Vector3(0, 9, 3),
     lookAt:  new THREE.Vector3(0, 0, -3),
-    lerpPos: 6.0,
-    lerpRot: 8.0,
+    lerpPos: 12.0,
+    lerpRot: 10.0,
     followHeading: true,
   },
   profile: {
-    offset:  new THREE.Vector3(12, 3, 0),
-    lookAt:  new THREE.Vector3(0, 1, -4),
-    lerpPos: 7.0,
-    lerpRot: 8.0,
+    offset:  new THREE.Vector3(10, 2.5, 0),
+    lookAt:  new THREE.Vector3(0, 0.8, -3),
+    lerpPos: 12.0,
+    lerpRot: 10.0,
     followHeading: false,
   },
 };

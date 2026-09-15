@@ -26,5 +26,27 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+    build: {
+      // WASM + GLB optimization
+      rollupOptions: {
+        output: {
+          // Keep .wasm and .glb files as separate assets (not bundled)
+          assetFileNames: (assetInfo) => {
+            const info = assetInfo.name.split('.')
+            const ext = info[info.length - 1]
+            if (/png|jpe?g|gif|svg|webp|ico|ttf|woff2?/i.test(ext)) {
+              return `assets/images/[name]-[hash][extname]`
+            } else if (/wasm/i.test(ext)) {
+              return `assets/wasm/[name][extname]` // Keep WASM hashed but separate
+            } else if (/glb?/i.test(ext)) {
+              return `assets/models/[name]-[hash][extname]`
+            }
+            return `assets/[name]-[hash][extname]`
+          },
+        },
+      },
+      // Increase chunk size warnings for large GLBs
+      chunkSizeWarningLimit: 10000,
+    },
   }
 })

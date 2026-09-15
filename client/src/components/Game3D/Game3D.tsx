@@ -2,7 +2,7 @@
  * Game3D — Root component: Canvas + Physics + all systems
  * Main 3D game scene built with React Three Fiber.
  */
-import { Suspense, useEffect, useRef, useCallback } from 'react';
+import { Suspense, useEffect, useRef } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { Physics } from '@react-three/rapier';
 
@@ -76,17 +76,16 @@ function AudioBridge() {
 // ─── Inner scene (needs Canvas context) ──────────────────────────────────────
 function Scene({ lowEnd }: { lowEnd: boolean }) {
   const npcsRef = useRef<NpcState[]>([]);
-  const npcsRefWrapper = useRef(npcsRef.current);
 
-  const handleNpcsRef = useCallback((ref: React.MutableRefObject<NpcState[]>) => {
-    npcsRefWrapper.current = ref.current;
+  const handleNpcsRef = useRef((ref: React.MutableRefObject<NpcState[]>) => {
     npcsRef.current = ref.current;
-  }, []);
+  }).current;
 
   return (
     <Physics
       gravity={[0, -9.7119, 0]}
-      timeStep="vary"
+      timeStep={1 / 60}
+      interpolate={true}
     >
       <Lighting />
       <SceneEnvironment lowEnd={lowEnd} />
@@ -212,7 +211,7 @@ export function Game3D({ onExit }: Game3DProps) {
         frameloop="always"
         dpr={LOW_END ? [1, 1] : [1, 1.5]}
         shadows={LOW_END ? false : 'soft'}
-        camera={{ fov: 75, near: 0.1, far: 500 }}
+        camera={{ fov: 75, near: 0.1, far: 1500 }}
         gl={{ antialias: !LOW_END, powerPreference: 'high-performance' }}
         style={{ position: 'absolute', inset: 0 }}
       >
