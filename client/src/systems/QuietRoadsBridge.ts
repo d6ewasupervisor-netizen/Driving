@@ -13,7 +13,8 @@
  *   - Telemetry queue for the parent dashboard
  */
 import {
-  DialogueRunner, Simulation, QuestionBank, newMastery, sm2Update, gradeQuality, tpForAnswer,
+  DialogueRunner, Simulation, QuestionBank, CardDeck, CARD_FOR_TRIGGER, newMastery, sm2Update, gradeQuality, tpForAnswer,
+  type Card, type CardResult,
   type DialogueHost, type DialogueFile, type VehicleSample, type SimFrame, type MissionId,
   type Question as CoreQuestion, type TimerHandle, VEHICLE, type WalkerInput,
 } from '@/quietroads';
@@ -28,10 +29,11 @@ import act8 from '@/quietroads/data/dialogue_act8.json';
 import qv1 from '@/quietroads/data/questions_v1.json';
 import qv2 from '@/quietroads/data/questions_v2_weak.json';
 import qv3 from '@/quietroads/data/questions_v3_routines.json';
+import cardsJson from '@/quietroads/data/cards.json';
 import { useGameStore } from '@/stores/gameStore';
 import { useQRStore } from '@/stores/qrStore';
 import type { Question, Category } from '@/types/quiz';
-import { getCurrentSpeedMs, getSmoothedPedals, teleportVehicle, scaleCurrentSpeed, haltVehicle } from '@/systems/VehicleController';
+import { getCurrentSpeedMs, getSmoothedPedals, getLateralSlip, teleportVehicle, scaleCurrentSpeed, haltVehicle } from '@/systems/VehicleController';
 
 // The R3F Beetle brakes at 8 m/s² (MAX_BRAKE_DECEL in VehicleController). The stopping
 // shadow must be honest about *this* car, so the observer uses the same number.
@@ -46,7 +48,10 @@ class Bridge {
   readonly runner: DialogueRunner;
   readonly sim: Simulation;
   readonly bank: QuestionBank;
+  readonly deck: CardDeck;
   private started = false;
+  private worldCardReturnPhase: 'driving' | 'walking' = 'driving';
+  private cardsSeen = new Set<string>();
   private pendingQuiz: { trigger: string; at: number } | null = null;
   private activeQuiz: { q: CoreQuestion; shownAt: number; options: string[] } | null = null;
   private quizCooldownUntil = 0;
@@ -57,6 +62,7 @@ class Bridge {
     this.runner = new DialogueRunner(this.host());
     for (const a of [act01, act2, act3, act4, act5, act6, act7, act8]) this.runner.load(structuredClone(a) as unknown as DialogueFile);
     this.bank = new QuestionBank().load(qv1 as never).load(qv2 as never).load(qv3 as never);
+    this.deck = new CardDeck().load(cardsJson as unknown as Card[]);
     this.sim = new Simulation({
       fire: (e, d) => this.fire(e, d),
       requestQuiz: (trigger, delayS) => { this.pendingQuiz = { trigger, at: this.clock + delayS }; },
@@ -107,6 +113,7 @@ class Bridge {
     this.runner.on('choice_shown', (node, options) => T({ choices: { node, options: options ?? [] } }));
     this.runner.on('choice_hidden', () => T({ choices: null }));
     this.runner.on('idle', () => T({ line: null, direction: null, choices: null }));
+    this.runner.on('card_shown', (id) => this.showCard(id, 'story'));
     this.runner.on('scene_started', (id) => {
       const type = this.runner.data.scenes[id]?.type;
       useQRStore.setState({ sceneId: id });
@@ -128,6 +135,8 @@ class Bridge {
     const sceneId = !fresh && st.sceneId && this.runner.hasScene(st.sceneId) ? st.sceneId : '0.1';
     this.started = true;
     useGameStore.getState().setWorldMode('kent');
+    // Kent is portrait. Lock where the browser allows (PWA/fullscreen on Android); elsewhere the HUD asks.
+    try { (screen.orientation as unknown as { lock?: (o: string) => Promise<void> }).lock?.('portrait').catch(() => {}); } catch { /* not supported */ }
     this.runner.startScene(sceneId);
   }
 
@@ -176,6 +185,11 @@ class Bridge {
   private fire(event: string, data?: Record<string, unknown>) {
     useQRStore.getState().addTelemetry({ ts: Date.now(), event, data });
     if (event === 'waypoint.reach:dol_lot_exit') this.sim.escapeForgiving = false;
+    if (event === 'mission.fail.swarm') {
+      // The windshield fills. Then it clears and she's back at the start.
+      useQRStore.getState().setTransient({ scare: 'flood' });
+      window.setTimeout(() => useQRStore.getState().setTransient({ scare: 'none' }), 2600);
+    }
     if (event === 'waypoint.reach:beetle_driver_seat') {
       // She's in. Doors slam (in the script). Back to the car; the dialogue takes it from here.
       this.sim.enterVehicle();
@@ -199,6 +213,7 @@ class Bridge {
       speedMs: getCurrentSpeedMs(),
       throttle: pedals.throttle, brake: pedals.brake, steer: g.steering,
       horn: useQRStore.getState().horn,
+      lateralSlip: getLateralSlip(),
     };
   }
 
@@ -239,6 +254,14 @@ class Bridge {
     if (this.clock < this.quizCooldownUntil || this.activeQuiz) return;
     const g = useGameStore.getState();
     if (g.phase !== 'driving') return;
+    // A PINK MENACE card for this hazard beats a plain question. Each card once per run.
+    const cardIds = (CARD_FOR_TRIGGER[trigger] ?? []).filter((id) => this.deck.has(id) && !this.cardsSeen.has(id));
+    if (cardIds.length) {
+      this.quizCooldownUntil = this.clock + 20;
+      this.showCard(cardIds[0], 'world');
+      this.fire('card.open', { id: cardIds[0], trigger });
+      return;
+    }
     const mastery = useQRStore.getState().mastery;
     const pool = this.bank.forTrigger(trigger);
     if (!pool.length) return;
@@ -290,6 +313,39 @@ class Bridge {
 
   /** QuizOverlay calls this on Continue. */
   onQuizClosed() { this.sim.unfreeze('quiz'); this.activeQuiz = null; }
+
+  // ---------------------------------------------------------------- cards
+  private showCard(id: string, source: 'story' | 'world') {
+    const g = useGameStore.getState();
+    if (source === 'world') this.worldCardReturnPhase = g.phase === 'walking' ? 'walking' : 'driving';
+    this.cardsSeen.add(id);
+    haltVehicle();
+    this.sim.freeze('card');
+    useQRStore.getState().setTransient({ card: { id, source } });
+    g.setPhase('card');
+  }
+
+  /** CardOverlay's Continue. Applies the card's consequences and resumes whatever was paused. */
+  finishCard(result: CardResult) {
+    const active = useQRStore.getState().card;
+    useQRStore.getState().setTransient({ card: null });
+    this.sim.unfreeze('card');
+    if (!active) return;
+    if (active.source === 'story') {
+      // The runner grades, logs, and moves to the next node; the scene type decides the phase.
+      const sceneType = this.runner.scene?.type;
+      useGameStore.getState().setPhase(sceneType === 'gameplay' ? (this.sim.mode === 'walker' ? 'walking' : 'driving') : 'dialogue');
+      this.runner.resolveCard(result);
+    } else {
+      // In-world card: same grading as a story card, then back to the road.
+      if (result.correct === true) useQRStore.getState().addVar('respect', 2);
+      else if (result.correct === false) useQRStore.getState().addVar('respect', -1);
+      if (result.noise != null && result.noise > 0) this.sim.noise.emit(DialogueRunner.CARD_NOISE_DB(result.noise), this.sim.playerPos, this.sim.playerZone);
+      useQRStore.getState().addChoice({ ts: Date.now(), scene: 'world', node: this.sim.missionId || '-', option: `card:${result.card}:${result.option ?? '-'}` });
+      this.fire(result.correct === null ? `card.seen:${result.card}` : result.correct ? `card.correct:${result.card}` : `card.wrong:${result.card}`);
+      useGameStore.getState().setPhase(this.worldCardReturnPhase);
+    }
+  }
 
   // ---------------------------------------------------------------- UI actions
   shh() { this.sim.interior.answerQte(); }

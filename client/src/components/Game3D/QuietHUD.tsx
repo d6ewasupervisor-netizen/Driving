@@ -3,6 +3,7 @@
  * reads without colour), posted speed limit vs. your speed, objective line,
  * horn button, toasts. Sits alongside the existing GameHUD/EngineHUD.
  */
+import { useEffect, useState } from 'react';
 import { useGameStore } from '@/stores/gameStore';
 import { useQRStore } from '@/stores/qrStore';
 import { QuietRoads } from '@/systems/QuietRoadsBridge';
@@ -24,6 +25,11 @@ export function QuietHUD() {
   const setHorn = useQRStore((s) => s.setHorn);
   const run = useQRStore((s) => s.run);
   const setRun = useQRStore((s) => s.setRun);
+  const [landscape, setLandscape] = useState(false);
+  useEffect(() => {
+    const check = () => setLandscape(window.innerWidth > window.innerHeight && 'ontouchstart' in window);
+    check(); window.addEventListener('resize', check); return () => window.removeEventListener('resize', check);
+  }, []);
 
   if (worldMode !== 'kent') return null;
   const driving = phase === 'driving';
@@ -100,6 +106,7 @@ export function QuietHUD() {
       )}
 
       {toast && <div style={styles.toast}>{toast}</div>}
+      {landscape && <div style={styles.rotate}>↻ Turn your phone upright — Quiet Roads is a portrait game</div>}
     </div>
   );
 }
@@ -119,5 +126,6 @@ const styles: Record<string, React.CSSProperties> = {
   objTitle: { fontSize: 9, letterSpacing: '0.2em', color: '#F28DB2', marginBottom: 2 },
   tp: { position: 'absolute', top: 'calc(10px + env(safe-area-inset-top))', right: 16, color: '#ffd93d', fontWeight: 800, fontSize: 13, letterSpacing: '0.08em', background: 'rgba(0,0,0,0.45)', padding: '4px 8px', borderRadius: 6 },
   horn: { position: 'absolute', bottom: 'calc(96px + env(safe-area-inset-bottom))', right: 16, width: 64, height: 64, borderRadius: 32, border: '2px solid #ff4444', background: 'rgba(120,20,20,0.55)', color: '#ff9a9a', fontWeight: 800, fontSize: 11, letterSpacing: '0.1em', pointerEvents: 'auto', touchAction: 'none', userSelect: 'none' },
+  rotate: { position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'rgba(10,12,18,0.92)', color: '#F28DB2', padding: '14px 18px', borderRadius: 10, fontSize: 15, fontWeight: 700, border: '1px solid #F28DB2', textAlign: 'center' },
   toast: { position: 'absolute', bottom: 'calc(180px + env(safe-area-inset-bottom))', left: '50%', transform: 'translateX(-50%)', background: 'rgba(10,12,18,0.92)', color: '#fff', padding: '10px 16px', borderRadius: 8, fontSize: 14, border: '1px solid rgba(255,255,255,0.2)', maxWidth: '90vw' },
 };

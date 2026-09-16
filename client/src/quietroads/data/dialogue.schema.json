@@ -395,7 +395,8 @@
             "effects",
             "pool",
             "jump",
-            "end"
+            "end",
+            "card"
           ]
         },
         "speaker": {
@@ -497,6 +498,10 @@
         },
         "background": {
           "type": "string"
+        },
+        "card": {
+          "type": "string",
+          "description": "card node: PINK MENACE card id"
         }
       },
       "allOf": [

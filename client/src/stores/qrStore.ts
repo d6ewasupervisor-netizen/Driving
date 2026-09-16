@@ -39,6 +39,9 @@ interface Transient {
   horn: boolean;
   run: boolean;
   qteActive: boolean;
+  /** A PINK MENACE card on screen. source tells the bridge how to continue afterwards. */
+  card: { id: string; source: 'story' | 'world' } | null;
+  scare: 'none' | 'edge' | 'flood';
 }
 
 interface Actions {
@@ -71,6 +74,7 @@ const emptyPersisted: Persisted = {
 
 const emptyTransient: Transient = {
   line: null, direction: null, choices: null, objective: '', toast: '', frame: null, horn: false, run: false, qteActive: false,
+  card: null, scare: 'none',
 };
 
 export const useQRStore = create<QRState>()(

@@ -230,7 +230,7 @@
           "emotion": "neutral",
           "volume": "whisper",
           "text": "Washington rule: instruction permit at 15 with driver-ed, 15½ without. Licensed adult in the passenger seat, always. Out here that adult is going to have to be someone I earn.",
-          "next": "0.2.go"
+          "next": "0.2.card_I-002"
         },
         "0.2.go": {
           "type": "end",
@@ -347,6 +347,16 @@
           "volume": "whisper",
           "text": "Small sounds fade. Big sounds don't. Got it. Got it.",
           "auto_ms": 2400
+        },
+        "0.2.card_I-002": {
+          "type": "card",
+          "card": "I-002",
+          "next": "0.2.card_I-003"
+        },
+        "0.2.card_I-003": {
+          "type": "card",
+          "card": "I-003",
+          "next": "0.2.go"
         }
       },
       "triggers": [
@@ -677,7 +687,7 @@
           "emotion": "deadpan",
           "volume": "whisper",
           "text": "That's the most Department of Licensing thing I've ever seen.",
-          "next": "1.2.4"
+          "next": "1.2.card_I-005"
         },
         "1.2.4": {
           "type": "line",
@@ -736,6 +746,16 @@
             "checkpoint": "dol_parked"
           },
           "next_scene": "1.3"
+        },
+        "1.2.card_I-005": {
+          "type": "card",
+          "card": "I-005",
+          "next": "1.2.card_I-009"
+        },
+        "1.2.card_I-009": {
+          "type": "card",
+          "card": "I-009",
+          "next": "1.2.4"
         }
       },
       "triggers": [
@@ -871,7 +891,7 @@
           "text": "Ali — no words. Just breath.",
           "anim": "ali.frozen_breath",
           "auto_ms": 1600,
-          "next": "1.3.chase"
+          "next": "1.3.card_I-006"
         },
         "1.3.chase": {
           "type": "end",
@@ -925,7 +945,7 @@
           "emotion": "scared",
           "volume": "whisper",
           "text": "She's by the terminal. She's still —",
-          "next": "1.3.doorway"
+          "next": "1.3.card_I-007"
         },
         "1.3.doorway": {
           "type": "direction",
@@ -1006,7 +1026,7 @@
           "emotion": "tired",
           "volume": "whisper",
           "text": "Okay. Okay. Back out. Slow. We're leaving.",
-          "next": "1.3.19"
+          "next": "1.3.card_I-010"
         },
         "1.3.19": {
           "type": "line",
@@ -1050,7 +1070,7 @@
           "noise_db": 70,
           "text": "— okay that was a mistake, that was a big — GO GO GO —",
           "auto_ms": 2200,
-          "next": "1.3.escape"
+          "next": "1.3.card_I-008"
         },
         "1.3.escape": {
           "type": "wait",
@@ -1064,7 +1084,7 @@
           "emotion": "scared",
           "volume": "whisper",
           "text": "They're all — the whole lot. The whole lot's gone. I can't go back in there.",
-          "next": "1.3.23"
+          "next": "1.3.card_I-010b"
         },
         "1.3.23": {
           "type": "line",
@@ -1087,6 +1107,31 @@
             "log": "mission.complete:dol_interior.honk"
           },
           "next_scene": "1.4"
+        },
+        "1.3.card_I-006": {
+          "type": "card",
+          "card": "I-006",
+          "next": "1.3.chase"
+        },
+        "1.3.card_I-007": {
+          "type": "card",
+          "card": "I-007",
+          "next": "1.3.doorway"
+        },
+        "1.3.card_I-008": {
+          "type": "card",
+          "card": "I-008",
+          "next": "1.3.escape"
+        },
+        "1.3.card_I-010": {
+          "type": "card",
+          "card": "I-010",
+          "next": "1.3.19"
+        },
+        "1.3.card_I-010b": {
+          "type": "card",
+          "card": "I-010",
+          "next": "1.3.23"
         }
       },
       "triggers": [
@@ -1210,7 +1255,7 @@
           "emotion": "tense",
           "volume": "low",
           "text": "…Bad night?",
-          "next": "1.4.8"
+          "next": "1.4.card_I-011"
         },
         "1.4.8": {
           "type": "direction",
@@ -1247,6 +1292,11 @@
             "log": "scene.complete:1.4"
           },
           "next_scene": "1.4b"
+        },
+        "1.4.card_I-011": {
+          "type": "card",
+          "card": "I-011",
+          "next": "1.4.8"
         }
       }
     },
@@ -1293,7 +1343,7 @@
           "emotion": "tired",
           "volume": "whisper",
           "text": "Fine. Plan B.",
-          "next": "1.4b.end"
+          "next": "1.4b.card_I-012"
         },
         "1.4b.end": {
           "type": "end",
@@ -1308,6 +1358,11 @@
             "log": "act.complete:1"
           },
           "next_scene": "2.1"
+        },
+        "1.4b.card_I-012": {
+          "type": "card",
+          "card": "I-012",
+          "next": "1.4b.end"
         }
       }
     }

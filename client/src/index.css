@@ -66,3 +66,7 @@ h2 {
   font-weight: normal;
   margin-top: 0;
 }
+
+/* Quiet Roads scare overlay */
+@keyframes qr-palm { from { filter: brightness(0.8); } to { filter: brightness(1.15); } }
+@keyframes qr-contact { from { opacity: 0; } to { opacity: 0.95; } }

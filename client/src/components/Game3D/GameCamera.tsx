@@ -42,11 +42,11 @@ const MODES: Record<CameraMode, ModeConfig> = {
     lerpRot: 10.0,
     followHeading: false,
   },
-  // Quiet Roads: behind and above, pitched down so the stopping shadow reads on the road
-  // while the block ahead stays visible. lookAt.z is extended with speed (see below).
+  // Quiet Roads, portrait: behind and well above, pitched down so the stopping shadow
+  // reads on the road and the tall frame shows the block ahead. lookAt.z extends with speed.
   quiet: {
-    offset:  new THREE.Vector3(0, 7.0, 9.0),
-    lookAt:  new THREE.Vector3(0, 0.0, -8),
+    offset:  new THREE.Vector3(0, 8.5, 8.0),
+    lookAt:  new THREE.Vector3(0, 0.5, -11),
     lerpPos: 10.0,
     lerpRot: 9.0,
     followHeading: true,
@@ -54,8 +54,8 @@ const MODES: Record<CameraMode, ModeConfig> = {
 };
 const QUIET_LOOKAHEAD_PER_MPH = 0.16; // metres of extra aim per mph
 // On foot (Quiet Roads 1.3): fixed north-up, closer and steeper so the aisles read.
-const WALK_OFFSET = new THREE.Vector3(0, 6.0, 5.5);
-const WALK_LOOKAT = new THREE.Vector3(0, 0.4, -2.5);
+const WALK_OFFSET = new THREE.Vector3(0, 7.0, 6.0);
+const WALK_LOOKAT = new THREE.Vector3(0, 0.4, -3.5);
 
 // ─── Screen shake (module-level for easy triggering) ──────────────────────────
 let _shakeIntensity = 0;

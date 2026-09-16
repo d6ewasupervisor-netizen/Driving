@@ -51,6 +51,8 @@ export interface DialogueEvents {
   direction_shown: (node: DialogueNode, nodeId: string) => void;
   choice_shown: (node: DialogueNode, options: DialogueNode["choices"], nodeId: string) => void;
   choice_hidden: () => void;
+  /** A PINK MENACE card is on screen; the UI must call runner.resolveCard() to continue. */
+  card_shown: (cardId: string, nodeId: string) => void;
   effects_applied: (effects: Effects) => void;
   gameplay_requested: (id: string) => void;
   scene_started: (sceneId: string) => void;

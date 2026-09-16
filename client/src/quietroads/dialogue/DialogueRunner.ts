@@ -1,6 +1,6 @@
 import type {
   Character, ChoiceOption, Condition, DialogueFile, DialogueNode, Effects,
-  Scene, ShownLine, VoiceBed,
+  Scene, ShownLine, VoiceBed, CardResult,
 } from "./types";
 import type { DialogueHost, DialogueEvents, TimerHandle } from "./host";
 
@@ -165,6 +165,9 @@ export class DialogueRunner {
         break;
       case "wait":
         break; // resumes in onEvent
+      case "card":
+        this.emit("card_shown", node.card ?? "", nodeId);
+        break; // resumes in resolveCard
       case "effects":
         this.advance();
         break;
@@ -182,14 +185,34 @@ export class DialogueRunner {
         // Resident end: scene stays loaded when next_scene is empty so late
         // triggers (exam.pass, study.close, shop.buy:*) still resolve.
         this.emit("scene_finished", sid, next);
+        if (!next) this.emit("idle"); // nothing follows: clear whatever line led here
         break;
       }
     }
   }
 
-  /** Called from UI on tap. No-op while a choice, wait, or end is current. */
+  /** Called from UI on tap. During a wait a tap dismisses the last line; choices need a pick. */
   advanceFromUi(): void {
-    if (!this.current || ["choice", "wait", "end"].includes(this.current.type)) return;
+    if (!this.current) return;
+    if (this.current.type === "wait") { this.emit("idle"); return; }
+    if (["choice", "end", "card"].includes(this.current.type)) return;
+    this.advance();
+  }
+
+  /**
+   * The UI answered (or dismissed) the current card. Grading is the card's own:
+   * correct +2 Respect, wrong −1; a positive noise delta is heard by the Quiet
+   * (the host maps the card's small ints onto dB). Everything is logged.
+   */
+  static CARD_NOISE_DB = (n: number) => 40 + n * 12; // 1→52 (yellow), 2→64, 3→76 (red)
+  resolveCard(result: CardResult): void {
+    if (!this.current || this.current.type !== "card") return;
+    if (this.scene) this.host.logChoice(this.scene.id, this.currentId, `card:${result.card}:${result.option ?? "-"}`);
+    if (result.correct === true) this.host.addVar("respect", 2);
+    else if (result.correct === false) this.host.addVar("respect", -1);
+    if (result.noise != null && result.noise > 0) this.host.emitNoise(DialogueRunner.CARD_NOISE_DB(result.noise));
+    if (result.time_cost) this.host.addVar("time_cost", result.time_cost);
+    this.host.logEvent(`card.${result.correct === null ? "seen" : result.correct ? "correct" : "wrong"}:${result.card}`);
     this.advance();
   }
 

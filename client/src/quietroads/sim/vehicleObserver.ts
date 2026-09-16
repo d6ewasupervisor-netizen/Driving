@@ -14,7 +14,15 @@ export interface VehicleSample {
   brake: number;      // 0..1
   steer: number;      // -1..1
   horn: boolean;
+  /** Measured sideways slip from the vehicle controller (|lateral v| / |forward v|), if available. */
+  lateralSlip?: number;
 }
+
+export const SKID = {
+  SLIP_THRESHOLD: 0.32,   // measured slip ratio that counts as sliding
+  MIN_SPEED_MS: 5.5,      // ~12 mph — below this the tyres can't scream
+  SUSTAIN_S: 0.25,        // must hold for a quarter second (no single-frame blips)
+} as const;
 
 export const VEHICLE = {
   REACTION_S: 1.5,
@@ -45,11 +53,12 @@ export class VehicleObserver {
   private prev: VehicleSample | null = null;
   private hornHeld = false;
   private hardCd = 0; private skidCd = 0; private speedOverT = 0; private speedOverCd = 0; private ambientT = 0;
+  private slipT = 0;
   private lastHeading = 0;
 
   constructor(private noise: NoiseSystem, private fire: (event: string, data?: Record<string, unknown>) => void) {}
 
-  reset() { this.prev = null; this.skidding = false; this.hardCd = this.skidCd = this.speedOverT = this.speedOverCd = this.ambientT = 0; }
+  reset() { this.prev = null; this.skidding = false; this.hardCd = this.skidCd = this.speedOverT = this.speedOverCd = this.ambientT = this.slipT = 0; }
 
   step(dt: number, s: VehicleSample, speedLimitMph: number): ObserverOut {
     const p = this.prev ?? s;
@@ -64,17 +73,23 @@ export class VehicleObserver {
     if (s.throttle > 0.9 && p.throttle <= 0.9 && v < 9 && this.hardCd <= 0) { this.noise.emitKind("hard_accel", s.pos); this.fire("input.hard_accel"); this.hardCd = 1.5; }
     if (s.brake > 0.85 && p.brake <= 0.85 && v > 4.5 && this.hardCd <= 0) { this.noise.emitKind("hard_brake", s.pos); this.fire("input.hard_brake"); this.hardCd = 1.5; }
 
-    // lateral acceleration from actual yaw rate → traction-circle skid
+    // Skid: prefer the controller's measured slip. Fall back to yaw-derived lateral g only
+    // when no slip is supplied, and then only at real speed — arcade steering pivots hard at
+    // low speed and would otherwise read every corner as a slide.
     let dh = s.heading - (this.prev ? this.lastHeading : s.heading);
     dh = ((dh + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI;
     const yawRate = dt > 0 ? dh / dt : 0;
     const latAcc = Math.abs(v * yawRate);
     const limit = this.mu * 9.81;
+    const slidingNow = s.lateralSlip != null
+      ? (s.lateralSlip > SKID.SLIP_THRESHOLD && v > SKID.MIN_SPEED_MS)
+      : (latAcc > limit * 0.95 && v > 8);
+    this.slipT = slidingNow ? this.slipT + dt : 0;
     const was = this.skidding;
-    if (latAcc > limit * 0.95 && v > 3) {
+    if (this.slipT >= SKID.SUSTAIN_S) {
       this.skidding = true;
       if (!was && this.skidCd <= 0) { this.noise.emitKind("skid", s.pos); this.fire("skid.begin"); this.skidCd = 2; }
-    } else {
+    } else if (!slidingNow) {
       if (was) this.fire("skid.recovered");
       this.skidding = false;
     }

@@ -108,6 +108,11 @@ export function getCurrentSpeedMs(): number {
   return currentSpeed;
 }
 
+/** Measured sideways slip ratio (|lateral v| / |forward v|) from the last tick. */
+export function getLateralSlip(): number {
+  return _lateralSlip;
+}
+
 /** The pedals as the car actually feels them (after the ramp), 0..1 each. */
 export function getSmoothedPedals(): { throttle: number; brake: number } {
   return { throttle: smoothedThrottle, brake: smoothedBrake };
@@ -118,6 +123,7 @@ export function haltVehicle(): void {
   currentSpeed = 0;
   smoothedAccel = 0;
   smoothedThrottle = 0;
+  smoothedBrake = 0;
   smoothedBrake = 0;
   if (_body) {
     _body.setLinvel({ x: 0, y: 0, z: 0 }, true);

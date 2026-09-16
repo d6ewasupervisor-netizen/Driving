@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { useGameStore } from '@/stores/gameStore';
 import { useQRStore } from '@/stores/qrStore';
 import { QuietRoads } from '@/systems/QuietRoadsBridge';
+import { STILL_FOR_SCENE } from './stills';
 
 export function DialogueBox() {
   const line = useQRStore((s) => s.line);
@@ -15,6 +16,7 @@ export function DialogueBox() {
   const choices = useQRStore((s) => s.choices);
   const phase = useGameStore((s) => s.phase);
   const worldMode = useGameStore((s) => s.worldMode);
+  const sceneId = useQRStore((s) => s.sceneId);
   const [tick, setTick] = useState(0);
 
   // Shrinking bar for timed choices
@@ -26,7 +28,7 @@ export function DialogueBox() {
     return () => window.clearInterval(id);
   }, [choices]);
 
-  if (worldMode !== 'kent' || phase === 'quiz' || phase === 'paused' || phase === 'menu') return null;
+  if (worldMode !== 'kent' || phase === 'quiz' || phase === 'paused' || phase === 'menu' || phase === 'card') return null;
   if (!line && !direction && !choices) return null;
   const cutscene = phase === 'dialogue';
 
@@ -38,6 +40,9 @@ export function DialogueBox() {
   return (
     <div data-ui style={{ ...styles.wrap, pointerEvents: cutscene ? 'auto' : 'none' }} onClick={() => { if (!choices) QuietRoads.tap(); }}>
       {cutscene && <div style={styles.dim} />}
+      {cutscene && sceneId && STILL_FOR_SCENE[sceneId] && (
+        <img src={STILL_FOR_SCENE[sceneId]} alt="" style={styles.still} />
+      )}
       <div data-ui onClick={(e) => { if (!cutscene && !choices) { e.stopPropagation(); QuietRoads.tap(); } }} style={{ ...styles.box, pointerEvents: 'auto', borderColor: loud ? '#ff4444' : radio ? '#5DADE2' : 'rgba(255,255,255,0.18)' }}>
         {line && (
           <>
@@ -72,6 +77,7 @@ export function DialogueBox() {
 const styles: Record<string, React.CSSProperties> = {
   wrap: { position: 'fixed', inset: 0, zIndex: 220, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', paddingBottom: 'calc(96px + env(safe-area-inset-bottom))' },
   dim: { position: 'absolute', inset: 0, background: 'rgba(5,6,10,0.72)' },
+  still: { position: 'absolute', left: '50%', top: 'calc(8% + env(safe-area-inset-top))', transform: 'translateX(-50%)', width: 'min(92vw, 520px)', aspectRatio: '606 / 361', objectFit: 'cover', borderRadius: 10, opacity: 0.92, boxShadow: '0 12px 40px rgba(0,0,0,0.7)', filter: 'saturate(0.85)' },
   box: { position: 'relative', width: 'min(720px, 92vw)', background: 'rgba(10,12,18,0.92)', border: '1px solid', borderRadius: 12, padding: '12px 16px 10px', color: '#eee', fontFamily: 'system-ui, sans-serif', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' },
   speaker: { fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 4 },
   sys: { color: '#888', fontWeight: 400, textTransform: 'none', letterSpacing: 0 },

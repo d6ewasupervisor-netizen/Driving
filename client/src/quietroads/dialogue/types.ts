@@ -5,7 +5,7 @@ export type VoiceBed = "none" | "radio_static" | "cb_radio" | "phone";
 export type Delivery = "V" | "S" | "R" | "G" | "SYS";
 export type NodeType =
   | "line" | "direction" | "choice" | "branch" | "wait"
-  | "effects" | "pool" | "jump" | "end";
+  | "effects" | "pool" | "jump" | "end" | "card";
 export type SceneType = "video" | "still" | "radio" | "gameplay" | "shop" | "exam";
 
 export interface Character {
@@ -82,6 +82,17 @@ export interface DialogueNode {
   wait_for?: string;
   pool?: string;
   scene?: string;
+  /** card node: PINK MENACE card id (e.g. "II-007"). The UI shows it; resolveCard() continues. */
+  card?: string;
+}
+
+/** What the UI reports back when a card is answered (or dismissed, for dossiers). */
+export interface CardResult {
+  card: string;
+  option: string | null;     // option id, or null for a dossier/beat
+  correct: boolean | null;   // null when the card has no graded options
+  noise?: number;            // card state_delta.noise (small ints, may be negative)
+  time_cost?: number;
 }
 
 export interface Trigger {

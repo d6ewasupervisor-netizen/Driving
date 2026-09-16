@@ -21,7 +21,8 @@ export type GamePhase =
   | 'victory'
   | 'gameover'
   | 'dialogue'
-  | 'walking';
+  | 'walking'
+  | 'card';
 
 export type WorldMode = 'highway' | 'kent';
 
@@ -216,7 +217,7 @@ export const useGameStore = create<GameState>()(
 
       togglePause: () => {
         const { phase, prePausePhase } = get();
-        if (phase === 'driving' || phase === 'walking' || phase === 'dialogue') set({ phase: 'paused', prePausePhase: phase });
+        if (phase === 'driving' || phase === 'walking' || phase === 'dialogue' || phase === 'card') set({ phase: 'paused', prePausePhase: phase });
         else if (phase === 'paused') set({ phase: prePausePhase });
       },
 
@@ -376,7 +377,7 @@ export const useGameStore = create<GameState>()(
       name: 'aigoo-game-save',
       partialize: (state) => ({
         // Exclude runtime-only state
-        phase: state.phase === 'driving' || state.phase === 'dialogue' ? 'menu' : state.phase,
+        phase: ['driving', 'dialogue', 'walking', 'card'].includes(state.phase) ? 'menu' : state.phase,
         worldMode: state.worldMode,
         mileage: state.mileage,
         lastQuizMile: state.lastQuizMile,

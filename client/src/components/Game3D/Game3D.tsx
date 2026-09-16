@@ -42,6 +42,8 @@ import { QuietRoadsFrame } from './QuietRoadsFrame';
 import { DialogueBox } from './DialogueBox';
 import { QuietHUD } from './QuietHUD';
 import { GracieQTE } from './GracieQTE';
+import { CardOverlay } from './CardOverlay';
+import { ScareOverlay } from './ScareOverlay';
 
 // ─── Low-end detection (computed once) ───────────────────────────────────────
 const LOW_END = isLowEndDevice();
@@ -252,6 +254,8 @@ export function Game3D({ onExit }: Game3DProps) {
         <QuietHUD />
         <GracieQTE />
         <DialogueBox />
+        <ScareOverlay />
+        <CardOverlay />
         <PauseMenu onExit={onExit} />
         <VictoryScreen onExit={onExit} />
         <GameOverScreen />
