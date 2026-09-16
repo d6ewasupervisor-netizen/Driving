@@ -2,6 +2,8 @@ import { AuthProvider, useAuth } from '@/lib/authContext'
 import { useState } from 'react'
 import ZombieRoadWarrior from '@/components/ZombieRoadWarrior'
 import { useGameStore } from '@/stores/gameStore'
+import { useQRStore } from '@/stores/qrStore'
+import { QuietRoads } from '@/systems/QuietRoadsBridge'
 
 type AppView = 'dashboard' | 'game'
 
@@ -65,7 +67,7 @@ function LoginForm() {
   )
 }
 
-function Dashboard({ onPlayGame }: { onPlayGame: () => void }) {
+function Dashboard({ onPlayGame, onPlayQuietRoads }: { onPlayGame: () => void; onPlayQuietRoads: () => void }) {
   const { user, signOut } = useAuth()
 
   return (
@@ -90,7 +92,29 @@ function Dashboard({ onPlayGame }: { onPlayGame: () => void }) {
         </span>
       </div>
       
-      {/* Play Game Button - prominently displayed */}
+      {/* Quiet Roads — the story game (Kent → the permit) */}
+      {user?.role === 'player' && (
+        <button
+          onClick={onPlayQuietRoads}
+          style={{
+            width: '100%',
+            padding: '20px 30px',
+            fontSize: 18,
+            fontWeight: 'bold',
+            background: 'linear-gradient(135deg, #F28DB2 0%, #b95f88 100%)',
+            color: '#1a0a12',
+            border: '3px solid #000',
+            borderRadius: 12,
+            cursor: 'pointer',
+            boxShadow: '4px 4px 0 #000',
+            marginBottom: 14
+          }}
+        >
+          🐈 QUIET ROADS
+          <div style={{ fontSize: 12, fontWeight: 'normal', marginTop: 4, opacity: 0.8 }}>Kent. Grandma's Beetle. Don't wake anybody.</div>
+        </button>
+      )}
+      {/* Road trip (the original endless highway) */}
       {user?.role === 'player' && (
         <button 
           onClick={onPlayGame}
@@ -149,10 +173,19 @@ function AppContent() {
     return <ZombieRoadWarrior onExit={() => setView('dashboard')} />
   }
 
-  return <Dashboard onPlayGame={() => {
-    useGameStore.getState().setPhase('driving')
-    setView('game')
-  }} />
+  return <Dashboard
+    onPlayGame={() => {
+      // Open the game's own menu (New Game / Continue / Quiet Roads) instead of jumping to the highway.
+      useGameStore.getState().setPhase('menu')
+      setView('game')
+    }}
+    onPlayQuietRoads={() => {
+      // Resume from the last checkpoint if there is one, else start Act 0.
+      const hasSave = !!useQRStore.getState().checkpoint
+      QuietRoads.start(!hasSave)
+      setView('game')
+    }}
+  />
 }
 
 function App() {
