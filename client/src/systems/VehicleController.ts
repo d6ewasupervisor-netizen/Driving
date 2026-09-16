@@ -41,6 +41,21 @@ const MAX_DRIVE_ACCEL = 9.81 * 0.45 * 0.8;
 const THROTTLE_SMOOTH_UP = 3.5;
 const THROTTLE_SMOOTH_DOWN = 5.0;
 const ACCEL_SMOOTH_RATE = 10.0;
+
+// ─── Quiet Roads (Kent) pedal profile ────────────────────────────────────────
+// Pads and keys are binary, so the *ramp* is the pedal. A tap on the gas is a
+// gentle 0.2–0.3; holding it for a second and a quarter is full throttle. Same
+// idea for the brake: a tap is a squeeze, holding is a stop. The car is also a
+// heavy old Beetle here: 0.2 g of drive instead of 0.36 g, and slower surge
+// smoothing so shifts don't shove.
+const KENT_THROTTLE_UP = 0.8;      // 1/s → full in 1.25 s
+const KENT_THROTTLE_DOWN = 4.0;
+const KENT_BRAKE_UP = 1.6;         // 1/s → full in 0.6 s (a panic stop is still available)
+const KENT_BRAKE_DOWN = 6.0;
+const KENT_MAX_DRIVE_ACCEL = 9.81 * 0.2;
+const KENT_ACCEL_SMOOTH_RATE = 6.0;
+const HIGHWAY_BRAKE_UP = 12.0;     // effectively instant, as before
+const HIGHWAY_BRAKE_DOWN = 12.0;
 const LATERAL_DAMP_RATE = 5.0;
 const LATERAL_DAMP_STRAIGHT = 18.0;
 const YAW_CENTER_RATE = 20.0;
@@ -57,6 +72,7 @@ const FUEL_PER_BATCH = 0.08;
 let mileageAccumulator = 0;
 let currentSpeed = 0;
 let smoothedThrottle = 0;
+let smoothedBrake = 0;
 let smoothedAccel = 0;
 
 let _lateralSlip = 0;
@@ -92,11 +108,17 @@ export function getCurrentSpeedMs(): number {
   return currentSpeed;
 }
 
+/** The pedals as the car actually feels them (after the ramp), 0..1 each. */
+export function getSmoothedPedals(): { throttle: number; brake: number } {
+  return { throttle: smoothedThrottle, brake: smoothedBrake };
+}
+
 /** Bring the car to a dead stop (cutscenes, quizzes). */
 export function haltVehicle(): void {
   currentSpeed = 0;
   smoothedAccel = 0;
   smoothedThrottle = 0;
+  smoothedBrake = 0;
   if (_body) {
     _body.setLinvel({ x: 0, y: 0, z: 0 }, true);
     _body.setAngvel({ x: 0, y: 0, z: 0 }, true);
@@ -205,15 +227,26 @@ export function tickVehicle(
   }
 
   _lateralSlip = Math.abs(lateralSpeed) / Math.max(1, Math.abs(currentSpeed));
-  _brakeSlip = brakeInput > 0.1 ? brakeInput * (Math.abs(currentSpeed) > 2 ? 0.5 : 0) : 0;
+  _brakeSlip = smoothedBrake > 0.1 ? smoothedBrake * (Math.abs(currentSpeed) > 2 ? 0.5 : 0) : 0;
   _isAnyWheelSlipping = _lateralSlip > 0.1 || _brakeSlip > 0.2;
 
-  // ── Smooth throttle input ─────────────────────────────────────────────
+  // ── Smooth pedal inputs (profile by world) ────────────────────────────
+  const kent = store.worldMode === 'kent';
+  const thUp = kent ? KENT_THROTTLE_UP : THROTTLE_SMOOTH_UP;
+  const thDown = kent ? KENT_THROTTLE_DOWN : THROTTLE_SMOOTH_DOWN;
+  const brUp = kent ? KENT_BRAKE_UP : HIGHWAY_BRAKE_UP;
+  const brDown = kent ? KENT_BRAKE_DOWN : HIGHWAY_BRAKE_DOWN;
   if (throttleInput > smoothedThrottle) {
-    smoothedThrottle = Math.min(throttleInput, smoothedThrottle + THROTTLE_SMOOTH_UP * dt);
+    smoothedThrottle = Math.min(throttleInput, smoothedThrottle + thUp * dt);
   } else {
-    smoothedThrottle = Math.max(throttleInput, smoothedThrottle - THROTTLE_SMOOTH_DOWN * dt);
+    smoothedThrottle = Math.max(throttleInput, smoothedThrottle - thDown * dt);
   }
+  if (brakeInput > smoothedBrake) {
+    smoothedBrake = Math.min(brakeInput, smoothedBrake + brUp * dt);
+  } else {
+    smoothedBrake = Math.max(brakeInput, smoothedBrake - brDown * dt);
+  }
+  const brakePedal = smoothedBrake;
 
   // ── Decide pedal roles based on current speed ──────────────────────────
   const reverseSpeedMs = MAX_REVERSE_MPH * MPH_TO_MS;
@@ -223,13 +256,13 @@ export function tickVehicle(
 
   if (currentSpeed > 0.3) {
     isAccelerating = smoothedThrottle > 0;
-    isBraking = brakeInput > 0;
+    isBraking = brakePedal > 0;
   } else if (currentSpeed < -0.3) {
     isBraking = smoothedThrottle > 0;
-    isReversing = brakeInput > 0;
+    isReversing = brakePedal > 0;
   } else {
     isAccelerating = smoothedThrottle > 0;
-    isReversing = brakeInput > 0 && smoothedThrottle === 0;
+    isReversing = brakePedal > 0 && smoothedThrottle === 0;
   }
 
   // ── Engine state ───────────────────────────────────────────────────────
@@ -237,7 +270,7 @@ export function tickVehicle(
     engine.gear = -1;
     engine.rpm = Math.max(IDLE_RPM, Math.min(3000,
       (Math.abs(currentSpeed) / reverseSpeedMs) * 3000));
-    engine.throttle = brakeInput;
+    engine.throttle = brakePedal;
   } else {
     engine.throttle = smoothedThrottle;
     engine.rpm = rpmFromSpeed(Math.abs(currentSpeed), engine.gear);
@@ -249,16 +282,17 @@ export function tickVehicle(
   let rawAccel = 0;
 
   if (isAccelerating) {
-    rawAccel += getDriveAccel(smoothedThrottle, engine.rpm, engine.gear);
+    const drive = getDriveAccel(smoothedThrottle, engine.rpm, engine.gear);
+    rawAccel += kent ? Math.min(drive, KENT_MAX_DRIVE_ACCEL) : drive;
   }
 
   if (isBraking && Math.abs(currentSpeed) > 0.1) {
-    const activeBrakeInput = currentSpeed > 0 ? brakeInput : smoothedThrottle;
+    const activeBrakeInput = currentSpeed > 0 ? brakePedal : smoothedThrottle;
     rawAccel -= Math.sign(currentSpeed) * MAX_BRAKE_DECEL * activeBrakeInput;
   }
 
   if (isReversing && currentSpeed > -reverseSpeedMs) {
-    rawAccel -= REVERSE_ACCEL * brakeInput;
+    rawAccel -= REVERSE_ACCEL * brakePedal;
   }
 
   if (Math.abs(currentSpeed) > 0.1) {
@@ -270,7 +304,7 @@ export function tickVehicle(
   }
 
   // Smooth acceleration to eliminate gear-shift surges
-  const maxAccelDelta = ACCEL_SMOOTH_RATE * dt;
+  const maxAccelDelta = (kent ? KENT_ACCEL_SMOOTH_RATE : ACCEL_SMOOTH_RATE) * dt;
   smoothedAccel += THREE.MathUtils.clamp(rawAccel - smoothedAccel, -maxAccelDelta, maxAccelDelta);
 
   // ── Integrate speed ────────────────────────────────────────────────────

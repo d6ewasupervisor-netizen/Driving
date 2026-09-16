@@ -31,7 +31,7 @@ import qv3 from '@/quietroads/data/questions_v3_routines.json';
 import { useGameStore } from '@/stores/gameStore';
 import { useQRStore } from '@/stores/qrStore';
 import type { Question, Category } from '@/types/quiz';
-import { getCurrentSpeedMs, teleportVehicle, scaleCurrentSpeed, haltVehicle } from '@/systems/VehicleController';
+import { getCurrentSpeedMs, getSmoothedPedals, teleportVehicle, scaleCurrentSpeed, haltVehicle } from '@/systems/VehicleController';
 
 // The R3F Beetle brakes at 8 m/s² (MAX_BRAKE_DECEL in VehicleController). The stopping
 // shadow must be honest about *this* car, so the observer uses the same number.
@@ -191,11 +191,13 @@ class Bridge {
     const [x, , z] = g.vehiclePosition;
     // vehicleHeading = atan2(-fx, -fz); forward in XZ = (-sin h, -cos h). Core heading = atan2(fz, fx).
     const fx = -Math.sin(g.vehicleHeading), fz = -Math.cos(g.vehicleHeading);
+    // Pedals after the ramp, not the raw pad: a tap is gentle; only a held stab reads as "hard".
+    const pedals = getSmoothedPedals();
     return {
       pos: { x, y: z },
       heading: Math.atan2(fz, fx),
       speedMs: getCurrentSpeedMs(),
-      throttle: g.throttle, brake: g.brake, steer: g.steering,
+      throttle: pedals.throttle, brake: pedals.brake, steer: g.steering,
       horn: useQRStore.getState().horn,
     };
   }
